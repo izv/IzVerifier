@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<installation version="5.0" xmlns="http://izpack.org/schema/installation"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://izpack.org/schema/installation http://izpack.org/schema/installation/izpack-installation-5.0.xsd">
+
+  <info>
+    <appname>IzVerifier-Test-Installer</appname>
+    <appversion>0.0.1</appversion>
+    <url>http://www.google.com</url>
+    <authors>Francisco Canas</authors>
+    <javaversion>1.7</javaversion>
+  </info>
+
+  <guiprefs width="800" height="600" resizable="no">
+      <modifier key="useHeadingPanel" value="yes"/>
+      <modifier key="headingImageOnLeft" value="yes"/>
+      <modifier key="headingImageBorderSize" value="0"/>
+      <laf name="looks">
+        <os family="unix"/>
+        <os family="windows"/>
+        <os family="mac"/>
+      </laf>
+  </guiprefs>
+
+  <locale>
+    <langpack iso3="eng" />
+    <langpack iso3="fra" />
+  </locale>
+
+  <variables xmlns:xi="http://www.w3.org/2001/XInclude">
+     <xi:include href="variables.xml"/>
+  </variables>
+
+  <dynamicvariables xmlns:xi="http://www.w3.org/2001/XInclude">
+     <xi:include href="dynamic_variables.xml"/>
+  </dynamicvariables>
+
+  <conditions xmlns:xi="http://www.w3.org/2001/XInclude">
+     <xi:include href="conditions.xml"/>
+  </conditions>
+
+  <resources xmlns:xi="http://www.w3.org/2001/XInclude">
+     <xi:include href="resources.xml"/>
+  </resources>
+
+  <panels xmlns:xi="http://www.w3.org/2001/XInclude">
+     <xi:include href="panels.xml"/>
+  </panels>
+
+  <packs xmlns:xi="http://www.w3.org/2001/XInclude">
+     <xi:include href="packs.xml"/>
+  </packs>
+
+</installation>
