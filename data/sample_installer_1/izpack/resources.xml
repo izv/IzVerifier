@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xfragment>
+      <res id="CustomLangPack.xml" src="langpacks/CustomLangPack.xml"/>
+      <res id="CustomLangPack.xml_eng" src="langpacks/CustomLangPack.xml"/>
+      <res id="userInputSpec.xml" src="userInputSpec.xml" parse="yes" type="xml"/>
+</xfragment>

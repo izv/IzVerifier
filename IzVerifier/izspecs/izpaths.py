@@ -8,13 +8,14 @@ class IzPaths():
     Class responsible for providing paths to specific IzPack resources and spec files.
     """
     specs = ['variables', 'conditions', 'dynamicvariables', 'resources', 'panels', 'packs']
-
+    
     def __init__(self, path):
         """
         Initialize the installer's root path.
         """
         self.root = path
         self.parse_paths()
+        self.find_resources()
 
 
     def parse_paths(self):
@@ -43,10 +44,42 @@ class IzPaths():
         """
         Returns a path to the spec file, or None if there isn't any.
         """
-        return self.root + self.paths[spec]
+        if not self.paths[spec]:
+            return None
+        else:
+            return self.root + self.paths[spec]
+
+    def find_resources(self):
+        """
+        Parse the install.xml resources and extract paths to available resource files.
+        """
+        self.resources = {}
+        path = self.get_path('resources')
+
+        if not path:
+            rsoup = self.soup
+        else:
+            rsoup = BeautifulSoup()
+
+        self.find_langpacks(rsoup)
+
+    def find_langpacks(self, soup):
+        langpacks = []
+
+        for res in soup.find_all('res'):
+            if 'CustomLangPack.xml' in res['id']:
+                langpacks.append((res['id'], res['src']))
+        self.resources['langpacks'] = langpacks
 
 
-
-
+    def get_langpacks(self):
+        """
+        Returns a list of found langpacks in the form:
+        [
+            (langpack_id, langpack_path),
+            ...
+        ]
+        """
+        return self.resources['langpacks']
 
 

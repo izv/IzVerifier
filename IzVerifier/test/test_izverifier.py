@@ -51,16 +51,30 @@ class TestVerifier(unittest.TestCase):
         num = len(izc.get_keys())
         self.assertEquals(num, 3, str(num) + "=3")
 
+    def test_langpack_paths(self):
+        """
+        Test that we parsed the langpack paths from resources.xml
+        """
+        langpacks = [('CustomLangPack.xml', 'langpacks/CustomLangPack.xml'),
+                     ('CustomLangPack.xml_eng', 'langpacks/CustomLangPack.xml')]
+
+        for tpack, fpack in zip(langpacks, self.izv.paths.get_langpacks()):
+            self.assertTrue(tpack == fpack)
+
+
     def test_IzStrings(self):
         """
         Testing the strings container.
         """
-        izs = IzStrings(self.izv.paths.get_path('strings'))
+        langpacks = self.izv.paths.get_langpacks()
+
+        langpack = langpacks[0]
+        izs = IzStrings(langpack[1])
         self.assertTrue(izs != None)
 
         # Test for number of keys in conditions.xml plus white list
         num = len(izs.get_keys())
-        self.assertEquals(num, 11, str(num) + "=11")
+        self.assertEquals(num, 1, str(num) + "=1")
 
 if __name__ == '__main__':
     unittest.main()

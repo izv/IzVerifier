@@ -65,7 +65,7 @@ class IzConditions(IzContainer):
 
     def print_keys(self):
         for cond in self.conditions.keys():
-            print cond
+            print(cond)
 
     def count(self):
         return len(self.conditions.keys())
