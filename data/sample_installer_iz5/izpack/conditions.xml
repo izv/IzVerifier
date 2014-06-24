@@ -9,4 +9,15 @@
         <name>variable1</name>
         <value>true</value>
     </condition>
+
+    <condition type="and" id="and.1">
+        <condition type="ref" refid="pack.a"/>
+        <condition type="ref" refid="variable1"/>
+    </condition>
+
+    <condition type="and" id="and.2">
+        <condition type="ref" refid="pack.b"/>
+        <condition type="ref" refid="variable1"/>
+    </condition>
+
 </xfragment>
