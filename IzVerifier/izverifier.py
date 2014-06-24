@@ -1,6 +1,7 @@
+__author__ = 'fcanas'
+
 from IzVerifier.exceptions.IzVerifierException import IzArgumentsException
 from IzVerifier.izspecs.izpaths import IzPaths
-__author__ = 'fcanas'
 
 
 class IzVerifier():

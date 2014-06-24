@@ -1,4 +1,5 @@
 IzVerifier
 ==========
 
-Static Spec Verification for IzPack Installers
+Static spec file  verification for IzPack installers.
+

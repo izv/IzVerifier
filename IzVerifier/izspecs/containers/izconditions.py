@@ -1,6 +1,6 @@
-from bs4 import BeautifulSoup
 import re
-from IzVerifier.izspecs.izcontainer import IzContainer
+from bs4 import BeautifulSoup
+from IzVerifier.izspecs.containers.izcontainer import IzContainer
 from IzVerifier.izspecs.izproperties import *
 
 
@@ -30,31 +30,25 @@ class IzConditions(IzContainer):
                      ("getCondition({0}", "getCondition\(({0})\)")]
     }
 
-
-    def __init__(self, spec_path):
-        self.conditions = {}
-        self.soup = BeautifulSoup(open(spec_path))
-        self.parse_conditions(self.soup)
-
-    def parse_conditions(self, soup):
+    def parse(self, soup):
         """ Extracts all conditions from conditions.xml document. """
         conds = soup.find_all(self.has_condition_definition)
         for cond in conds:
-            self.conditions[str(cond['id'])] = cond
+            self.container[str(cond['id'])] = cond
 
 
     def get_keys(self):
         """
         Returns a set of all the keys for defined conditions.
         """
-        return set(self.conditions.keys()) | set(self.properties[WHITE_LIST])
+        return set(self.container.keys()) | set(self.properties[WHITE_LIST])
 
     def referenced_variables(self):
         """
         Returns the ids for all variables referenced by variable type conditions.
         """
         variables = set()
-        for cond in self.conditions.itervalues():
+        for cond in self.container.itervalues():
             if self.has_def_by_variable_ref(cond):
                 if cond.find('name'):
                     var = cond.find('name').get_text()
@@ -64,20 +58,20 @@ class IzConditions(IzContainer):
         return variables
 
     def print_keys(self):
-        for cond in self.conditions.keys():
+        for cond in self.container.keys():
             print(cond)
 
     def count(self):
-        return len(self.conditions.keys())
+        return len(self.container.keys())
 
     def get_spec_elements(self):
         """
         Returns a set of xml elements defining each condition.
         """
-        return set(self.conditions.values())
+        return set(self.container.values())
 
     def to_string(self):
-        return str(self.conditions)
+        return str(self.container)
 
     def ref_transformer(self, reference):
         """ Given a compound condition id returns a list of the conditions contained in it.

@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
-from IzVerifier.izspecs.izcontainer import IzContainer
+
+from IzVerifier.izspecs.containers.izcontainer import IzContainer
 from IzVerifier.izspecs.izproperties import *
 
 
@@ -32,31 +33,26 @@ class IzVariables(IzContainer):
         WHITE_LIST_PATTERNS: []
     }
 
-    def __init__(self, path):
-        self.variables = {}
-        self.soup = BeautifulSoup(open(path))
-        self.parse_variables(self.soup)
-
-    def parse_variables(self, soup):
+    def parse(self, soup):
         """
         Extracts all variable definitions from variables.xml doc.
         """
         vars = soup.find_all('variable')
         for var in vars:
-            self.variables[str(var['name'])] = var
+            self.container[str(var['name'])] = var
 
     def get_keys(self):
         """
         Returns a set of all the keys for defined variables.
         """
-        return set(self.variables.keys()) | set(self.properties[WHITE_LIST])
+        return set(self.container.keys()) | set(self.properties[WHITE_LIST])
 
 
     def count(self):
         """
         Return number of vars found in definition file.
         """
-        return len(self.variables.keys())
+        return len(self.container.keys())
 
     def print_keys(self):
         """
@@ -68,10 +64,10 @@ class IzVariables(IzContainer):
         """
         Returns a set of xml elements defining each variable.
         """
-        return set(self.variables.values())
+        return set(self.container.values())
 
     def to_string(self):
-        return str(self.variables)
+        return str(self.container)
 
     @staticmethod
     def element_sort_key(element):

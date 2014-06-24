@@ -1,5 +1,6 @@
+from bs4 import BeautifulSoup
 from abc import abstractmethod
-
+from IzVerifier.exceptions.IzVerifierException import MissingSpecsException
 
 
 class IzContainer():
@@ -12,8 +13,14 @@ class IzContainer():
     izvariables (for izpack variables)
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, path):
+        self.container = {}
+        try:
+            self.soup = BeautifulSoup(open(path))
+        except IOError:
+            raise MissingSpecsException("spec not found at: " + path)
+            exit(1)
+        self.parse(self.soup)
 
     @abstractmethod
     def get_keys(self):

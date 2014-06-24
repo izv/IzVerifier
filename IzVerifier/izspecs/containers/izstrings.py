@@ -1,6 +1,9 @@
 from bs4 import BeautifulSoup
-from IzVerifier.izspecs.izcontainer import IzContainer
+from IzVerifier.exceptions.IzVerifierException import MissingSpecsException
+
+from IzVerifier.izspecs.containers.izcontainer import IzContainer
 from IzVerifier.izspecs.izproperties import *
+
 
 IZPACK_LANG_PATH = 'izpack_lang_path'
 
@@ -27,23 +30,17 @@ class IzStrings(IzContainer):
         PARENT_CLOSING_TAG: '</langpack>',
     }
 
-    def __init__(self, path):
-        self.strings = {}
-        self.soup = BeautifulSoup(open(path))
-        self.parse_strings(self.soup)
-
     def parse_izpack_strings(self, path):
         self.soup_izpack = BeautifulSoup(open(path))
-        self.parse_strings(self.soup_izpack)
+        self.parse(self.soup_izpack)
 
-    def parse_strings(self, soup):
+    def parse(self, soup):
         """
         Extracts all strings from the soup document.
         """
         strings = soup.find_all(self.has_definition)
         for st in strings:
-            self.strings[str(st['id'])] = st
-
+            self.container[str(st['id'])] = st
 
     def has_definition(self, element):
         """
@@ -93,18 +90,18 @@ class IzStrings(IzContainer):
     def get_keys(self):
         """
         """
-        return self.strings.keys()
+        return self.container.keys()
 
     def count(self):
         """
         """
-        return len(self.strings.keys())
+        return len(self.container.keys())
 
     def get_spec_elements(self):
         """
         Returns a set of xml elements defining each condition.
         """
-        return set(self.strings.values())
+        return set(self.container.values())
 
     def ref_transformer(self, reference):
         """
