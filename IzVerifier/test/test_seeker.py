@@ -91,7 +91,7 @@ class TestSeeker(unittest.TestCase):
         hits = len(results)
         self.assertEquals(hits, 1, msg=str(hits) + '!=1')
 
-    def test_findAllStrings(self):
+    def test_findAllStringsInSpecs(self):
         """
         Finds all strings referenced in installer spec files.
         """
@@ -104,9 +104,9 @@ class TestSeeker(unittest.TestCase):
         }
 
         hits = self.seeker.search_specs_for_attributes(props)
-        self.assertTrue(len(hits) != 0)
+        self.assertTrue(len(hits) == 7, msg=str(len(hits)) + '!=7')
 
-    def test_findAllConditions(self):
+    def test_findAllConditionsInSpecs(self):
         """
         Finds all strings referenced in installer spec files.
         """
@@ -122,7 +122,7 @@ class TestSeeker(unittest.TestCase):
         self.assertTrue(len(hits) == 1)
 
 
-    def test_findAllVariables(self):
+    def test_findAllVariablesInSpecs(self):
         """
         Finds all strings referenced in installer spec files.
         """
@@ -136,3 +136,14 @@ class TestSeeker(unittest.TestCase):
 
         hits = self.seeker.search_specs_for_attributes(props)
         self.assertTrue(len(hits) == 2)
+
+    def test_findAllStringsInSource(self):
+        """
+        Search source code for izpack string references.
+        """
+        hits = self.seeker.find_references_in_source(
+            patterns=self.strings.properties[PATTERNS],
+            path_list=[source_path2],
+            white_list_patterns=self.strings.properties[WHITE_LIST_PATTERNS]
+        )
+        print hits

@@ -76,7 +76,7 @@ class TestVerifier(unittest.TestCase):
 
         # Test for number of strings
         num = len(izs.get_keys())
-        self.assertEquals(num, 1, str(num) + '!=1')
+        self.assertEquals(num, 4, str(num) + '!=4')
 
     def test_IzVariables(self):
         """
