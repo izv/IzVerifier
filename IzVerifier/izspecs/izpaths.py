@@ -14,6 +14,8 @@ class IzPaths():
         Initialize the installer's root path.
         """
         self.root = path
+        self.izpack = path + '/izpack/'
+        self.res_path = path + '/resources/'
         self.parse_paths()
         self.find_resources()
 
@@ -24,7 +26,7 @@ class IzPaths():
         installer's install.xml spec.
         """
         self.paths = {}
-        self.soup = BeautifulSoup(open(self.root + 'install.xml'))
+        self.soup = BeautifulSoup(open(self.izpack + 'install.xml'))
         for spec in self.specs:
             self.paths[spec] = self.find_path(spec)
 
@@ -47,7 +49,16 @@ class IzPaths():
         if not self.paths[spec]:
             return None
         else:
-            return self.root + self.paths[spec]
+            return self.izpack + self.paths[spec]
+
+    def get_resource_path(self, res):
+        """
+        Return path to a resource file or None if it doesn't exist.
+        """
+        if not self.paths[res]:
+            return None
+        else:
+            return self.res_path + self.paths[res]
 
     def find_resources(self):
         """
@@ -59,7 +70,7 @@ class IzPaths():
         if not path:
             rsoup = self.soup
         else:
-            rsoup = BeautifulSoup()
+            rsoup = BeautifulSoup(open(path))
 
         self.find_langpacks(rsoup)
 
@@ -67,8 +78,9 @@ class IzPaths():
         langpacks = []
 
         for res in soup.find_all('res'):
+            self.paths[res['id']] = res['src']
             if 'CustomLangPack.xml' in res['id']:
-                langpacks.append((res['id'], res['src']))
+                langpacks.append((res['id'], self.res_path + res['src']))
         self.resources['langpacks'] = langpacks
 
 

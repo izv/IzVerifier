@@ -1,15 +1,13 @@
-import os
-from IzVerifier.izspecs.izconditions import IzConditions
-from IzVerifier.izspecs.izstrings import IzStrings
-from IzVerifier.izverifier import IzVerifier
-
 __author__ = 'fcanas'
 
 import unittest
+from IzVerifier.izspecs.izconditions import IzConditions
+from IzVerifier.izspecs.izstrings import IzStrings
+from IzVerifier.izspecs.izvariables import IzVariables
+from IzVerifier.izverifier import IzVerifier
+from IzVerifier.izspecs.izproperties import *
 
-path1 = 'data/sample_installer_1/izpack/'
-
-
+path1 = 'data/sample_installer_iz5'
 
 class TestVerifier(unittest.TestCase):
     """
@@ -44,23 +42,25 @@ class TestVerifier(unittest.TestCase):
         """
         Testing the strings container.
         """
-        izc = IzConditions(self.izv.paths.get_path('conditions'))
+        conditions = self.izv.paths.get_path('conditions')
+        self.assertEquals(conditions,'data/sample_installer_iz5/izpack/conditions.xml')
+
+        izc = IzConditions(conditions)
         self.assertTrue(izc != None)
 
         # Test for number of keys in conditions.xml plus white list
-        num = len(izc.get_keys())
-        self.assertEquals(num, 3, str(num) + "=3")
+        num = len(izc.get_keys()) - len(izc.properties[WHITE_LIST])
+        self.assertEquals(num, 2, str(num) + "!=2")
 
     def test_langpack_paths(self):
         """
         Test that we parsed the langpack paths from resources.xml
         """
-        langpacks = [('CustomLangPack.xml', 'langpacks/CustomLangPack.xml'),
-                     ('CustomLangPack.xml_eng', 'langpacks/CustomLangPack.xml')]
+        langpacks = [('CustomLangPack.xml', 'data/sample_installer_iz5/resources/langpacks/CustomLangPack.xml'),
+                     ('CustomLangPack.xml_eng', 'data/sample_installer_iz5/resources/langpacks/CustomLangPack.xml')]
 
         for tpack, fpack in zip(langpacks, self.izv.paths.get_langpacks()):
-            self.assertTrue(tpack == fpack)
-
+            self.assertTrue(tpack[1] == fpack[1], msg=tpack[1] + '!=' + fpack[1])
 
     def test_IzStrings(self):
         """
@@ -72,9 +72,22 @@ class TestVerifier(unittest.TestCase):
         izs = IzStrings(langpack[1])
         self.assertTrue(izs != None)
 
-        # Test for number of keys in conditions.xml plus white list
+        # Test for number of strings
         num = len(izs.get_keys())
-        self.assertEquals(num, 1, str(num) + "=1")
+        self.assertEquals(num, 1, str(num) + '!=1')
+
+    def test_IzVariables(self):
+        """
+        Testing the variables container.
+        """
+        variables = self.izv.paths.get_path('variables')
+        self.assertEquals(variables,'data/sample_installer_iz5/izpack/variables.xml')
+
+        izv = IzVariables(variables)
+        self.assertTrue(izv != None)
+        num = len(izv.get_keys()) - len(izv.properties[WHITE_LIST])
+        self.assertEquals(num, 3, str(num) + '!=3')
+
 
 if __name__ == '__main__':
     unittest.main()

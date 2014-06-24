@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xfragment>
+    <variable name="some.var.1" value="some.value.1"/>
+    <variable name="some.var.2" value="some.value.2"/>
+    <variable name="some.var.3" value="some.value.3"/>
+</xfragment>

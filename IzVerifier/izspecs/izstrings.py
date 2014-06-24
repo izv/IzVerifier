@@ -30,7 +30,6 @@ class IzStrings(IzContainer):
     def __init__(self, path):
         self.strings = {}
         self.soup = BeautifulSoup(open(path))
-        self.parse_strings(self.soup_izpack)
         self.parse_strings(self.soup)
 
     def parse_izpack_strings(self, path):

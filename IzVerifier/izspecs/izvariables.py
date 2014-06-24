@@ -3,7 +3,7 @@ from IzVerifier.izspecs.izcontainer import IzContainer
 from IzVerifier.izspecs.izproperties import *
 
 
-class Variables(IzContainer):
+class IzVariables(IzContainer):
     """
     Container for parsing and storing IzPack variables from variables.xml.
     """

@@ -13,7 +13,7 @@ setup(
             'IzVerifier.izspecs',
             'IzVerifier.test'
         ],
-        data_files=[('data', ['data/sample_installer_1'])],
+        data_files=[('data', ['data/sample_installer_iz5'])],
         url='https://github.com/FranciscoCanas/IzVerifier',
         license='LICENSE.txt',
         description='Static Verification for IzPack Specification Files',
