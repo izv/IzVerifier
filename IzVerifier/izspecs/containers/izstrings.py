@@ -14,7 +14,7 @@ class IzStrings(IzContainer):
     properties = {
         NAME: 'strings',
         DEFINITION_SPEC_FILES: ['eng.xml'],
-        REFERENCE_SPEC_FILES: ["install.xml", "userInputSpec.xml", "ProcessPanel.Spec.xml", "core-packs.xml"],
+        REFERENCE_SPEC_FILES: ["izpack/install.xml", "resources/userInputSpec.xml", "izpack/ProcessPanel.Spec.xml", "izpackcore-packs.xml"],
         SOURCE_SEARCH_PATTERN: 'langpack.getString(',
         CHECK_KEY_PATTERN: 'langpack.getString\(\"(.*?)\"\)',
         ATTRIBUTES: ['id', 'tooltip', 'variable'],

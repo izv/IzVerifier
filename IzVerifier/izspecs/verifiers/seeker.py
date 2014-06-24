@@ -17,20 +17,21 @@ class Seeker:
         self.hits = []
         self.paths = paths
 
-    def search_specs_for_attributes(self, path, specs, filter_fn, attributes, value_fn=lambda x: True,
-                                    transform_fn=lambda x: x):
+    def search_specs_for_attributes(self, args):
         """
         Searches each spec file for any elements that pass the filter_fn, then
         finds occurrences of the given attributes in those elements, Returns a
         set of all values returned by the transform_fn when the found attribute values
         are its parameters.
 
-        :param path: path to the root folder where specs are found
-        :param specs: a list of spec file paths to search
-        :param filter_fn: the filtering function for xml elements
-        :param attributes: a list of attributes to extract from elements that pass the filter
-        :param value_fn: A function that further filters results by their value.
-        :param transform_fn: a function that transforms the values of attributes to some desired form
+        args = {
+             'path': path to root of installer folder,
+             'specs': a list of spec files to search through,
+             'filter_fn': a filtering function for xml elements,
+             'attributes': a list of the attributes to extract from matching elements,
+             'value_fn': a function that filters the extracted values,
+             'transform_fn': a function to transform matching values to some form.
+        }
 
          For example:
          in:
@@ -46,6 +47,13 @@ class Seeker:
          returns the input value.
         """
         values_found_for_attributes = set()
+
+        path = args['path']
+        specs = args['specs']
+        filter_fn = args['filter_fn']
+        attributes = args['attributes']
+        value_fn = args.get('value_fn', lambda x: True)
+        transform_fn = args.get('transform_fn', lambda x: x)
 
         # Search each of the spec files required for elements that pass the filters
         for spec in specs:
@@ -67,8 +75,7 @@ class Seeker:
 
         return values_found_for_attributes
 
-    def search_specs_for_value(self, path, value, element_matcher, attributes_list, specs_list,
-                               value_transformer=lambda x: x):
+    def search_specs_for_value(self, args):
         """
         Searches the given spec files for any instances of elements that pass the element_filter
         which hold attributes specified in the specs_list which in turn have the sought after
@@ -76,22 +83,21 @@ class Seeker:
 
         Will return a set of tuples of the form (value, spec file) after transforming the value
         using the transform_fn.
+
+        See description of args above.
         """
+        value = args['id']
 
         def value_matcher(val):
             matcher = re.compile(value)
             return (not matcher.match(val) == None)
 
+        args['value_fn'] = value_matcher
 
-        hits = self.search_specs_for_attributes(path=path,
-                                                specs=specs_list,
-                                                filter_fn=element_matcher,
-                                                attributes=attributes_list,
-                                                value_fn=value_matcher,
-                                                transform_fn=value_transformer)
+        hits = self.search_specs_for_attributes(args)
         return hits
 
-    def find_all_references(self, search_properties):
+    def find_all_references(self, args):
         """
         Performs a search for some entity defined by the search_properties argument.
         Search_properties is a dict, containing the following:
@@ -104,7 +110,7 @@ class Seeker:
         transformer     : A function to transform the value, when found (can be identity function)
         patterns        : A list of grep string patterns for the target in source code, of the form:
                             (find_pattern, key_extract_pattern)
-        source paths           : A list of source code paths to search.
+        source paths    : A list of source code paths to search.
 
         Returns all references found.
         """
@@ -112,19 +118,14 @@ class Seeker:
 
 
 
-        hits = self.search_specs_for_value(path=self.paths.root,
-                                           value=search_properties['id'],
-                                           specs_list=search_properties['specs'],
-                                           element_matcher=search_properties['element_matcher'],
-                                           attributes_list=search_properties['attributes'],
-                                           value_transformer=search_properties['transformer'])
+        hits = self.search_specs_for_value(args)
         spec_hits |= hits
 
 
-        source_hits = self.find_references_in_source(patterns=search_properties['patterns'],
-                                                     path_list=search_properties['paths'],
-                                                     vid=search_properties['id'],
-                                                     white_list_patterns=search_properties['white_list_patterns'])
+        source_hits = self.find_references_in_source(patterns=args['patterns'],
+                                                     path_list=args['source_paths'],
+                                                     vid=args['id'],
+                                                     white_list_patterns=args['white_list_patterns'])
 
         return spec_hits | source_hits
 
@@ -269,7 +270,10 @@ class Seeker:
         Scrapes the xml spec file given in path and returns a set of all elements meeting the
         search_fn condition.
         """
-        soup = BeautifulSoup(open(path))
+        try:
+            soup = BeautifulSoup(open(path))
+        except IOError:
+            return set()
         return soup.find_all(search_fn)
 
     @staticmethod
