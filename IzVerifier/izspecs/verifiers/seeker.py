@@ -97,7 +97,7 @@ class Seeker:
         hits = self.search_specs_for_attributes(args)
         return hits
 
-    def find_all_references(self, args):
+    def find_id_references(self, args):
         """
         Performs a search for some entity defined by the search_properties argument.
         Search_properties is a dict, containing the following:

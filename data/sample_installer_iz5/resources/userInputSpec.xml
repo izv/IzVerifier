@@ -1,7 +1,7 @@
 <userInput>
     <panel id="some.user.panel">
         <field type="title" bold="true" size="2" id="some.user.panel.title"/>
-        <field type="staticText" id="some.user.panel.info"/>
+        <field type="staticText" id="some.user.panel.info" conditionid="some.condition.1"/>
         <field type="text" variable="some.user">
            <spec id="some.user" size="15" set="user"/>
         </field>

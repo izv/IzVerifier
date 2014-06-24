@@ -14,7 +14,7 @@ class IzConditions(IzContainer):
     properties = {
         NAME: "conditions",
         DEFINITION_SPEC_FILES: ['conditions.xml'],
-        REFERENCE_SPEC_FILES: ["install.xml", "userInputSpec.xml", "ProcessPanel.Spec.xml", "core-packs.xml"],
+        REFERENCE_SPEC_FILES: ["izpack/install.xml", "resources/userInputSpec.xml", "izpack/ProcessPanel.Spec.xml", "izpack/core-packs.xml"],
         IGNORE_KEY_PATTERN: '^izpack.*',  # used by izpack internal vars
         SOURCE_SEARCH_PATTERN: 'isConditionTrue(',
         CHECK_KEY_PATTERN: "isConditionTrue\(\"(.*?)\"\)",
