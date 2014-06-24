@@ -1,7 +1,10 @@
-__author__ = 'fcanas'
-
+import importlib
+from IzVerifier.izspecs.verifiers.seeker import Seeker
+from IzVerifier.izspecs.izproperties import *
 from IzVerifier.exceptions.IzVerifierException import IzArgumentsException
 from IzVerifier.izspecs.izpaths import IzPaths
+
+__author__ = 'fcanas'
 
 
 class IzVerifier():
@@ -22,9 +25,72 @@ class IzVerifier():
         }
         """
         validate_arguments(args)
+        self.containers = {}
         self.installer = args.get('installer')
         self.sources = args.get('sources', [])
         self.paths = IzPaths(self.installer)
+        self.seeker = Seeker(self.paths)
+
+    def verify(self, specification, verbose=0):
+        """
+        Runs a verification on the given izpack spec: conditions, strings, variables, etc.
+        """
+        container = self.init_container(specification)
+        defined = container.get_keys()
+        crefs = self.find_code_references(specification)
+        srefs = self.find_spec_references(specification)
+
+        cmissing = undefined(defined, crefs)
+
+        if verbose > 0:
+            report_set(cmissing)
+
+        smissing = undefined(defined, srefs)
+
+        if verbose > 0:
+            report_set(smissing)
+
+        return cmissing | smissing
+
+    def init_container(self, specification):
+        """
+        Initialize a container to be used for verification.
+        """
+        module = importlib.import_module("IzVerifier.izspecs.containers.iz" + specification)
+        class_ = getattr(module, 'Iz' + specification.title())
+        instance = class_(self.paths.get_path(specification))
+        self.containers[specification] = instance
+        return instance
+
+    def find_code_references(self, specification):
+        """
+        Find all source code references for specs in each container.
+        :param specifications: conditions, variables, strings, or other izpack spec
+        """
+        container = self.containers[specification]
+        hits = self.seeker.find_references_in_source(patterns=container.properties[PATTERNS],
+                                                     path_list=self.sources,
+                                                     white_list_patterns=container.properties[WHITE_LIST_PATTERNS])
+
+        return hits
+
+    def find_spec_references(self, specification):
+        """
+        Find all specification xml references for specs in each container.
+        :param installer:
+        :param specifications:
+        """
+        container = self.containers[specification]
+
+        args = {
+             'path': self.paths.root,
+             'specs': container.properties[REFERENCE_SPEC_FILES],
+             'filter_fn': container.has_reference,
+             'attributes': container.properties[ATTRIBUTES],
+             'transform_fn': container.ref_transformer
+        }
+        hits = self.seeker.search_specs_for_attributes(args)
+        return hits
 
 
 def validate_arguments(args):
@@ -32,11 +98,11 @@ def validate_arguments(args):
     Throws exceptions if required args are missing or invalid.
     """
     if not args.has_key('installer'):
-         raise IzArgumentsException("No Path to Installer Specified")
-         exit(1)
+        raise IzArgumentsException("No Path to Installer Specified")
+        exit(1)
     if not args.has_key('specs'):
-         raise IzArgumentsException("No Spec files Specified for Verification")
-         exit(1)
+        raise IzArgumentsException("No Spec files Specified for Verification")
+        exit(1)
 
 
 def undefined(key_set, tup_set):
@@ -69,3 +135,12 @@ def quote_remover(key):
     if '=' in key:
         key = quote_remover(''.join(key.split('=')[1:]))
     return key
+
+def report_set(entities):
+    """ Human-readable report for a set of unverified entities. """
+
+    for item in sorted(entities):
+        if type(item) is tuple:
+            print item[0] + ' => ' + item[1]
+        else:
+            print item

@@ -6,7 +6,7 @@
            <spec id="some.user" size="15" set="user"/>
         </field>
         <field type="space"/>
-        <field type="password" variable="some.user.password">
+        <field type="password" variable="some.user.password" conditionid="variable1">
             <spec>
                 <pwd id="some.user.password" size="16" />
                 <pwd id="some.user.password.confirm" size="16" />

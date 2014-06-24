@@ -119,7 +119,7 @@ class TestSeeker(unittest.TestCase):
         }
 
         hits = self.seeker.search_specs_for_attributes(props)
-        self.assertTrue(len(hits) == 1)
+        self.assertTrue(len(hits) == 2)
 
 
     def test_findAllVariablesInSpecs(self):

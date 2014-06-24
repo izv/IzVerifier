@@ -15,6 +15,14 @@ public Class Foo {
         System.out.println("some.string.2");
         System.out.println(idata.langpack.getString(key2));
         System.out.println(idata.langpack.getString("some.string.3"));
+
+        String cond1 = "some.condition.1";
+        Boolean isTrue = idata.getRules().isConditionTrue(cond1);
+
+        String someVar = "some.undefined.var.1";
+        String someVal = idata.getVariable(someVar);
+
+        String someVal2 = idata.getVariable("some.other.undefined.var");
     }
 
 }

@@ -28,7 +28,7 @@ class IzPaths():
         self.paths = {}
         self.soup = BeautifulSoup(open(self.izpack + 'install.xml'))
         for spec in self.specs:
-            self.paths[spec] = self.find_path(spec)
+            self.paths[spec] = self.izpack + self.find_path(spec)
 
 
     def find_path(self, spec):
@@ -49,7 +49,7 @@ class IzPaths():
         if not self.paths[spec]:
             return None
         else:
-            return self.izpack + self.paths[spec]
+            return self.paths[spec]
 
     def get_resource_path(self, res):
         """
@@ -82,6 +82,7 @@ class IzPaths():
             if 'CustomLangPack.xml' in res['id']:
                 langpacks.append((res['id'], self.res_path + res['src']))
         self.resources['langpacks'] = langpacks
+        self.paths['strings'] = langpacks[0][1]
 
 
     def get_langpacks(self):

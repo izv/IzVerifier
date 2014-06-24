@@ -9,6 +9,8 @@ from IzVerifier.izspecs.izproperties import *
 
 
 path1 = 'data/sample_installer_iz5'
+source_path2 = 'data/sample_code_base'
+
 
 class TestVerifier(unittest.TestCase):
     """
@@ -18,7 +20,7 @@ class TestVerifier(unittest.TestCase):
     def setUp(self):
         args = {
             'installer': path1,
-            'sources': [],
+            'sources': [source_path2],
             'specs': ['conditions', 'strings', 'variables']
         }
         self.izv = IzVerifier(args)
@@ -90,6 +92,30 @@ class TestVerifier(unittest.TestCase):
         num = len(izv.get_keys()) - len(izv.properties[WHITE_LIST])
         self.assertEquals(num, 3, str(num) + '!=3')
 
+    def test_verifyConditions(self):
+        """
+        Verify conditions in sample installer.
+        """
+        hits = self.izv.verify('conditions', verbose=1)
+        num = len(hits)
+        self.assertTrue(num == 2)
+
+    def test_verifyVariables(self):
+        """
+        Verify conditions in sample installer.
+        """
+        hits = self.izv.verify('variables', verbose=1)
+        num = len(hits)
+        self.assertTrue(num == 4)
+
+    def test_verifyVariables(self):
+        """
+        Verify conditions in sample installer.
+        """
+        hits = self.izv.verify('strings', verbose=1)
+        print hits
+        num = len(hits)
+        self.assertTrue(num == 7)
 
 if __name__ == '__main__':
     unittest.main()
