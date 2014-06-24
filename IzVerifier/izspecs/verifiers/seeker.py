@@ -14,7 +14,6 @@ class Seeker:
     grep_whitelist_patterns = []
 
     def __init__(self, paths):
-        self.hits = []
         self.paths = paths
 
     def search_specs_for_attributes(self, args):
@@ -294,9 +293,8 @@ class Seeker:
         Returns a set of all lines containing that pattern.
         """
         keys = set()
-
-        cmd = ["grep -R '" + search_pattern + "' " + path]
-
+        cmd_string = "grep -R -e '{0}' {1}".format(search_pattern, path)
+        cmd = [cmd_string]
         try:
             output = subprocess.check_output(cmd, shell=True)
             for line in output.split("\n"):

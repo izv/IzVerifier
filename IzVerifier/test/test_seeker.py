@@ -146,4 +146,5 @@ class TestSeeker(unittest.TestCase):
             path_list=[source_path2],
             white_list_patterns=self.strings.properties[WHITE_LIST_PATTERNS]
         )
-        print hits
+        num = len(hits)
+        self.assertTrue(num == 4)

@@ -8,10 +8,13 @@ public Class Foo {
     public static void Run(AbstractUIProcessHandler handler, String [] args) {
         AutomatedInstallData idata = AutomatedInstallData.getInstance();
 
-        String key = "some.string.2";
+        String key1 = "some.string.1";
+        String key2 = "some.string.4";
+        String val = idata.langpack.getString(key1);
 
-        System.out.println(idata.langpacks.getString(key));
-        System.out.println(idata.langpacks.getString("some.string.1"));
+        System.out.println("some.string.2");
+        System.out.println(idata.langpack.getString(key2));
+        System.out.println(idata.langpack.getString("some.string.3"));
     }
 
 }
