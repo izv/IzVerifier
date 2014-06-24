@@ -18,14 +18,12 @@ def test_verify_all_dependencies(verifier):
     drefs = conditions.get_keys()
 
 
-    for condition in drefs | crefs | srefs:
+    for condition in drefs | srefs | crefs:
 
         result = verify_dependencies(condition, conditions, variables)
         fail = True
         if result:
-
             last_path = list(result)[-1]
-
             if 'variable' in last_path[-1]:
                 fail = False # indicates undefined variable, so we return a warning
             else:
@@ -124,6 +122,10 @@ def display_paths(paths):
             else:
                 branch = ""
             tab += 3
-            print(" " * tab + branch + str(node[0]) + " : (" + str(node[1]) + ")")
-    print("")
+            if type(node[0]) is tuple:
+                id = node[0][0]
+            else:
+                id = node[0]
+            print " " * tab + branch + str(id) + " : (" + str(node[1]) + ")"
+    print
 
