@@ -4,10 +4,6 @@ from IzVerifier.izspecs.containers.izcontainer import IzContainer
 from IzVerifier.izspecs.izproperties import *
 
 
-KEY_PATTERN = 'get_key_pattern'
-REF_ID_ATTRIBUTES_LIST = 'ref_id_attributes_list'
-IGNORE_KEY_PATTERN = 'ignore_key_pattern'
-
 class IzConditions(IzContainer):
     """ Container for parsing and storing IzPack conditions from conditions.xml. """
 

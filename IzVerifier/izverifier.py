@@ -47,7 +47,7 @@ class IzVerifier():
         """
         Runs a verification on the given izpack spec: conditions, strings, variables, etc.
         """
-        container = self.init_container(specification)
+        container = self.get_container(specification)
         defined = container.get_keys()
         crefs = self.find_code_references(specification)
         srefs = self.find_spec_references(specification)
@@ -64,6 +64,16 @@ class IzVerifier():
 
         return cmissing | smissing
 
+    def get_container(self, specification):
+        """
+        Returns an izpack item container filled with specs gathered from the installer
+        specified in the constructor.
+        """
+        if not self.containers.has_key(specification):
+            return self.init_container(specification)
+        else:
+            return self.containers[specification]
+
     def init_container(self, specification):
         """
         Initialize a container to be used for verification.
@@ -79,7 +89,7 @@ class IzVerifier():
         Find all source code references for specs in each container.
         :param specifications: conditions, variables, strings, or other izpack spec
         """
-        container = self.containers[specification]
+        container = self.get_container(specification)
         hits = self.seeker.find_references_in_source(patterns=container.properties[PATTERNS],
                                                      path_list=self.sources,
                                                      white_list_patterns=container.properties[WHITE_LIST_PATTERNS])
@@ -92,7 +102,7 @@ class IzVerifier():
         :param installer:
         :param specifications:
         """
-        container = self.containers[specification]
+        container = self.get_container(specification)
 
         args = {
              'path': self.paths.root,
