@@ -105,10 +105,3 @@ class IzVariables(IzContainer):
             if element.has_attr(atty): return True
 
         return False
-
-
-
-if __name__ == "__main__":
-    vars = Variables("../../../fsw-installer/installer/variables.xml")
-    print vars.get_spec_elements()
-    print str(vars.count()) + " variables found."

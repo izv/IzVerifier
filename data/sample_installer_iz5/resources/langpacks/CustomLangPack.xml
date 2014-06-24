@@ -1,3 +1,6 @@
 <langpack>
     <str id="some.string.1" txt="Some String go here."/>
+    <str id="some.string.2" txt="Some String go here."/>
+    <str id="some.string.3" txt="Some String go here."/>
+    <str id="some.user.panel.title" txt="Some User Text Go Here."/>
 </langpack>

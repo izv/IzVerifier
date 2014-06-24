@@ -1,7 +1,6 @@
 __author__ = 'fcanas'
 
 import unittest
-
 from IzVerifier.izspecs.containers.izconditions import IzConditions
 from IzVerifier.izspecs.containers.izstrings import IzStrings
 from IzVerifier.izspecs.containers.izvariables import IzVariables
@@ -19,7 +18,8 @@ class TestVerifier(unittest.TestCase):
     def setUp(self):
         args = {
             'installer': path1,
-            'sources': []
+            'sources': [],
+            'specs': ['conditions', 'strings', 'variables']
         }
         self.izv = IzVerifier(args)
 
