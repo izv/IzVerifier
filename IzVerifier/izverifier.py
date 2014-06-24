@@ -25,13 +25,25 @@ class IzVerifier():
         }
         """
         validate_arguments(args)
+        self.specifications = ['conditions', 'variables', 'strings']
         self.containers = {}
         self.installer = args.get('installer')
         self.sources = args.get('sources', [])
         self.paths = IzPaths(self.installer)
         self.seeker = Seeker(self.paths)
 
-    def verify(self, specification, verbose=0):
+    def verify_all(self, verbosity=0):
+        """
+        Runs a verification for all specs.
+        """
+        missing = set([])
+
+        for specification in self.specifications:
+            missing |= self.verify(specification, verbosity)
+        return missing
+
+
+    def verify(self, specification, verbosity=0):
         """
         Runs a verification on the given izpack spec: conditions, strings, variables, etc.
         """
@@ -42,12 +54,12 @@ class IzVerifier():
 
         cmissing = undefined(defined, crefs)
 
-        if verbose > 0:
+        if verbosity > 0:
             report_set(cmissing)
 
         smissing = undefined(defined, srefs)
 
-        if verbose > 0:
+        if verbosity > 0:
             report_set(smissing)
 
         return cmissing | smissing
@@ -138,9 +150,11 @@ def quote_remover(key):
 
 def report_set(entities):
     """ Human-readable report for a set of unverified entities. """
+    template = ' [ {0:.<40}{1:.>40} ] '
+    template1 = ' [ {0:.<80} ] '
 
     for item in sorted(entities):
         if type(item) is tuple:
-            print item[0] + ' => ' + item[1]
+            print template.format(item[0], item[1])
         else:
-            print item
+            print template1.format(item)

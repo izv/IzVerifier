@@ -51,15 +51,6 @@ class IzPaths():
         else:
             return self.paths[spec]
 
-    def get_resource_path(self, res):
-        """
-        Return path to a resource file or None if it doesn't exist.
-        """
-        if not self.paths[res]:
-            return None
-        else:
-            return self.res_path + self.paths[res]
-
     def find_resources(self):
         """
         Parse the install.xml resources and extract paths to available resource files.
@@ -78,11 +69,11 @@ class IzPaths():
         langpacks = []
 
         for res in soup.find_all('res'):
-            self.paths[res['id']] = res['src']
+            self.paths[res['id']] = self.res_path + res['src']
             if 'CustomLangPack.xml' in res['id']:
                 langpacks.append((res['id'], self.res_path + res['src']))
-        self.resources['langpacks'] = langpacks
-        self.paths['strings'] = langpacks[0][1]
+            self.resources['langpacks'] = langpacks
+            self.paths['strings'] = langpacks[0][1]
 
 
     def get_langpacks(self):

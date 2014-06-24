@@ -96,7 +96,7 @@ class TestVerifier(unittest.TestCase):
         """
         Verify conditions in sample installer.
         """
-        hits = self.izv.verify('conditions', verbose=1)
+        hits = self.izv.verify('conditions', verbosity=1)
         num = len(hits)
         self.assertTrue(num == 2)
 
@@ -104,7 +104,7 @@ class TestVerifier(unittest.TestCase):
         """
         Verify conditions in sample installer.
         """
-        hits = self.izv.verify('variables', verbose=1)
+        hits = self.izv.verify('variables', verbosity=1)
         num = len(hits)
         self.assertTrue(num == 4)
 
@@ -112,10 +112,18 @@ class TestVerifier(unittest.TestCase):
         """
         Verify conditions in sample installer.
         """
-        hits = self.izv.verify('strings', verbose=1)
-        print hits
+        hits = self.izv.verify('strings', verbosity=1)
         num = len(hits)
         self.assertTrue(num == 7)
+
+    def test_verifyAll(self):
+        """
+        Verify all specs on sample installer.
+        """
+        hits = self.izv.verify_all(verbosity=1)
+        num = len(hits)
+        assert(num != 0)
+
 
 if __name__ == '__main__':
     unittest.main()
