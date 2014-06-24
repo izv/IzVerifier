@@ -117,15 +117,17 @@ def display_paths(paths):
     for path in paths:
         tab = 0
         for node in path:
-            if tab:
-                branch = "\---> "
-            else:
-                branch = ""
-            tab += 3
             if type(node[0]) is tuple:
                 id = node[0][0]
             else:
                 id = node[0]
+
+            if tab:
+                branch = u'\u02ea\u2192 '
+            else:
+                branch = ''
+            tab += 3
+
             print " " * tab + branch + str(id) + " : (" + str(node[1]) + ")"
     print
 
