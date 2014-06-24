@@ -10,6 +10,7 @@ from IzVerifier.izspecs.izproperties import *
 
 
 path1 = 'data/sample_installer_iz5'
+source_path2 = 'data/sample_code_base'
 
 class TestSeeker(unittest.TestCase):
     """
@@ -19,7 +20,7 @@ class TestSeeker(unittest.TestCase):
     def setUp(self):
         args = {
             'installer': path1,
-            'sources': [],
+            'sources': [source_path2],
             'specs': ['conditions', 'strings', 'variables']
         }
 
