@@ -19,7 +19,7 @@ class IzVerifier():
         Main entry point for IzVerifier. Args is a dictionary in this form:
 
         args = {
-            'installer': path                   # Path to installer's root folder.
+            'installer': path                   # Path to installer's install.xml file.
             'sources': [path1, path2, ...]      # Path(s) to associated source code roots.
             'specs': [spec1, spec2, ...]        # Spec files to subject to verification process.
         }
