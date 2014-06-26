@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
         name='IzVerifier',
-        version='0.0.1.1',
+        version='0.0.1.2',
         author='Francisco Canas',
         author_email='mailfrancisco@gmail.com',
         packages=[
@@ -13,7 +13,6 @@ setup(
             'IzVerifier.izspecs',
             'IzVerifier.test'
         ],
-        data_files=[('data', ['data/sample_installer_iz5', 'data/sample_code_base'])],
         url='https://github.com/FranciscoCanas/IzVerifier',
         license='LICENSE.txt',
         description='Static spec file  verification for IzPack installers.',
