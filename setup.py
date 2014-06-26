@@ -17,7 +17,7 @@ setup(
         url='https://github.com/FranciscoCanas/IzVerifier',
         license='LICENSE.txt',
         description='Static spec file  verification for IzPack installers.',
-        long_description=open('README.md').read(),
+        long_description=open('README.txt').read(),
         install_requires=[
                 "beautifulsoup4 >= 4.3.2"
             ]
