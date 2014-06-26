@@ -1,3 +1,4 @@
+import os
 from os.path import dirname
 from bs4 import BeautifulSoup
 import re
@@ -34,10 +35,9 @@ class IzPaths():
         Takes base paths to specs and resources.
         """
         self.install = specs + '/install.xml'
-        self.specs_path = specs
+        self.specs_path = path_format(specs)
         self.root = dirname(dirname(self.specs_path)) + '/'
-        self.res_path = resources
-
+        self.res_path = path_format(resources)
 
     def parse_paths(self):
         """
@@ -125,5 +125,17 @@ class IzPaths():
         """
         p = re.sub('\$\{.*\}','', path)
         return p
+
+def path_format(path):
+    """
+    Currently ensures a path to a folder ends in a '/', and a path
+    to a file does not.
+    """
+
+    if os.path.isdir(path):
+        if path[-1] != '/':
+            return path + '/'
+    return path
+
 
 

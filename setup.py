@@ -13,10 +13,10 @@ setup(
             'IzVerifier.izspecs',
             'IzVerifier.test'
         ],
-        data_files=[('data', ['data/sample_installer_iz5'])],
+        data_files=[('data', ['data/sample_installer_iz5', 'data/sample_code_base'])],
         url='https://github.com/FranciscoCanas/IzVerifier',
         license='LICENSE.txt',
-        description='Static Verification for IzPack Specification Files',
+        description='Static spec file  verification for IzPack installers.',
         long_description=open('README.md').read(),
         install_requires=[
                 "beautifulsoup4 >= 4.3.2"
