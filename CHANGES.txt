@@ -1,1 +1,2 @@
+v0.0.1.1, 2014-06-26 -- Fixed README for package.
 v0.0.1, 2014-06-26 -- Creating package with basic installer verification.
