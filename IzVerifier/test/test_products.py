@@ -17,8 +17,9 @@ class TestProduct(unittest.TestCase):
     """
 
     args = {
-            'installer': path1,
+            'specs_path': path1,
             'sources': source_paths,
+            'resources_path': path2,
             'specs': ['conditions', 'strings', 'variables']
         }
 

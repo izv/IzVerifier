@@ -19,9 +19,9 @@ class IzVerifier():
         Main entry point for IzVerifier. Args is a dictionary in this form:
 
         args = {
-            'installer': path                   # Path to installer's install.xml file.
+            'specs_path': path                  # Path to specs folder for installer.
+            'resources_path': path              # Path to root resources folder for installer.
             'sources': [path1, path2, ...]      # Path(s) to associated source code roots.
-            'specs': [spec1, spec2, ...]        # Spec files to subject to verification process.
         }
         """
         validate_arguments(args)
@@ -29,7 +29,7 @@ class IzVerifier():
         self.containers = {}
         self.installer = args.get('installer')
         self.sources = args.get('sources', [])
-        self.paths = IzPaths(self.installer)
+        self.paths = IzPaths(args['specs_path'], args['resources_path'])
         self.seeker = Seeker(self.paths)
 
     def verify_all(self, verbosity=0):
@@ -119,11 +119,11 @@ def validate_arguments(args):
     """
     Throws exceptions if required args are missing or invalid.
     """
-    if not args.has_key('installer'):
-        raise IzArgumentsException("No Path to Installer Specified")
+    if not args.has_key('specs_path'):
+        raise IzArgumentsException("No Path to Installer Specs Specified")
         exit(1)
-    if not args.has_key('specs'):
-        raise IzArgumentsException("No Spec files Specified for Verification")
+    if not args.has_key('resources_path'):
+        raise IzArgumentsException("No Path to Installer Resources Specified")
         exit(1)
 
 

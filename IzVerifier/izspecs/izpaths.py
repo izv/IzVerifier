@@ -1,4 +1,6 @@
+from os.path import dirname
 from bs4 import BeautifulSoup
+import re
 
 __author__ = 'fcanas'
 
@@ -15,24 +17,26 @@ class IzPaths():
         'panels': 'panels.xml',
         'packs': 'packs.xml'
     }
+
+    resources = {}
     
-    def __init__(self, path):
+    def __init__(self, specs, resources):
         """
         Initialize the installer's root path.
         """
 
-        self.set_paths(path)
+        self.set_paths(specs, resources)
         self.parse_paths()
         self.find_resources()
 
-    def set_paths(self, path):
+    def set_paths(self, specs, resources):
         """
-        Takes a path to an install.xml file and sets paths to spec files, resources, and root.
+        Takes base paths to specs and resources.
         """
-        self.install = path
-        self.izpack = path.replace('install.xml', '')
-        self.root = path.replace('izpack/install.xml', '')
-        self.res_path = path.replace('izpack/install.xml', 'resources/')
+        self.install = specs + '/install.xml'
+        self.specs_path = specs
+        self.root = dirname(dirname(self.specs_path)) + '/'
+        self.res_path = resources
 
 
     def parse_paths(self):
@@ -46,7 +50,7 @@ class IzPaths():
             spec_file = self.find_path(spec)
             if spec_file:
                 # If spec file exists
-                self.paths[spec] = self.izpack + spec_file
+                self.paths[spec] = self.specs_path + spec_file
             else:
                 # If specs are held inside install.xml
                 self.paths[spec] = self.install
@@ -61,7 +65,7 @@ class IzPaths():
         if element:
             child = element.find('xi:include')
             if child: # if xi:include exists, specs are external.
-                path = child['href']
+                path = self.strip_variables(child['href'])
             else:
                 # Internal specs.
                 path = None
@@ -97,12 +101,12 @@ class IzPaths():
         langpacks = []
 
         for res in soup.find_all('res'):
-            self.paths[res['id']] = self.res_path + res['src']
-            if 'CustomLangPack.xml' in res['id']:
-                langpacks.append((res['id'], self.res_path + res['src']))
+            res_path = self.res_path + self.strip_variables(res['src'])
+            self.paths[res['id']] = res_path
+            if 'CustomLangPack.xml'.lower() in res['id'].lower():
+                langpacks.append((res['id'], res_path))
         self.resources['langpacks'] = langpacks
         self.paths['strings'] = langpacks[0][1]
-
 
     def get_langpacks(self):
         """
@@ -113,5 +117,13 @@ class IzPaths():
         ]
         """
         return self.resources['langpacks']
+
+    def strip_variables(self, path):
+        """
+        Strips away variables from paths.
+        TODO: proper properties substitution.
+        """
+        p = re.sub('\$\{.*\}','', path)
+        return p
 
 

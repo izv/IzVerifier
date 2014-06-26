@@ -8,7 +8,8 @@ from IzVerifier.izverifier import IzVerifier
 from IzVerifier.izspecs.izproperties import *
 
 
-path1 = 'data/sample_installer_iz5/izpack/install.xml'
+path1 = 'data/sample_installer_iz5/izpack/'
+path2 = 'data/sample_installer_iz5/resources/'
 source_path2 = 'data/sample_code_base'
 
 
@@ -19,8 +20,9 @@ class TestVerifier(unittest.TestCase):
 
     def setUp(self):
         args = {
-            'installer': path1,
+            'specs_path': path1,
             'sources': [source_path2],
+            'resources_path': path2,
             'specs': ['conditions', 'strings', 'variables']
         }
         self.izv = IzVerifier(args)
