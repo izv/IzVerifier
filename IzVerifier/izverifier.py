@@ -1,4 +1,5 @@
 import importlib
+from IzVerifier.izspecs.verifiers.dependencies import test_verify_all_dependencies
 from IzVerifier.izspecs.verifiers.seeker import Seeker
 from IzVerifier.izspecs.izproperties import *
 from IzVerifier.exceptions.IzVerifierException import IzArgumentsException
@@ -114,6 +115,11 @@ class IzVerifier():
         hits = self.seeker.search_specs_for_attributes(args)
         return hits
 
+    def dependency_verification(self):
+        """
+        Run a conditions dependency graph search.
+        """
+        test_verify_all_dependencies(self)
 
 def validate_arguments(args):
     """
@@ -168,3 +174,4 @@ def report_set(entities):
             print template.format(item[0], item[1])
         else:
             print template1.format(item)
+
