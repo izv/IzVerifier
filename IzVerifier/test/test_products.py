@@ -11,6 +11,7 @@ from IzVerifier.izspecs.izproperties import *
 
 path1 = '' # path to install.xml
 path2 = '' # path to install.xml
+path3 = ''
 source_paths = [] # paths to code bases
 class TestProduct(unittest.TestCase):
     """
