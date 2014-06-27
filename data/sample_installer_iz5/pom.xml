@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.fcanas.IzVerifier</groupId>
+  <artifactId>test-installer</artifactId>
+  <version>1.0.0</version>
+  <name>IzVerifier Test Installer</name>
+  <packaging>jar</packaging>
+
+  <properties>
+    <izpack.version>5.0.0-rc2-SNAPSHOT</izpack.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <build>
+    <finalName>skeleton-${project.version}-installer</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.izpack</groupId>
+        <artifactId>izpack-maven-plugin</artifactId>
+        <version>${izpack.version}</version>
+        <configuration>
+          <baseDir>${project.build.directory}/classes</baseDir>
+          <installFile>${basedir}/src/main/izpack/install.xml</installFile>
+        </configuration>
+        <executions>
+          <execution>
+            <id>standard-installer</id>
+            <phase>package</phase>
+            <goals>
+              <goal>izpack</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

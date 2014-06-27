@@ -1,11 +1,12 @@
 __author__ = 'fcanas'
 
 import unittest
+
 from IzVerifier.izspecs.containers.izconditions import IzConditions
 from IzVerifier.izspecs.containers.izstrings import IzStrings
 from IzVerifier.izspecs.containers.izvariables import IzVariables
 from IzVerifier.izverifier import IzVerifier
-from IzVerifier.izspecs.izproperties import *
+from IzVerifier.izspecs.containers.constants import *
 
 
 path1 = 'data/sample_installer_iz5/izpack/'

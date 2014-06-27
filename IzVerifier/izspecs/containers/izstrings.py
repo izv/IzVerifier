@@ -1,8 +1,7 @@
 from bs4 import BeautifulSoup
-from IzVerifier.exceptions.IzVerifierException import MissingSpecsException
 
 from IzVerifier.izspecs.containers.izcontainer import IzContainer
-from IzVerifier.izspecs.izproperties import *
+from IzVerifier.izspecs.containers.constants import *
 
 
 IZPACK_LANG_PATH = 'izpack_lang_path'

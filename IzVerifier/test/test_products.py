@@ -21,6 +21,7 @@ class TestProduct(unittest.TestCase):
             'specs_path': path1,
             'sources': source_paths,
             'resources_path': path2,
+            'pom': path3,
             'specs': ['conditions', 'strings', 'variables']
         }
 

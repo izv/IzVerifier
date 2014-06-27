@@ -1,5 +1,5 @@
 __author__ = 'fcanas'
-from IzVerifier.izspecs.izproperties import *
+from IzVerifier.izspecs.containers.constants import *
 
 
 def test_verify_all_dependencies(verifier):

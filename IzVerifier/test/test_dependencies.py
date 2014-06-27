@@ -1,9 +1,8 @@
 __author__ = 'fcanas'
 
 import unittest
+
 from IzVerifier.izverifier import IzVerifier
-from IzVerifier.izspecs.verifiers.dependencies import test_verify_all_dependencies
-from IzVerifier.izspecs.izproperties import *
 
 
 path1 = 'data/sample_installer_iz5/izpack/'

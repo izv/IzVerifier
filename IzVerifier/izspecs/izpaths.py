@@ -16,16 +16,18 @@ class IzPaths():
         'dynamicvariables': 'dynamic_variables.xml',
         'resources': 'resources.xml',
         'panels': 'panels.xml',
-        'packs': 'packs.xml'
+        'packs': 'packs.xml',
+        'userInputspec': 'userInputSpec.xml'
     }
 
     resources = {}
     
-    def __init__(self, specs, resources):
+    def __init__(self, specs, resources, properties = {}):
         """
         Initialize the installer's root path.
         """
 
+        self.properties = properties
         self.set_paths(specs, resources)
         self.parse_paths()
         self.find_resources()

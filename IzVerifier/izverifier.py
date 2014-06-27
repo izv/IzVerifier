@@ -1,9 +1,12 @@
 import importlib
+from IzVerifier.izspecs.izproperties import IzProperties
+
 from IzVerifier.izspecs.verifiers.dependencies import test_verify_all_dependencies
 from IzVerifier.izspecs.verifiers.seeker import Seeker
-from IzVerifier.izspecs.izproperties import *
+from IzVerifier.izspecs.containers.constants import *
 from IzVerifier.exceptions.IzVerifierException import IzArgumentsException
 from IzVerifier.izspecs.izpaths import IzPaths
+
 
 __author__ = 'fcanas'
 
@@ -22,6 +25,7 @@ class IzVerifier():
         args = {
             'specs_path': path                  # Path to specs folder for installer.
             'resources_path': path              # Path to root resources folder for installer.
+            'pom': path                         # Path to pom file, if used for properties.
             'sources': [path1, path2, ...]      # Path(s) to associated source code roots.
         }
         """
@@ -30,7 +34,11 @@ class IzVerifier():
         self.containers = {}
         self.installer = args.get('installer')
         self.sources = args.get('sources', [])
-        self.paths = IzPaths(args['specs_path'], args['resources_path'])
+        if args.has_key('pom'):
+            self.properties = IzProperties(args['pom'])
+        else:
+            self.properties = None
+        self.paths = IzPaths(args['specs_path'], args['resources_path'], self.properties)
         self.seeker = Seeker(self.paths)
 
     def verify_all(self, verbosity=0):

@@ -1,7 +1,7 @@
 import re
-from bs4 import BeautifulSoup
+
 from IzVerifier.izspecs.containers.izcontainer import IzContainer
-from IzVerifier.izspecs.izproperties import *
+from IzVerifier.izspecs.containers.constants import *
 
 
 class IzConditions(IzContainer):
