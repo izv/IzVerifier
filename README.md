@@ -38,7 +38,7 @@ Instantiate the IzVerifier, then call its verification methods:
     >>> izv = IzVerifier(args)
     >>> izv.verify_all(verbosity=1)
 
-Available methods include:
+IzVerifier methods:
 
     verify_all(verbosity=0):
         Run verification tests on all installer specs.
@@ -48,9 +48,10 @@ Available methods include:
         Run verification tests on the given specification.
         Returns a set of all references for the given spec that are undefined.
 
-    dependency_verification(izv):
+    dependency_verification(verbosity=0):
         Runs a condition dependencies graph search on all conditions referenced by the specs
-        of the installer contained by izv, an instance of IzVerifier.
+        of the installer.
+        Returns a set of tuples containing paths to missing dependencies.
 
 
 
