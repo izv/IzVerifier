@@ -18,7 +18,7 @@ class TestSeeker(unittest.TestCase):
         Tests izproperties' ability to parse props from a pom file.
         """
         props = IzProperties(pom)
-        self.assertEquals(props['izpack.version'], '5.0.0-rc2-SNAPSHOT')
+        self.assertEquals(props['izpack.version'], '5.0.0-rc2')
         self.assertEquals(props['project.build.sourceEncoding'], 'UTF-8')
 
 
@@ -27,3 +27,27 @@ class TestSeeker(unittest.TestCase):
         Test izpack properties file parsing.
         """
         pass
+
+    def test_substituteStrings(self):
+        """
+        Test the substitution methods.
+        """
+        props = IzProperties(pom)
+
+        s1 = "${izpack.version}-A.B.C"
+        r1 = props.substitute(s1)
+        self.assertEquals("5.0.0-rc2-A.B.C", r1)
+
+        s2 = "${project.version}-A.B.C"
+        r2 = props.substitute(s2)
+        self.assertEquals("5.0.0-rc2-SNAPSHOT-A.B.C", r2)
+
+        s3 = "${undefined.prop}-A.B.C"
+        r3 = props.substitute(s3)
+        self.assertEquals("${undefined.prop}-A.B.C", r3)
+
+        s4 = "${mistyped.prop-A.B.C"
+        r4 = props.substitute(s4)
+        self.assertEquals("${mistyped.prop-A.B.C", r4)
+
+

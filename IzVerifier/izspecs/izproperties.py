@@ -1,5 +1,6 @@
 from UserDict import UserDict
 from bs4 import BeautifulSoup
+import re
 
 __author__ = 'fcanas'
 
@@ -48,3 +49,39 @@ class IzProperties(dict):
                     self[str(prop.name)] = str(prop.string)
                 except Exception, e:
                     continue
+
+    def substitute(self, string):
+        """
+        Puts the given string through variable substitution: replacing all incidences of
+        ${key} for the key's value if it exists. If key doesn't exist, it returns
+        the unsubbed variable. The substitution is performed iteratively until all
+        possible variables have been subbed.
+        """
+        while True:
+            old_string = string
+            matches = re.findall('\$\{.*\}', string)
+
+            if not matches:
+                break
+
+            for match in matches:
+                value = self._substitute(match)
+                if not value is match:
+                    string = str.replace(string, match, value)
+
+            if string is old_string:
+                break
+        return string
+
+    def _substitute(self, key):
+        """
+        Substitues a given key for its value. If the value doesn't exist,
+        return the key.
+
+        Key is in the form ${some.key}
+        """
+        stripped_key = key[2:-1]
+        if self.has_key(stripped_key):
+            return self[stripped_key]
+        else:
+            return key
