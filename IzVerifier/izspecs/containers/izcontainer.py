@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from abc import abstractmethod
-from IzVerifier.exceptions.IzVerifierException import MissingSpecsException
+from IzVerifier.exceptions.IzVerifierException import MissingFileException
 
 
 class IzContainer():
@@ -18,7 +18,7 @@ class IzContainer():
         try:
             self.soup = BeautifulSoup(open(path))
         except IOError:
-            raise MissingSpecsException("spec not found at: " + path)
+            raise MissingFileException("spec not found at: " + path)
             exit(1)
         self.parse(self.soup)
 

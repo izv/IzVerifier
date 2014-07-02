@@ -17,8 +17,8 @@ class IzArgumentsException(IzVerifierException):
     Thrown when IzVerifier is called with invalid arguments.
     """
 
-class MissingSpecsException(IzVerifierException):
+class MissingFileException(IzVerifierException):
     """
-    Thrown when a required xml spec file can't be found.
+    Thrown when a required xml spec or resource file can't be found.
     """
 

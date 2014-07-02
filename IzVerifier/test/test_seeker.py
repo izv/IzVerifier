@@ -1,3 +1,5 @@
+from IzVerifier.izspecs.izproperties import IzProperties
+
 __author__ = 'fcanas'
 
 import unittest
@@ -13,6 +15,8 @@ from IzVerifier.izspecs.containers.constants import *
 path1 = 'data/sample_installer_iz5/izpack/'
 path2 = 'data/sample_installer_iz5/resources/'
 source_path2 = 'data/sample_code_base'
+pom = 'data/sample_installer_iz5/pom.xml'
+
 
 class TestSeeker(unittest.TestCase):
     """
@@ -24,16 +28,15 @@ class TestSeeker(unittest.TestCase):
             'specs_path': path1,
             'sources': [source_path2],
             'resources_path': path2,
+            'pom': pom,
             'specs': ['conditions', 'strings', 'variables']
         }
-
         self.verifier = IzVerifier(args)
         self.seeker = Seeker(self.verifier.paths)
-        langpacks = self.verifier.paths.get_langpacks()
-        langpack = langpacks[0]
+        langpack = self.verifier.paths.get_langpack_path()
         self.conditions = IzConditions(self.verifier.paths.get_path('conditions'))
         self.variables = IzVariables(self.verifier.paths.get_path('variables'))
-        self.strings = IzStrings(langpack[1])
+        self.strings = IzStrings(langpack)
 
     def test_findStringReference(self):
         """

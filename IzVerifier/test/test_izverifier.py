@@ -12,6 +12,8 @@ from IzVerifier.izspecs.containers.constants import *
 path1 = 'data/sample_installer_iz5/izpack/'
 path2 = 'data/sample_installer_iz5/resources/'
 source_path2 = 'data/sample_code_base'
+pom = 'data/sample_installer_iz5/pom.xml'
+
 
 
 class TestVerifier(unittest.TestCase):
@@ -24,6 +26,7 @@ class TestVerifier(unittest.TestCase):
             'specs_path': path1,
             'sources': [source_path2],
             'resources_path': path2,
+            'pom': pom,
             'specs': ['conditions', 'strings', 'variables']
         }
         self.izv = IzVerifier(args)
@@ -63,20 +66,20 @@ class TestVerifier(unittest.TestCase):
         """
         Test that we parsed the langpack paths from resources.xml
         """
-        langpacks = [('CustomLangPack.xml', 'data/sample_installer_iz5/resources/langpacks/CustomLangPack.xml'),
-                     ('CustomLangPack.xml_eng', 'data/sample_installer_iz5/resources/langpacks/CustomLangPack.xml')]
+        langpacks = [('default', 'data/sample_installer_iz5/resources/langpacks/CustomLangPack.xml'),
+                     ('eng', 'data/sample_installer_iz5/resources/langpacks/CustomLangPack.xml')]
 
-        for tpack, fpack in zip(langpacks, self.izv.paths.get_langpacks()):
-            self.assertTrue(tpack[1] == fpack[1], msg=tpack[1] + '!=' + fpack[1])
+        for tpack, fpack in zip(langpacks, self.izv.paths.get_langpacks().keys()):
+            self.assertEquals(tpack[1], self.izv.paths.get_langpack_path(tpack[0]))
+
 
     def test_IzStrings(self):
         """
         Testing the strings container.
         """
-        langpacks = self.izv.paths.get_langpacks()
+        langpack = self.izv.paths.get_langpack_path()
 
-        langpack = langpacks[0]
-        izs = IzStrings(langpack[1])
+        izs = IzStrings(langpack)
         self.assertTrue(izs != None)
 
         # Test for number of strings
