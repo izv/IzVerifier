@@ -28,6 +28,7 @@ IzVerifier takes a dictionary of arguments in the following form:
     args = {
         'specs_path': path                  # Path to specs folder for installer.
         'resources_path': path              # Path to root resources folder for installer.
+        'pom': path                         # Path to the installer project's pom.xml file.
         'sources': [path1, path2, ...]      # Path(s) to associated source code roots.
     }
 

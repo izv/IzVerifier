@@ -11,6 +11,7 @@ IzVerifier/izspecs/__init__.py
 IzVerifier/izspecs/izpaths.py
 IzVerifier/izspecs/izproperties.py
 IzVerifier/izspecs/containers/__init__.py
+IzVerifier/izspecs/containers/constants.py
 IzVerifier/izspecs/containers/izconditions.py
 IzVerifier/izspecs/containers/izcontainer.py
 IzVerifier/izspecs/containers/izstrings.py
@@ -20,6 +21,8 @@ IzVerifier/izspecs/verifiers/dependencies.py
 IzVerifier/izspecs/verifiers/seeker.py
 IzVerifier/test/__init__.py
 IzVerifier/test/test_dependencies.py
+IzVerifier/test/test_izpaths.py
+IzVerifier/test/test_izproperties.py
 IzVerifier/test/test_izverifier.py
 IzVerifier/test/test_products.py
 IzVerifier/test/test_seeker.py

@@ -4,16 +4,16 @@ from distutils.core import setup
 
 setup(
         name='IzVerifier',
-        version='0.0.1.3',
+        version='0.0.2',
         author='Francisco Canas',
         author_email='mailfrancisco@gmail.com',
         packages=[
             'IzVerifier',
             'IzVerifier.exceptions',
             'IzVerifier.izspecs',
-            'IzVerifier.test',
             'IzVerifier.izspecs.containers',
-            'IzVerifier.izspecs.verifiers'
+            'IzVerifier.izspecs.verifiers',
+            'IzVerifier.test'
         ],
         url='https://github.com/FranciscoCanas/IzVerifier',
         license='LICENSE.txt',
