@@ -56,22 +56,22 @@ class IzVerifier():
         """
         Runs a verification on the given izpack spec: conditions, strings, variables, etc.
         """
-        template = ' [ missing {0:.<40}{1:.>40} ] '
+        templates = ' [ {0:.<40}missing in specs{1:.>40} ] '
+        templatec = ' [ {0:.<40}missing in code{1:.>40} ] '
         container = self.get_container(specification)
         defined = container.get_keys()
         crefs = self.find_code_references(specification)
         srefs = self.find_spec_references(specification)
 
         cmissing = undefined(defined, crefs)
-
-        if verbosity > 0:
-            print
-            print template.format(specification, len(cmissing))
-            report_set(cmissing)
-
         smissing = undefined(defined, srefs)
 
         if verbosity > 0:
+            print
+            print templatec.format(specification, len(cmissing))
+            report_set(cmissing)
+            print
+            print templates.format(specification, len(smissing))
             report_set(smissing)
 
         return cmissing | smissing

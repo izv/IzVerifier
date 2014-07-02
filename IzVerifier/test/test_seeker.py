@@ -122,6 +122,7 @@ class TestSeeker(unittest.TestCase):
             'specs': map(self.verifier.paths.get_path, self.conditions.properties[REFERENCE_SPEC_FILES]),
             'filter_fn': self.conditions.has_reference,
             'attributes': self.conditions.properties[ATTRIBUTES],
+            'white_list_patterns': []
         }
 
         hits = self.seeker.search_specs_for_attributes(props)
@@ -138,6 +139,7 @@ class TestSeeker(unittest.TestCase):
             'specs':  map(self.verifier.paths.get_path, self.variables.properties[REFERENCE_SPEC_FILES]),
             'filter_fn': self.variables.has_reference,
             'attributes': self.variables.properties[ATTRIBUTES],
+            'white_list_patterns': []
         }
 
         hits = self.seeker.search_specs_for_attributes(props)

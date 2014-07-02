@@ -52,6 +52,7 @@ class Seeker:
         attributes = args['attributes']
         value_fn = args.get('value_fn', lambda x: True)
         transform_fn = args.get('transform_fn', lambda x: x)
+        white_list = args.get('white_list_patterns', [])
 
         # Search each of the spec files required for elements that pass the filters
         for spec in specs:
@@ -66,10 +67,12 @@ class Seeker:
                     if isinstance(transformation, set) or isinstance(transformation, list):
                         for transformed_value in transformation:
                             if value_fn(transformed_value):
-                                values_found_for_attributes.add((transformed_value, spec))
+                                if not self.in_grep_whitelist(transformed_value, white_list):
+                                    values_found_for_attributes.add((transformed_value, spec))
                     else:
                         if value_fn(transformation):
-                            values_found_for_attributes.add((transformation, spec))
+                            if not self.in_grep_whitelist(transformation, white_list):
+                                values_found_for_attributes.add((transformation, spec))
 
         return values_found_for_attributes
 
