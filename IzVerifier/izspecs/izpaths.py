@@ -123,7 +123,6 @@ class IzPaths():
     def strip_variables(self, path):
         """
         Strips away variables from paths.
-        TODO: proper properties substitution.
         """
         p = re.sub('\$\{.*\}','', path)
         return p
@@ -132,12 +131,13 @@ def path_format(path):
     """
     Currently ensures a path to a folder ends in a '/', and a path
     to a file does not.
-    """
 
+    Also removes any double '//'.
+    """
     if os.path.isdir(path):
         if path[-1] != '/':
-            return path + '/'
-    return path
+            path = path + '/'
+    return re.sub(r'/+/', '/', path)
 
 
 
