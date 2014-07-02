@@ -31,6 +31,6 @@ class TestDependencies(unittest.TestCase):
         """
         Run the full dependency verification test.
         """
-        self.izv.dependency_verification()
+        self.izv.dependency_verification(verbosity=1)
 
 

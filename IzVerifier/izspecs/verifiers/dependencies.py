@@ -2,7 +2,7 @@ __author__ = 'fcanas'
 from IzVerifier.izspecs.containers.constants import *
 
 
-def test_verify_all_dependencies(verifier):
+def test_verify_all_dependencies(verifier, verbosity=0):
     """
     For the given installer conditions, verify the dependencies for every single one of the conditions
     that are in some way referenced in specs or source.
@@ -29,8 +29,9 @@ def test_verify_all_dependencies(verifier):
             else:
                 return_value += 1 # indicates an undefined condition, so we fail
 
-        if result: display_paths(result)
-    return return_value
+        if result and verbosity > 0:
+            display_paths(result)
+    return result
 
 
 

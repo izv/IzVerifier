@@ -126,11 +126,11 @@ class IzVerifier():
         hits = self.seeker.search_specs_for_attributes(args)
         return hits
 
-    def dependency_verification(self):
+    def dependency_verification(self, verbosity=0):
         """
         Run a conditions dependency graph search.
         """
-        test_verify_all_dependencies(self)
+        test_verify_all_dependencies(self, verbosity)
 
 def validate_arguments(args):
     """
