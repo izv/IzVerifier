@@ -56,6 +56,7 @@ class IzVerifier():
         """
         Runs a verification on the given izpack spec: conditions, strings, variables, etc.
         """
+        template = ' [ missing {0:.<40}{1:.>40} ] '
         container = self.get_container(specification)
         defined = container.get_keys()
         crefs = self.find_code_references(specification)
@@ -64,6 +65,8 @@ class IzVerifier():
         cmissing = undefined(defined, crefs)
 
         if verbosity > 0:
+            print
+            print template.format(specification, len(cmissing))
             report_set(cmissing)
 
         smissing = undefined(defined, srefs)
@@ -114,11 +117,11 @@ class IzVerifier():
         container = self.get_container(specification)
 
         args = {
-             'path': self.paths.root,
-             'specs': container.properties[REFERENCE_SPEC_FILES],
+             'specs': map(self.paths.get_path, container.properties[REFERENCE_SPEC_FILES]),
              'filter_fn': container.has_reference,
              'attributes': container.properties[ATTRIBUTES],
-             'transform_fn': container.ref_transformer
+             'transform_fn': container.ref_transformer,
+             'white_list_patterns': container.properties[WHITE_LIST_PATTERNS]
         }
         hits = self.seeker.search_specs_for_attributes(args)
         return hits

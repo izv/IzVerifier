@@ -25,7 +25,7 @@ class Seeker:
 
         args = {
              'path': path to root of installer folder,
-             'specs': a list of spec files to search through,
+             'specs': a list of paths to spec files to search through,
              'filter_fn': a filtering function for xml elements,
              'attributes': a list of the attributes to extract from matching elements,
              'value_fn': a function that filters the extracted values,
@@ -34,7 +34,7 @@ class Seeker:
 
          For example:
          in:
-         specs = All the usual xml specs
+         specs = paths to the xml specs we are searching
          filter_fn = element.has_attr('condition') or element.has_attr('conditionid')
          attributes = ['condition','conditionid']
          transform_fn = izconditions.split_compound_conditions
@@ -47,7 +47,6 @@ class Seeker:
         """
         values_found_for_attributes = set()
 
-        path = args['path']
         specs = args['specs']
         filter_fn = args['filter_fn']
         attributes = args['attributes']
@@ -56,7 +55,7 @@ class Seeker:
 
         # Search each of the spec files required for elements that pass the filters
         for spec in specs:
-            hits = self.search_specs(filter_fn, path + '/' + spec)
+            hits = self.search_specs(filter_fn, spec)
 
             for tag in attributes:
                 values = self.extract_attributes(hits, tag)

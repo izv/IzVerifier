@@ -45,7 +45,7 @@ class TestSeeker(unittest.TestCase):
         props = {
             'path': self.verifier.paths.root,
             'id': 'some.user.panel.title',
-            'specs': ["izpack/install.xml", "resources/userInputSpec.xml", "resources/langpacks/CustomLangPack.xml"],
+            'specs': ['data/sample_installer_iz5/izpack/install.xml','data/sample_installer_iz5/resources/userInputSpec.xml'],
             'filter_fn': self.strings.has_reference,
             'attributes': self.strings.properties[ATTRIBUTES],
             'transformer': lambda x: x,
@@ -55,7 +55,7 @@ class TestSeeker(unittest.TestCase):
         }
         results = self.seeker.find_id_references(props)
         hits = len(results)
-        self.assertEquals(hits, 2, msg=str(hits) + '!=2')
+        self.assertEquals(hits, 1, msg=str(hits) + '!=1')
 
     def test_findConditionReference(self):
         """
@@ -65,7 +65,7 @@ class TestSeeker(unittest.TestCase):
         props = {
             'path': self.verifier.paths.root,
             'id': 'some.condition.1',
-            'specs': self.conditions.properties[REFERENCE_SPEC_FILES],
+            'specs': map(self.verifier.paths.get_path, self.conditions.properties[REFERENCE_SPEC_FILES]),
             'filter_fn': self.conditions.has_reference,
             'attributes': self.conditions.properties[ATTRIBUTES],
             'transformer': lambda x: x,
@@ -85,7 +85,7 @@ class TestSeeker(unittest.TestCase):
         props = {
             'path': self.verifier.paths.root,
             'id': 'some.user.password',
-            'specs': self.variables.properties[REFERENCE_SPEC_FILES],
+            'specs': map(self.verifier.paths.get_path, self.variables.properties[REFERENCE_SPEC_FILES]),
             'filter_fn': self.variables.has_reference,
             'attributes': self.variables.properties[ATTRIBUTES],
             'transformer': lambda x: x,
@@ -104,7 +104,7 @@ class TestSeeker(unittest.TestCase):
 
         props = {
             'path': self.verifier.paths.root,
-            'specs': self.strings.properties[REFERENCE_SPEC_FILES],
+            'specs': map(self.verifier.paths.get_path, self.strings.properties[REFERENCE_SPEC_FILES]),
             'filter_fn': self.strings.has_reference,
             'attributes': self.strings.properties[ATTRIBUTES],
         }
@@ -119,7 +119,7 @@ class TestSeeker(unittest.TestCase):
 
         props = {
             'path': self.verifier.paths.root,
-            'specs': self.conditions.properties[REFERENCE_SPEC_FILES],
+            'specs': map(self.verifier.paths.get_path, self.conditions.properties[REFERENCE_SPEC_FILES]),
             'filter_fn': self.conditions.has_reference,
             'attributes': self.conditions.properties[ATTRIBUTES],
         }
@@ -135,7 +135,7 @@ class TestSeeker(unittest.TestCase):
 
         props = {
             'path': self.verifier.paths.root,
-            'specs': self.variables.properties[REFERENCE_SPEC_FILES],
+            'specs':  map(self.verifier.paths.get_path, self.variables.properties[REFERENCE_SPEC_FILES]),
             'filter_fn': self.variables.has_reference,
             'attributes': self.variables.properties[ATTRIBUTES],
         }

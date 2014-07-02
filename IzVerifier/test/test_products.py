@@ -27,24 +27,31 @@ class TestProduct(unittest.TestCase):
         }
 
     def setUp(self):
+        #self.loadInstaller(self.args)
         pass
 
-    def verifyInstaller(self, args):
+
+    def loadInstaller(self, args):
         """
         Runs the verifications on some installer product.
         """
 
         self.verifier = IzVerifier(args)
         self.seeker = Seeker(self.verifier.paths)
-        langpacks = self.verifier.paths.get_langpacks()
-        langpack = langpacks[0]
+        langpack = self.verifier.paths.get_langpack_path()
         self.conditions = IzConditions(self.verifier.paths.get_path('conditions'))
         self.variables = IzVariables(self.verifier.paths.get_path('variables'))
-        self.strings = IzStrings(langpack[1])
+        self.strings = IzStrings(langpack)
+
+    def verifyInstaller(self):
+        """
+        Run verification tests.
+        """
+        self.verifier.verify_all(verbosity=1)
 
     def test_verifyInstaller(self):
+        #self.verifyInstaller()
         pass
-        #self.verifyInstaller(self.args)
 
 
 

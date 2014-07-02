@@ -18,10 +18,13 @@ class IzPaths():
         'variables': 'variables.xml',
         'conditions': 'conditions.xml',
         'dynamicvariables': 'dynamic_variables.xml',
+        'dynamic_variables': 'dynamic_variables.xml',
         'resources': 'resources.xml',
         'panels': 'panels.xml',
         'packs': 'packs.xml',
-        'install': 'install.xml'
+        'install': 'install.xml',
+        'ProcessPanel.Spec': 'ProcessPanel.Spec.xml',
+        'core-packs': 'packs.xml'
     }
 
     # Default paths to resource files relative to specs folder.
@@ -92,7 +95,7 @@ class IzPaths():
         """
         for col in [self.specs, self.resources]:
             if col.has_key(name):
-                return path_format(col['BASE'] + col[name])
+                return force_absolute(col['BASE'], col[name])
         raise MissingFileException(name)
 
 
@@ -114,7 +117,7 @@ class IzPaths():
         Parse the install.xml (or resources.xml) soup to find all available resources.
         """
         for res in soup.find_all('res'):
-            if 'CustomLangPack' in res['id']:
+            if 'customlangpack' in res['id'].lower():
                 self.find_langpack_path(res)
             else:
                 id = remove_xml(res['id'])
@@ -128,7 +131,8 @@ class IzPaths():
         src = path_format(self.properties.substitute(langpack['src']))
         if '.xml_' in id:
             self.langpacks[id[-3:]] = src
-        else:
+
+        if not self.langpacks.has_key('default'):
             self.langpacks['default'] = src
             self.resources['strings'] = src
 
@@ -148,24 +152,35 @@ class IzPaths():
         """
         Returns the path to the langpack with the given localization id.
         """
-        return path_format(self.res_path + self.langpacks[id])
+        path = self.langpacks[id]
+        return force_absolute(self.res_path, path)
 
 
 def remove_xml(id):
     """
     Removes the .xml from a resource or spec id.
     """
-    if '.xml' in id[:-4]:
+    if '.xml' in id[-4:]:
         return id[:-4]
     else:
         return id
 
+def force_absolute(base, path):
+    """
+    Ensures that the base path is not appended to an absolute path.
+    """
+    if base in path:
+        return path
+    else:
+        return path_format(base + path)
+
 def path_format(path):
     """
-    Currently ensures a path to a folder ends in a '/', and a path
-    to a file does not.
+    Ensures the path is formatted correctly:
 
-    Also removes any double '//'.
+    Folder ends in a '/', and a path to a file does not.
+
+    Removes any double '//'.
     """
     if os.path.isdir(path):
         if path[-1] != '/':

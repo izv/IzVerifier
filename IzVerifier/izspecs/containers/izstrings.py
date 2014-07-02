@@ -13,7 +13,10 @@ class IzStrings(IzContainer):
     properties = {
         NAME: 'strings',
         DEFINITION_SPEC_FILES: ['eng.xml'],
-        REFERENCE_SPEC_FILES: ["izpack/install.xml", "resources/userInputSpec.xml", "izpack/ProcessPanel.Spec.xml", "izpackcore-packs.xml"],
+        REFERENCE_SPEC_FILES: ["install",
+                               "userInputSpec",
+                               "ProcessPanel.Spec",
+                               "core-packs"],
         SOURCE_SEARCH_PATTERN: 'langpack.getString(',
         CHECK_KEY_PATTERN: 'langpack.getString\(\"(.*?)\"\)',
         ATTRIBUTES: ['id', 'tooltip', 'variable'],
@@ -23,7 +26,8 @@ class IzStrings(IzContainer):
             ('setError({0}', 'setError\(({0})\)'),
             ('setMessage({0}', 'setMessage\(({0})\)'),
             ('System.*.println({0}', 'System.*.println\(({0})\)')],
-        WHITE_LIST_PATTERNS: ['^.*\(\(String\) conn\);.*$'], # for some weirdness in a console helper :)
+        WHITE_LIST_PATTERNS: ['^.*\(\(String\) conn\);.*$',
+                              '^UserInputPanel.*$'], # for some weirdness in a console helper :)
 
         PARENT_OPENING_TAG: '<langpack>',
         PARENT_CLOSING_TAG: '</langpack>',
