@@ -45,12 +45,10 @@ def display_paths(paths):
                 id = node[0][0]
             else:
                 id = node[0]
-
             if tab:
                 branch = u'\u02ea\u2192 '
             else:
                 branch = ''
             tab += 3
-
             print " " * tab + branch + str(id) + " : (" + str(node[1]) + ")"
     print

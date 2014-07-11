@@ -123,11 +123,11 @@ class IzVerifier():
         hits = self.seeker.search_specs_for_attributes(args)
         return hits
 
-    def dependency_verification(self, verbosity=0):
+    def dependency_verification(self, verbosity=0, fail_on_undefined_vars=False):
         """
         Run a conditions dependency graph search.
         """
-        results = test_verify_all_dependencies(self, verbosity)
+        results = test_verify_all_dependencies(self, verbosity, fail_on_undefined_vars=fail_on_undefined_vars)
         return results
 
     def find_references(self, id, specs=None, verbosity=0):

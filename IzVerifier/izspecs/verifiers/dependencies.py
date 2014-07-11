@@ -3,7 +3,7 @@ from IzVerifier.izspecs.containers.constants import *
 
 __author__ = 'fcanas'
 
-def test_verify_all_dependencies(verifier, verbosity=0):
+def test_verify_all_dependencies(verifier, verbosity=0, fail_on_undefined_vars=False):
     """
     For the given installer conditions, verify the dependencies for every single one of the conditions
     that are in some way referenced in specs or source.
@@ -26,10 +26,9 @@ def test_verify_all_dependencies(verifier, verbosity=0):
         if result:
             last_path = list(result)[-1]
             if 'variable' in last_path[-1]:
-                fail = False # indicates undefined variable, so we return a warning
+                fail = fail_on_undefined_vars # indicates undefined variable, so we return a warning
             else:
                 return_value += 1 # indicates an undefined condition, so we fail
-
         if fail and verbosity > 0:
             display_paths(result)
     return return_value
