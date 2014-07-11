@@ -1,11 +1,12 @@
 import importlib
-from IzVerifier.izspecs.izproperties import IzProperties
 
+from IzVerifier.izspecs.izproperties import IzProperties
 from IzVerifier.izspecs.verifiers.dependencies import test_verify_all_dependencies
 from IzVerifier.izspecs.verifiers.seeker import Seeker
 from IzVerifier.izspecs.containers.constants import *
 from IzVerifier.exceptions.IzVerifierException import IzArgumentsException
 from IzVerifier.izspecs.izpaths import IzPaths
+from IzVerifier.logging.reporter import Reporter
 
 
 __author__ = 'fcanas'
@@ -30,6 +31,7 @@ class IzVerifier():
         }
         """
         validate_arguments(args)
+        self.reporter = Reporter()
         self.specifications = ['conditions', 'variables', 'strings']
         self.containers = {}
         self.installer = args.get('installer')
@@ -56,8 +58,7 @@ class IzVerifier():
         """
         Runs a verification on the given izpack spec: conditions, strings, variables, etc.
         """
-        templates = ' [ {0:.<40}missing in specs{1:.>40} ] '
-        templatec = ' [ {0:.<40}missing in code{1:.>40} ] '
+
         container = self.get_container(specification)
         defined = container.get_keys()
         crefs = self.find_code_references(specification)
@@ -67,12 +68,8 @@ class IzVerifier():
         smissing = undefined(defined, srefs)
 
         if verbosity > 0:
-            print
-            print templatec.format(specification, len(cmissing))
-            report_set(cmissing)
-            print
-            print templates.format(specification, len(smissing))
-            report_set(smissing)
+            self.reporter.report_header(specification, 'code', cmissing)
+            self.reporter.report_header(specification, 'specs', smissing)
 
         return cmissing | smissing
 
@@ -174,15 +171,4 @@ def quote_remover(key):
     if '=' in key:
         key = quote_remover(''.join(key.split('=')[1:]))
     return key
-
-def report_set(entities):
-    """ Human-readable report for a set of unverified entities. """
-    template = ' [ {0:.<40}{1:.>40} ] '
-    template1 = ' [ {0:.<80} ] '
-
-    for item in sorted(entities):
-        if type(item) is tuple:
-            print template.format(item[0], item[1])
-        else:
-            print template1.format(item)
 

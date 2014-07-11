@@ -1,6 +1,7 @@
-__author__ = 'fcanas'
+from IzVerifier.logging.reporter import display_paths
 from IzVerifier.izspecs.containers.constants import *
 
+__author__ = 'fcanas'
 
 def test_verify_all_dependencies(verifier, verbosity=0):
     """
@@ -108,27 +109,5 @@ def _verify_dependencies(id, conditions, variables, undefined_paths, current_pat
     return undefined_paths
 
 
-def display_paths(paths):
-    """
-    Human readable output for displaying dependency paths.
-    """
-    def node_printer(node):
-        return str(node[0]) + "(" + node[1] + ")"
 
-    for path in paths:
-        tab = 0
-        for node in path:
-            if type(node[0]) is tuple:
-                id = node[0][0]
-            else:
-                id = node[0]
-
-            if tab:
-                branch = u'\u02ea\u2192 '
-            else:
-                branch = ''
-            tab += 3
-
-            print " " * tab + branch + str(id) + " : (" + str(node[1]) + ")"
-    print
 
