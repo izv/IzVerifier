@@ -30,10 +30,9 @@ def test_verify_all_dependencies(verifier, verbosity=0):
             else:
                 return_value += 1 # indicates an undefined condition, so we fail
 
-        if result and verbosity > 0:
+        if fail and verbosity > 0:
             display_paths(result)
-    return result
-
+    return return_value
 
 
 def test_verify_dependencies(id, conditions, variables):

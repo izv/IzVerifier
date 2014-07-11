@@ -127,9 +127,10 @@ class IzVerifier():
         """
         Run a conditions dependency graph search.
         """
-        test_verify_all_dependencies(self, verbosity)
+        results = test_verify_all_dependencies(self, verbosity)
+        return results
 
-    def find_references(self, id, specs=None):
+    def find_references(self, id, specs=None, verbosity=0):
         """
         Finds all references to the given id in source code and specs file for any of the given specs.
         """
