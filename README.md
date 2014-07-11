@@ -54,5 +54,15 @@ IzVerifier methods:
         Returns a set of tuples containing paths to missing dependencies.
 
 
+Contributing
+------------
+
+Setting up to hack on IzVerifier is fairly simple:
+
+ + Fork your own copy of the repo, then clone it locally.
+ + From the root of the IzVerifier repo, pip install the project as an "editable":
 
 
+    $ pip install -e .
+
+ Now importing and calling IzVerifier as in the Usage guide above will use the version in your repo, so you can modify and immediately see the changes in your code without re-installing or upgrading the package.

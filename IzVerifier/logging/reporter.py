@@ -1,13 +1,18 @@
 __author__ = 'fcanas'
 
+
 class Reporter:
     """
     Responsible for displaying results and recording them to log files.
     """
+
+    def __init__(self):
+        pass
+
     templates = {
-        'test': ' [ {0:.<40}{1:.>40} ] ',
-        'set_tuples': ' [ {0:.<40}{1:.>40} ] ',
-        'set_items': ' [ {0:.<80} ] '
+        'test': '[ {0:.<40}{1:.>40} ]',
+        'set_tuples': '{0:.<40}{1:.>40}',
+        'set_items': '{0:.<80}'
     }
 
     def report_test(self, test, items):
@@ -35,8 +40,6 @@ def display_paths(paths):
     """
     Human readable output for displaying dependency paths.
     """
-    def node_printer(node):
-        return str(node[0]) + "(" + node[1] + ")"
 
     for path in paths:
         tab = 0
