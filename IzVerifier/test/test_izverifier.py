@@ -134,7 +134,20 @@ class TestVerifier(unittest.TestCase):
         """
         Find some references to items in source code and specs.
         """
-        hits = self.izv.find_references('some.user.password')
+        hits = self.izv.find_references('some.user.password', verbosity=2)
+        self.assertEquals(len(hits), 2)
+
+        hits = self.izv.find_references('password.empty', verbosity=2)
+        self.assertEquals(len(hits), 1)
+
+        # Ref in code
+        hits = self.izv.find_references('some.string.3', verbosity=2)
+        self.assertEquals(len(hits), 1)
+
+        # var substitution not yet implemented for find references, so this
+        # test will miss the ref in Foo.java
+        hits = self.izv.find_references('some.condition.1', verbosity=2)
+        self.assertEquals(len(hits), 1)
 
 
 if __name__ == '__main__':

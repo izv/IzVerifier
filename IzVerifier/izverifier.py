@@ -130,7 +130,7 @@ class IzVerifier():
         results = test_verify_all_dependencies(self, verbosity, fail_on_undefined_vars=fail_on_undefined_vars)
         return results
 
-    def find_references(self, id, specs=None, verbosity=0):
+    def find_references(self, rid, specs=None, verbosity=0):
         """
         Finds all references to the given id in source code and specs file for any of the given specs.
         """
@@ -140,11 +140,11 @@ class IzVerifier():
             specs = self.specifications
 
         for spec in specs:
-            results |= self.find_reference(spec, id)
+            results |= self.find_reference(spec, rid, verbosity)
 
         return results
 
-    def find_reference(self, spec, id):
+    def find_reference(self, spec, rid, verbosity=0):
         """
         Find all references to the given id in source and specs for the given spec.
         Returns a set of tuple results.
@@ -153,7 +153,7 @@ class IzVerifier():
 
         props = {
             'path': self.paths.root,
-            'id': id,
+            'id': rid,
             'specs': map(self.paths.get_path, container.properties[REFERENCE_SPEC_FILES]),
             'filter_fn': container.has_reference,
             'attributes': container.properties[ATTRIBUTES],
@@ -163,7 +163,8 @@ class IzVerifier():
             'white_list_patterns': container.properties[WHITE_LIST_PATTERNS]
         }
         results = self.seeker.find_id_references(props)
-        self.reporter.report_test('references to {0} {1}'.format(id, spec), results)
+        if verbosity > 0:
+            self.reporter.report_test('references to {0} in {1}'.format(rid, spec), results)
         return results
 
 
