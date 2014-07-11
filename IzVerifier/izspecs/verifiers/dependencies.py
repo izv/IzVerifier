@@ -11,8 +11,8 @@ def test_verify_all_dependencies(verifier, verbosity=0, fail_on_undefined_vars=F
 
     return_value = 0
 
-    crefs = verifier.find_code_references('conditions')
-    srefs = verifier.find_spec_references('conditions')
+    crefs = set([ref[0] for ref in verifier.find_code_references('conditions')])
+    srefs = set([ref[0] for ref in verifier.find_spec_references('conditions')])
 
     conditions = verifier.get_container('conditions')
     variables = verifier.get_container('variables')
@@ -20,17 +20,16 @@ def test_verify_all_dependencies(verifier, verbosity=0, fail_on_undefined_vars=F
 
 
     for condition in drefs | srefs | crefs:
-
         result = verify_dependencies(condition, conditions, variables)
         fail = True
         if result:
             last_path = list(result)[-1]
             if 'variable' in last_path[-1]:
-                fail = fail_on_undefined_vars # indicates undefined variable, so we return a warning
+                fail = fail_on_undefined_vars
             else:
                 return_value += 1 # indicates an undefined condition, so we fail
-        if fail and verbosity > 0:
-            display_paths(result)
+            if fail and verbosity > 0:
+                display_paths(result)
     return return_value
 
 
@@ -65,6 +64,8 @@ def _verify_dependencies(id, conditions, variables, undefined_paths, current_pat
     """
     tup = (id, 'condition')
     current_path += (tup,)
+
+    ids = conditions.get_keys()
 
     # Exception for izpack conditions:
     if id in conditions.properties[WHITE_LIST]:

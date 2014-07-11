@@ -191,7 +191,7 @@ class Seeker:
         if compound_matcher.match(key):
             return None
         elif literal_matcher.match(key):
-            pass
+            key = key[1:-1] # strip quotes
         # otherwise it's hopefully just a variable, likely runtime, but we can look for it.
         elif variable_matcher.match(key):
             key = self.find_variable_value(key, location, white_list)

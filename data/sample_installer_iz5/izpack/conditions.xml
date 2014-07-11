@@ -20,4 +20,9 @@
         <condition type="ref" refid="variable1"/>
     </condition>
 
+    <condition type="and" id="and.3">
+        <condition type="ref" refid="pack.does.not.exist"/>
+        <condition type="ref" refid="and.2"/>
+    </condition>
+
 </xfragment>
