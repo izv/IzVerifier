@@ -11,39 +11,44 @@ class IzPaths():
     """
     Class responsible for providing paths to specific IzPack resources and spec files.
     """
-
-    # Default paths to spec files relative to specs folder.
-    specs = {
-        'BASE' : '',
-        'variables': 'variables.xml',
-        'conditions': 'conditions.xml',
-        'dynamicvariables': 'dynamic_variables.xml',
-        'dynamic_variables': 'dynamic_variables.xml',
-        'resources': 'resources.xml',
-        'panels': 'panels.xml',
-        'packs': 'packs.xml',
-        'install': 'install.xml',
-        'ProcessPanel.Spec': 'ProcessPanel.Spec.xml',
-        'core-packs': 'packs.xml'
-    }
-
-    # Default paths to resource files relative to specs folder.
-    resources = {
-        'BASE': '',
-        'userInputSpec': 'userInputSpec.xml',
-        'strings': 'CustomLangPack.xml'
-    }
-
-    langpacks = {}
     
     def __init__(self, specs, resources, properties = {}):
         """
         Initialize the installer's root path.
         """
+        self.init_collections()
         self.properties = properties
         self.set_paths(specs, resources)
         self.parse_paths()
         self.find_resources()
+
+    def init_collections(self):
+        """
+        Initialize collections to their default values.
+        """
+        # Default paths to spec files relative to specs folder.
+        self.specs = {
+            'BASE' : '',
+            'variables': 'variables.xml',
+            'conditions': 'conditions.xml',
+            'dynamicvariables': 'dynamic_variables.xml',
+            'dynamic_variables': 'dynamic_variables.xml',
+            'resources': 'resources.xml',
+            'panels': 'panels.xml',
+            'packs': 'packs.xml',
+            'install': 'install.xml',
+            'ProcessPanel.Spec': 'ProcessPanel.Spec.xml',
+            'core-packs': 'packs.xml'
+        }
+
+        # Default paths to resource files relative to specs folder.
+        self.resources = {
+            'BASE': '',
+            'userInputSpec': 'userInputSpec.xml',
+            'strings': 'CustomLangPack.xml'
+        }
+
+        self.langpacks = {}
 
     def set_paths(self, specs, resources):
         """

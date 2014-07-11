@@ -34,7 +34,7 @@ class IzVerifier():
         self.reporter = Reporter()
         self.specifications = ['conditions', 'variables', 'strings']
         self.containers = {}
-        self.installer = args.get('installer')
+
         self.sources = args.get('sources', [])
         if args.has_key('pom'):
             self.properties = IzProperties(args['pom'])

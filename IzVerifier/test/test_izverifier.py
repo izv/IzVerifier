@@ -149,7 +149,6 @@ class TestVerifier(unittest.TestCase):
         hits = self.izv.find_references('some.condition.1', verbosity=2)
         self.assertEquals(len(hits), 1)
 
-
 if __name__ == '__main__':
     unittest.main()
 
