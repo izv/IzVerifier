@@ -68,8 +68,8 @@ class IzVerifier():
         smissing = undefined(defined, srefs)
 
         if verbosity > 0:
-            self.reporter.report_header(specification, 'code', cmissing)
-            self.reporter.report_header(specification, 'specs', smissing)
+            self.reporter.report_test('unreferenced {0} in code'.format(specification), cmissing)
+            self.reporter.report_test('unreferenced {0} in specs'.format(specification), smissing)
 
         return cmissing | smissing
 
@@ -128,6 +128,47 @@ class IzVerifier():
         Run a conditions dependency graph search.
         """
         test_verify_all_dependencies(self, verbosity)
+
+    def find_references(self, id, specs=None):
+        """
+        Finds all references to the given id in source code and specs file for any of the given specs.
+        """
+        results = set()
+
+        if not specs:
+            specs = self.specifications
+
+        for spec in specs:
+            results |= self.find_reference(spec, id)
+
+        return results
+
+    def find_reference(self, spec, id):
+        """
+        Find all references to the given id in source and specs for the given spec.
+        Returns a set of tuple results.
+        """
+        container = self.get_container(spec)
+
+        props = {
+            'path': self.paths.root,
+            'id': id,
+            'specs': map(self.paths.get_path, container.properties[REFERENCE_SPEC_FILES]),
+            'filter_fn': container.has_reference,
+            'attributes': container.properties[ATTRIBUTES],
+            'transformer': lambda x: x,
+            'patterns': container.properties[PATTERNS],
+            'source_paths': self.sources,
+            'white_list_patterns': container.properties[WHITE_LIST_PATTERNS]
+        }
+        results = self.seeker.find_id_references(props)
+        self.reporter.report_test('references to {0} {1}'.format(id, spec), results)
+        return results
+
+
+
+
+
 
 def validate_arguments(args):
     """

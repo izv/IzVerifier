@@ -5,18 +5,17 @@ class Reporter:
     Responsible for displaying results and recording them to log files.
     """
     templates = {
-        'specs': ' [ {0:.<40}missing in specs{1:.>40} ] ',
-        'code': ' [ {0:.<40}missing in code{1:.>40} ] ',
+        'test': ' [ {0:.<40}{1:.>40} ] ',
         'set_tuples': ' [ {0:.<40}{1:.>40} ] ',
         'set_items': ' [ {0:.<80} ] '
     }
 
-    def report_header(self, specification, source, items):
+    def report_test(self, test, items):
         """
         Report header for specification results.
         """
-        template = self.templates[source]
-        print template.format(specification, len(items))
+        template = self.templates['test']
+        print template.format(test, len(items))
         self.report_set(items)
 
     def report_set(self, entities):

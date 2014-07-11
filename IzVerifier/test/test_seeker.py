@@ -71,7 +71,7 @@ class TestSeeker(unittest.TestCase):
             'transformer': lambda x: x,
             'patterns': self.conditions.properties[PATTERNS],
             'source_paths': [],
-            'white_list_patterns': self.strings.properties[WHITE_LIST_PATTERNS]
+            'white_list_patterns': self.conditions.properties[WHITE_LIST_PATTERNS]
         }
         results = self.seeker.find_id_references(props)
         hits = len(results)

@@ -130,6 +130,12 @@ class TestVerifier(unittest.TestCase):
         num = len(hits)
         assert(num != 0)
 
+    def test_findReference(self):
+        """
+        Find some references to items in source code and specs.
+        """
+        hits = self.izv.find_references('some.user.password')
+
 
 if __name__ == '__main__':
     unittest.main()
