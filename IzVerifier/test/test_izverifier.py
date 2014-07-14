@@ -32,6 +32,7 @@ class TestVerifier(unittest.TestCase):
             'specs': ['conditions', 'strings', 'variables']
         }
         self.izv = IzVerifier(args)
+        self.izv.reporter.set_terminal_width()  # Sets width to width of terminal
 
     def test_IzPaths(self):
         """
