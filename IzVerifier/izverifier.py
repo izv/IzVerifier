@@ -1,4 +1,5 @@
 import importlib
+from IzVerifier.izspecs.containers.izclasses import IzClasses
 
 from IzVerifier.izspecs.izproperties import IzProperties
 from IzVerifier.izspecs.verifiers.dependencies import test_verify_all_dependencies
@@ -34,13 +35,14 @@ class IzVerifier():
         self.reporter = Reporter()
         self.specifications = ['conditions', 'variables', 'strings']
         self.containers = {}
-
         self.sources = args.get('sources', [])
+
         if args.has_key('pom'):
             self.properties = IzProperties(args['pom'])
         else:
             self.properties = None
         self.paths = IzPaths(args['specs_path'], args['resources_path'], self.properties)
+        self.fill_classes()
         self.seeker = Seeker(self.paths)
 
     def verify_all(self, verbosity=0):
@@ -167,9 +169,15 @@ class IzVerifier():
             self.reporter.report_test('references to {0} in {1}'.format(rid, spec), results)
         return results
 
+    def fill_classes(self):
+        """
+        Fills a 'classes container' with custom class info from source code paths.
+        """
+        container = IzClasses()
 
-
-
+        for path in self.sources:
+            container.parse(path)
+        self.containers['classes'] = container
 
 
 def validate_arguments(args):

@@ -1,3 +1,5 @@
+from IzVerifier.izspecs.containers.izclasses import IzClasses
+
 __author__ = 'fcanas'
 
 import unittest
@@ -148,6 +150,18 @@ class TestVerifier(unittest.TestCase):
         # test will miss the ref in Foo.java
         hits = self.izv.find_references('some.condition.1', verbosity=2)
         self.assertEquals(len(hits), 1)
+
+    def test_izclasses(self):
+        """
+        Testing the izclasses container.
+        """
+        classes = IzClasses(source_path2)
+        classes.print_keys()
+        self.assertEquals(len(classes.get_keys()), 1)
+
+        hits = self.izv.verify('classes', verbosity=2)
+        self.assertEquals(len(hits), 2)
+
 
 if __name__ == '__main__':
     unittest.main()

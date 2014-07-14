@@ -1,0 +1,112 @@
+from IzVerifier.izspecs.containers.izcontainer import IzContainer
+from IzVerifier.izspecs.containers.constants import *
+from os import walk
+__author__ = 'fcanas'
+
+
+class IzClasses(IzContainer):
+    """
+    Container for parsing and storing custom classes used in izpack installers.
+    """
+    properties = {
+        NAME: "classes",
+        DEFINITION_SPEC_FILES: [],
+        REFERENCE_SPEC_FILES: [
+           "install",
+           "userInputSpec",
+           "ProcessPanel.Spec",
+           "core-packs"],
+        ATTRIBUTES: ['class'],
+        SPEC_ELEMENT: '',
+        PARENT_OPENING_TAG: '',
+        PARENT_CLOSING_TAG: '',
+        WHITE_LIST: [],
+        PATTERNS: [],
+        READ_PATTERNS: [],
+        WRITE_PATTERNS: [],
+        WHITE_LIST_PATTERNS: []
+    }
+
+    def __init__(self, path=None):
+        """
+        Initializes the container from the path to the root of custom source code.
+        """
+        self.container = {}
+        if path:
+            self.parse(path)
+
+    def parse(self, root):
+        """
+        Izclasses are not pre-defined anywhere. All we can do is make a collection of
+        all custom classes used in source code and index that.
+        """
+        for paths, dirs, files in walk(root):
+            for f in files:
+                if '.java' in f:
+                    path = paths + '/' + f
+                    self.container[path] = f
+
+
+    def get_keys(self):
+        """
+        Returns a set of all the keys for defined variables.
+        """
+        return set(self.container.keys()) | set(self.properties[WHITE_LIST])
+
+
+    def count(self):
+        """
+        Return number of vars found in definition file.
+        """
+        return len(self.container.keys())
+
+    def print_keys(self):
+        """
+        Prints all of the variable keys found in definition spec.
+        """
+        pass
+
+    def get_spec_elements(self):
+        """
+        Returns a set of xml elements defining each variable.
+        """
+        return set(self.container.values())
+
+    def to_string(self):
+        return str(self.container)
+
+    @staticmethod
+    def element_sort_key(element):
+        """
+        Returns the key to use when sorting elements of this container.
+        """
+        return element['class'].lower()
+
+    @staticmethod
+    def get_identifier(element):
+        """
+        Returns the identifying value for this element.
+        """
+        return element['class']
+
+    @staticmethod
+    def get_value(element):
+        """
+        Returns the main 'value' for this element.
+        """
+        return element['class']
+
+    def ref_transformer(self, ref):
+        """
+        Wraps reference into list.
+        """
+        return [ref]
+
+    def has_reference(self, element):
+        """
+        Return true if the given element contains an izpack var reference.
+        """
+        for atty in self.properties['attributes']:
+            if element.has_attr(atty): return True
+
+        return False
