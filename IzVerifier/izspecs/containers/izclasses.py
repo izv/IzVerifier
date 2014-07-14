@@ -16,7 +16,7 @@ class IzClasses(IzContainer):
            "userInputSpec",
            "ProcessPanel.Spec",
            "core-packs"],
-        ATTRIBUTES: ['class'],
+        ATTRIBUTES: ['class', 'name', 'classname'],
         SPEC_ELEMENT: '',
         PARENT_OPENING_TAG: '',
         PARENT_CLOSING_TAG: '',
@@ -24,7 +24,7 @@ class IzClasses(IzContainer):
         PATTERNS: [],
         READ_PATTERNS: [],
         WRITE_PATTERNS: [],
-        WHITE_LIST_PATTERNS: []
+        WHITE_LIST_PATTERNS: ['^com.izforge.izpack.*$']
     }
 
     def __init__(self, path=None):
@@ -44,7 +44,10 @@ class IzClasses(IzContainer):
             for f in files:
                 if '.java' in f:
                     path = paths + '/' + f
-                    self.container[path] = f
+                    name = path.replace(root, '')
+                    name = name.replace('/','.')
+                    name = name.replace('.java','')
+                    self.container[name] = path
 
 
     def get_keys(self):
@@ -64,7 +67,8 @@ class IzClasses(IzContainer):
         """
         Prints all of the variable keys found in definition spec.
         """
-        pass
+        for key in self.container.keys():
+            print key
 
     def get_spec_elements(self):
         """
@@ -94,11 +98,11 @@ class IzClasses(IzContainer):
         """
         Returns the main 'value' for this element.
         """
-        return element['class']
+        return element
 
     def ref_transformer(self, ref):
         """
-        Wraps reference into list.
+        Unwraps the ref if necessary.
         """
         return [ref]
 
@@ -106,7 +110,12 @@ class IzClasses(IzContainer):
         """
         Return true if the given element contains an izpack var reference.
         """
-        for atty in self.properties['attributes']:
-            if element.has_attr(atty): return True
+
+        if element.has_attr('name') and element.name == 'executeclass':
+            return True
+        if element.has_attr('class'):
+            return True
+        if element.has_attr('classname'):
+            return True
 
         return False

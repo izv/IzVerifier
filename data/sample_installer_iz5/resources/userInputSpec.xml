@@ -13,6 +13,8 @@
             </spec>
             <validator class="com.izforge.izpack.panels.userinput.validator.NotEmptyValidator" id="password.empty"/>
             <validator class="com.izforge.izpack.panels.userinput.validator.PasswordEqualityValidator" id="password.not.equal"/>
+            <validator class="SuperValidator" id="password.not.equal"/>
+            <validator class="SuperDuperValidator" id="password.not.equal"/>
         </field>
     </panel>
 </userInput>

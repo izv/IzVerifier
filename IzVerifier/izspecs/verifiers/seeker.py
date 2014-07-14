@@ -285,7 +285,12 @@ class Seeker:
         values = set()
         for ele in elements:
             if ele.has_attr(attribute):
-                values.add(str(ele[attribute]))
+                atty = ele[attribute]
+                if type(atty) is list:
+                    for a in atty:
+                        values.add(a)
+                else:
+                    values.add(atty)
         return values
 
     @staticmethod
