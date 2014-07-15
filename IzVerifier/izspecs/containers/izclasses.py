@@ -110,12 +110,19 @@ class IzClasses(IzContainer):
         """
         Return true if the given element contains an izpack var reference.
         """
+        def is_izpack_class(classname):
+            """
+            Determines if this references an izpack built-in class.
+            """
+            if type(classname) is list:
+                classname = classname[0]
+            return not '.' in classname
 
         if element.has_attr('name') and element.name == 'executeclass':
-            return True
+            return not is_izpack_class(element['name'])
         if element.has_attr('class'):
-            return True
+            return not is_izpack_class(element['class'])
         if element.has_attr('classname'):
-            return True
+            return not is_izpack_class(element['classname'])
 
         return False

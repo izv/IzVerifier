@@ -13,7 +13,7 @@ from IzVerifier.izspecs.containers.constants import *
 
 path1 = 'data/sample_installer_iz5/izpack/'
 path2 = 'data/sample_installer_iz5/resources/'
-source_path2 = 'data/sample_code_base'
+source_path2 = 'data/sample_code_base/src/'
 pom = 'data/sample_installer_iz5/pom.xml'
 
 

@@ -9,10 +9,10 @@ from IzVerifier.izverifier import IzVerifier
 from IzVerifier.izspecs.izproperties import *
 
 
-path1 = '' # path to specs
-path2 = '' # path to resources
-path3 = '' # path to pom
-source_paths = [''] # paths to code bases
+path1 = '/home/yyz/fcanas/workspace/installers/installer-commons/eap-installer/installer/' # path to specs
+path2 = '/home/yyz/fcanas/workspace/installers/installer-commons/eap-installer/installer/' # path to resources
+path3 = '/home/yyz/fcanas/workspace/installers/installer-commons/eap-installer/pom.xml' # path to pom
+source_paths = ['/home/yyz/fcanas/workspace/installers/installer-commons/src/main/java/'] # paths to code bases
 class TestProduct(unittest.TestCase):
     """
     This is a template class used to test the verifier on real izpack projects.
@@ -27,7 +27,7 @@ class TestProduct(unittest.TestCase):
         }
 
     def setUp(self):
-        #self.loadInstaller(self.args)
+        self.loadInstaller(self.args)
         pass
 
 
@@ -48,10 +48,12 @@ class TestProduct(unittest.TestCase):
         """
         Run verification tests.
         """
-        self.verifier.verify_all(verbosity=1)
+        #self.verifier.verify_all(verbosity=1)
+        self.verifier.containers.get('classes').print_keys()
+        self.verifier.verify('classes', verbosity=2)
 
     def test_verifyInstaller(self):
-        #self.verifyInstaller()
+        self.verifyInstaller()
         pass
 
 
