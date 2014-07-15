@@ -8,7 +8,7 @@ class Reporter:
     """
 
     def __init__(self):
-        self.width = 80  # default width of terminal
+        self.set_terminal_width()  # default width of terminal
 
     templates = {
         'test': '[ {0:.<{2}}{1:.>{3}} ]',
@@ -42,9 +42,8 @@ class Reporter:
         """
         Overwrites default terminal width with the width of the current terminal window.
         """
-
         height, width = termhelper.terminal_height_width()
-        self.width = width
+        self.width = max(width, 40)
 
     def get_tuple_padding(self, item):
         """
