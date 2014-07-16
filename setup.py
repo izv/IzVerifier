@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
         name='IzVerifier',
-        version='0.0.2',
+        version='0.0.3',
         author='Francisco Canas',
         author_email='mailfrancisco@gmail.com',
         packages=[
@@ -13,13 +13,15 @@ setup(
             'IzVerifier.izspecs',
             'IzVerifier.izspecs.containers',
             'IzVerifier.izspecs.verifiers',
-            'IzVerifier.test'
+            'IzVerifier.test',
+            'IzVerifier.logging'
         ],
         url='https://github.com/FranciscoCanas/IzVerifier',
         license='LICENSE.txt',
         description='Static spec file  verification for IzPack installers.',
         long_description=open('README.txt').read(),
         install_requires=[
-                "beautifulsoup4 >= 4.3.2"
+                "beautifulsoup4 >= 4.3.2",
+                "lxml >= 3.3.5"
             ]
         )
