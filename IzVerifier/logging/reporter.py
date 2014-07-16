@@ -55,7 +55,7 @@ class Reporter:
         # Default padding, used when both items fit in their own allocated space without shifting the padding
         # and when a line break is unavoidable (default padding keeps the output more readable than no padding
         # in the case of a very short first item with a very long second item)
-        tuple_padding = max(30, self.width - 50)
+        tuple_padding = max(30, self.width - 50, len(item[0]) + 1)
 
         # If the combined length of the items is short enough to fit on one line, avoid a line break
         if len(item[0]) + len(item[1]) < self.width:
