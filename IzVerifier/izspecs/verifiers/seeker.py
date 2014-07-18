@@ -272,7 +272,7 @@ class Seeker:
         search_fn condition.
         """
         try:
-            soup = BeautifulSoup(open(path))
+            soup = BeautifulSoup(open(path), 'xml')
         except IOError:
             return set()
         return soup.find_all(search_fn)
