@@ -1,3 +1,8 @@
+v0.0.3 2014-07-16:
+    - Added verification of custom classes referenced in spec files.
+    - Added basic logging package.
+    - Bug fixes for dependency tests and izpaths.
+
 v0.0.2  2014-07-02:
     - Now mostly compatible with izpack v4 installers:
     - IzPack property and POM file property parsing and substitution.
