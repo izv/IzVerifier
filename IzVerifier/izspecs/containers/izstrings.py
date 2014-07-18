@@ -34,7 +34,7 @@ class IzStrings(IzContainer):
     }
 
     def parse_izpack_strings(self, path):
-        self.soup_izpack = BeautifulSoup(open(path))
+        self.soup_izpack = BeautifulSoup(open(path), 'xml')
         self.parse(self.soup_izpack)
 
     def parse(self, soup):
@@ -81,6 +81,9 @@ class IzStrings(IzContainer):
 
         # rule elements don't use strings
         if element.has_attr('type') and 'rule' in element['type']:
+            return False
+
+        if 'executeForPack' in element.name and element.has_attr('id'):
             return False
 
         # Otherwise, check if this element contains one of the attributes used to

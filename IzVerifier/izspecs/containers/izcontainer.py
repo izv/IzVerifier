@@ -16,7 +16,7 @@ class IzContainer():
     def __init__(self, path):
         self.container = {}
         try:
-            self.soup = BeautifulSoup(open(path))
+            self.soup = BeautifulSoup(open(path), 'xml')
         except IOError:
             raise MissingFileException("spec not found at: " + path)
             exit(1)
