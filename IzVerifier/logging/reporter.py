@@ -38,12 +38,16 @@ class Reporter:
                 template = self.templates['set_items']
                 print template.format(item, self.width)
 
-    def set_terminal_width(self):
+    def set_terminal_width(self, warg=-1):
         """
-        Overwrites default terminal width with the width of the current terminal window.
+        Overwrites default terminal width with the width of the current terminal window or the width arg passed
+        in by user (if any and positive).
         """
-        height, width = termhelper.terminal_height_width()
-        self.width = max(width, 40)
+        if warg <= 0:
+            height, width = termhelper.terminal_height_width()
+            self.width = max(width, 80)
+        else:
+            self.width = warg
 
     def get_tuple_padding(self, item):
         """
