@@ -70,8 +70,8 @@ class IzVerifier():
         smissing = undefined(defined, srefs)
 
         if verbosity > 0:
-            self.reporter.report_test('unreferenced {0} in code'.format(specification), cmissing)
-            self.reporter.report_test('unreferenced {0} in specs'.format(specification), smissing)
+            self.reporter.report_test('undefined {0} referenced in code'.format(specification), cmissing)
+            self.reporter.report_test('undefined {0} referenced in specs'.format(specification), smissing)
 
         return cmissing | smissing
 
