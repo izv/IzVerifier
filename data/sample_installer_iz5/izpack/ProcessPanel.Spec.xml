@@ -1,0 +1,15 @@
+<processing>
+
+    <job name="Logging information">
+        <executeclass name="com.sample.installer.myTestLogger"/>
+    </job>
+
+    <job name="Run Installer Class" condition="myinstallerclass.condition">
+        <executeclass name="com.sample.installer.myInstallerClass"/>
+    </job>
+
+    <job name="Run Foo fool" condition="">
+        <executeclass name="com.sample.installer.Foo"/>
+    </job>
+
+</processing>

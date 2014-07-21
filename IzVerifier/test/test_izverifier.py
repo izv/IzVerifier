@@ -105,9 +105,25 @@ class TestVerifier(unittest.TestCase):
         """
         Verify conditions in sample installer.
         """
-        hits = self.izv.verify('conditions', verbosity=1)
+        hits = self.izv.verify('conditions', verbosity=2)
+        ids, locations = zip(*hits)
+        ids = list(ids)
+        locations = list(locations)
+
         num = len(hits)
-        self.assertTrue(num == 2)
+        self.assertTrue(num == 3)
+        self.assertTrue("myinstallerclass.condition" in ids)
+
+
+    def test_verifyClasses(self):
+        """
+        Verify classes in sample installer
+        """
+        hits = self.izv.verify('classes')
+        num = len(hits)
+        self.assertTrue(num == 4)
+
+
 
     def test_verifyVariables(self):
         """
