@@ -15,12 +15,23 @@ class IzContainer():
 
     def __init__(self, path):
         self.container = {}
+        self.referenced = {}
         try:
             self.soup = BeautifulSoup(open(path), 'xml')
         except IOError:
             raise MissingFileException("spec not found at: " + path)
             exit(1)
         self.parse(self.soup)
+
+    def get_referenced(self):
+        """
+        Return a dict containing all referenced entities and the location of their references:
+        {
+            'id1' => [file1, file2, ...],
+            ...
+        }
+        """
+        return self.referenced
 
     @abstractmethod
     def get_keys(self):

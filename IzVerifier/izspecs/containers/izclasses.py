@@ -32,6 +32,7 @@ class IzClasses(IzContainer):
         Initializes the container from the path to the root of custom source code.
         """
         self.container = {}
+        self.referenced = {}
         if path:
             self.parse(path)
 

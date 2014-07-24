@@ -66,6 +66,13 @@ class IzVerifier():
         crefs = self.find_code_references(specification)
         srefs = self.find_spec_references(specification)
 
+        refd = container.get_referenced()
+        for ref in crefs | srefs:
+            if refd.has_key(ref[0]):
+                refd[ref[0]] = refd[ref[0]] | ref[1]
+            else:
+                refd[ref[0]] = set([ref[1]])
+
         cmissing = undefined(defined, crefs)
         smissing = undefined(defined, srefs)
 
