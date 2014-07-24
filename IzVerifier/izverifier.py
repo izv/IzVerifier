@@ -186,6 +186,12 @@ class IzVerifier():
             container.parse(path)
         self.containers['classes'] = container
 
+    def get_referenced(self, specification):
+        """
+        Return a specification's map of id's to references.
+        """
+        return self.get_container(specification).get_referenced()
+
 
 def validate_arguments(args):
     """

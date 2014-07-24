@@ -163,7 +163,7 @@ class TestVerifier(unittest.TestCase):
         hits = self.izv.verify('classes', verbosity=2)
         self.assertEquals(len(hits), 2)
 
-        referenced = self.izv.containers['classes'].get_referenced()
+        referenced = self.izv.get_referenced('classes')
         self.assertTrue(referenced.has_key('com.sample.installer.Foo'))
         self.assertTrue(referenced.has_key('com.sample.installer.SuperValidator'))
         self.assertTrue(referenced.has_key('com.sample.installer.SuperDuperValidator'))
