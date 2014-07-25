@@ -1,3 +1,8 @@
+v0.0.3.1 2014-07-25:
+    - Now using lxml for faster xml parsing (note: lxml now required)
+    - Added get_referenced() public method.
+    - Minor output and spec parsing improvements.
+
 v0.0.3 2014-07-16:
     - Added verification of custom classes referenced in spec files.
     - Added basic logging package.
