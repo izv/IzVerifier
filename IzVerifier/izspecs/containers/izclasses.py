@@ -32,6 +32,7 @@ class IzClasses(IzContainer):
         Initializes the container from the path to the root of custom source code.
         """
         self.container = {}
+        self.referenced = {}
         if path:
             self.parse(path)
 
@@ -44,10 +45,14 @@ class IzClasses(IzContainer):
             for f in files:
                 if '.java' in f:
                     path = paths + '/' + f
-                    name = path.replace(root, '')
-                    name = name.replace('/','.')
-                    name = name.replace('.java','')
+                    name = self.path_to_id(root, path)
                     self.container[name] = path
+
+    def path_to_id(self, root, path):
+        """
+        Transforms a classpath to a class id.
+        """
+        return path.replace(root, '').replace('/', '.').replace('.java', '')
 
 
     def get_keys(self):

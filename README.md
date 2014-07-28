@@ -53,6 +53,16 @@ IzVerifier methods:
         of the installer.
         Returns a set of tuples containing paths to missing dependencies.
 
+    get_referenced(specification):
+        Returns a mapping for the given specification of all referenced items (defined or undefined) to the files they are referenced in.
+        The verify(specification) method must have run prior to calling get_referenced for the mapping to be filled.
+        The mapping is in the form:
+        {
+            'id1': set([file1, file2, ...]),
+            'id2': set([filea, fileb, ...]),
+            ...
+        }
+
 
 Contributing
 ------------

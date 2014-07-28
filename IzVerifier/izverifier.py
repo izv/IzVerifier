@@ -66,14 +66,27 @@ class IzVerifier():
         crefs = self.find_code_references(specification)
         srefs = self.find_spec_references(specification)
 
+        self.load_references(crefs | srefs, container)
+
         cmissing = undefined(defined, crefs)
         smissing = undefined(defined, srefs)
 
         if verbosity > 0:
-            self.reporter.report_test('unreferenced {0} in code'.format(specification), cmissing)
-            self.reporter.report_test('unreferenced {0} in specs'.format(specification), smissing)
+            self.reporter.report_test('undefined {0} referenced in code'.format(specification), cmissing)
+            self.reporter.report_test('undefined {0} referenced in specs'.format(specification), smissing)
 
         return cmissing | smissing
+
+    def load_references(self, references, container):
+        """
+        Load a container's referenced map with all detected references from source code and spec files.
+        """
+        referenced = container.get_referenced()
+        for ref in references:
+            if referenced.has_key(ref[0]):
+                referenced[ref[0]].add(ref[1])
+            else:
+                referenced[ref[0]] = set([ref[1]])
 
     def get_container(self, specification):
         """
@@ -178,6 +191,12 @@ class IzVerifier():
         for path in self.sources:
             container.parse(path)
         self.containers['classes'] = container
+
+    def get_referenced(self, specification):
+        """
+        Return a specification's map of id's to references.
+        """
+        return self.get_container(specification).get_referenced()
 
 
 def validate_arguments(args):
