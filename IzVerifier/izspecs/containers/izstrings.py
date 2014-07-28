@@ -25,7 +25,8 @@ class IzStrings(IzContainer):
             ('langpack.getString({0}', 'langpack.getString\(({0})\)'),
             ('setError({0}', 'setError\(({0})\)'),
             ('setMessage({0}', 'setMessage\(({0})\)'),
-            ('System.*.println({0}', 'System.*.println\(({0})\)')],
+            ('System.*.println({0}', 'System.*.println\(({0})\)'),
+            ('setErrorMessageId({0}', 'setErrorMessageId\(({0})\)')],
         WHITE_LIST_PATTERNS: ['^.*\(\(String\) conn\);.*$',
                               '^UserInputPanel.*$'], # for some weirdness in a console helper :)
 

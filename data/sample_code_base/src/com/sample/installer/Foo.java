@@ -11,7 +11,7 @@ public Class Foo {
         String key1 = "some.string.1";
         String key2 = "some.string.4";
         String val = idata.langpack.getString(key1);
-
+        setErrorMessageId("my.error.message.id.test");
         System.out.println("some.string.2");
         System.out.println(idata.langpack.getString(key2));
         System.out.println(idata.langpack.getString("some.string.3"));
