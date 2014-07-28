@@ -105,15 +105,17 @@ class TestVerifier(unittest.TestCase):
         Verify strings in sample installer
         """
         hits = self.izv.verify('strings', verbosity=2)
-        print hits
-        undefined_strings = set(['some.string.4',
-                                 'my.error.message.id.test',
-                                 'password.empty'
-                                 'password.not.equal',
-                                 'some.user',
-                                 'some.user.panel.info',
-                                 'some.user.password',
-                                 'some.user.password.confirm'])
+        undefined_strings = {'some.string.4',
+                             'my.error.message.id.test',
+                             'password.empty',
+                             'password.not.equal',
+                             'some.user',
+                             'some.user.panel.info',
+                             'some.user.password',
+                             'some.user.password.confirm',
+                             'some.string.5',
+                             'some.string.6'}
+
         ids, location = zip(*hits)
         self.assertTrue(not (set(ids) - undefined_strings))
 
@@ -155,7 +157,7 @@ class TestVerifier(unittest.TestCase):
         """
         hits = self.izv.verify('strings', verbosity=1)
         num = len(hits)
-        self.assertTrue(num == 7)
+        self.assertTrue(num == 10)
 
     def test_verifyAll(self):
         """

@@ -10,11 +10,16 @@ public Class Foo {
 
         String key1 = "some.string.1";
         String key2 = "some.string.4";
+        String key3 = "some.string.6"
         String val = idata.langpack.getString(key1);
         setErrorMessageId("my.error.message.id.test");
         System.out.println("some.string.2");
         System.out.println(idata.langpack.getString(key2));
         System.out.println(idata.langpack.getString("some.string.3"));
+        System.out.println(String.format(idata.langpack.getString("some.string.5")), string);
+        System.out.println(String.format(idata.langpack.getString(key3)), string);
+        System.out.println
+
 
         String cond1 = "some.condition.1";
         Boolean isTrue = idata.getRules().isConditionTrue(cond1);

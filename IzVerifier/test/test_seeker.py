@@ -155,4 +155,4 @@ class TestSeeker(unittest.TestCase):
             white_list_patterns=self.strings.properties[WHITE_LIST_PATTERNS]
         )
         num = len(hits)
-        self.assertTrue(num == 4)
+        self.assertTrue(num == 7)

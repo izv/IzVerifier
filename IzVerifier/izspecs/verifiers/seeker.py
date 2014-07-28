@@ -184,15 +184,30 @@ class Seeker:
 
     def match_variable(self, key):
         # someVariable;
-        variable = '^[\w].*$'
+        variable = '^[\w]+$'
         variable_matcher = re.compile(variable)
         return variable_matcher.match(key)
+
+    def match_method(self, key):
+        method = '^[\w].*\(.*$'
+        method_matcher = re.compile(method)
+        return method_matcher.match(key)
+
+    def extract_key_from_method(self, key):
+        extract_method = '\((.*)'
+        extract_method_pattern = re.compile(extract_method)
+        matched = re.search(extract_method_pattern, key)
+        return matched.group(1)
+
 
     def process_key(self, key, location, white_list):
         """
         Input: a key, file location, and white_list of keys
         Output: a key with quotes removed, if necessary.
         """
+
+        while (self.match_method(key)):
+            key = self.extract_key_from_method(key)
 
         # this is a tricky key using strings and variables, probably runtime.
         if self.match_compound(key):
@@ -201,9 +216,7 @@ class Seeker:
             key = key[1:-1] # strip quotes
         # otherwise it's hopefully just a variable, likely runtime, but we can look for it.
         elif self.match_variable(key):
-            print key
             key = self.find_variable_value(key, location, white_list)
-            print key
             key = key[1:-1] #strip quotes
         return key
 
