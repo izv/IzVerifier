@@ -167,7 +167,7 @@ class TestSeeker(unittest.TestCase):
                 ('System.out.println(idata.getString("string.key.2"', 'path/to/file.java', 'string.key.2'),
                 ('"string.key.3"', 'path/to/file.java', 'string.key.3'),
                 ('somevar + "string.key.4"', 'path/to/file.java', None),
-            ('idata.langpack.getString(key1', 'data/sample_code_base/src/com/sample/installer/Foo.java', 'some.string.1')
+            ('key1', 'data/sample_code_base/src/com/sample/installer/Foo.java', 'some.string.1')
         ]
 
         seeker = Seeker(None)

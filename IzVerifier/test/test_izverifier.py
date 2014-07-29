@@ -151,7 +151,7 @@ class TestVerifier(unittest.TestCase):
         num = len(hits)
         self.assertTrue(num == 4)
 
-    def test_verifyVariables(self):
+    def test_verifyStrings(self):
         """
         Verify conditions in sample installer.
         """
