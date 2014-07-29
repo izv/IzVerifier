@@ -45,7 +45,8 @@ class TestSeeker(unittest.TestCase):
         props = {
             'path': self.verifier.paths.root,
             'id': 'some.user.panel.title',
-            'specs': ['data/sample_installer_iz5/izpack/install.xml','data/sample_installer_iz5/resources/userInputSpec.xml'],
+            'specs': ['data/sample_installer_iz5/izpack/install.xml',
+                      'data/sample_installer_iz5/resources/userInputSpec.xml'],
             'filter_fn': self.strings.has_reference,
             'attributes': self.strings.properties[ATTRIBUTES],
             'transformer': lambda x: x,
@@ -136,7 +137,7 @@ class TestSeeker(unittest.TestCase):
 
         props = {
             'path': self.verifier.paths.root,
-            'specs':  map(self.verifier.paths.get_path, self.variables.properties[REFERENCE_SPEC_FILES]),
+            'specs': map(self.verifier.paths.get_path, self.variables.properties[REFERENCE_SPEC_FILES]),
             'filter_fn': self.variables.has_reference,
             'attributes': self.variables.properties[ATTRIBUTES],
             'white_list_patterns': []
@@ -156,3 +157,22 @@ class TestSeeker(unittest.TestCase):
         )
         num = len(hits)
         self.assertTrue(num == 7)
+
+    def test_processKeys(self):
+        """
+        Test the process_keys method.
+        """
+        # hits list: (key from source, location, expected output)
+        hits = [('idata.getString("string.key.1"', 'path/to/file.java', 'string.key.1'),
+                ('System.out.println(idata.getString("string.key.2"', 'path/to/file.java', 'string.key.2'),
+                ('"string.key.3"', 'path/to/file.java', 'string.key.3'),
+                ('somevar + "string.key.4"', 'path/to/file.java', None),
+            ('idata.langpack.getString(key1', 'data/sample_code_base/src/com/sample/installer/Foo.java', 'some.string.1')
+        ]
+
+        seeker = Seeker(None)
+        for hit in hits:
+            key = seeker.process_key(hit[0], hit[1], ['string.in.whitelist'])
+            print str(hit[2]) + " => " + str(key)
+            self.assertEquals(hit[2], key)
+
