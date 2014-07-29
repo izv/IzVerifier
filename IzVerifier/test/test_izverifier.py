@@ -17,7 +17,6 @@ source_path2 = 'data/sample_code_base/src/'
 pom = 'data/sample_installer_iz5/pom.xml'
 
 
-
 class TestVerifier(unittest.TestCase):
     """
     Basic testing of verifier class.
@@ -56,7 +55,7 @@ class TestVerifier(unittest.TestCase):
         Testing the strings container.
         """
         conditions = self.izv.paths.get_path('conditions')
-        self.assertEquals(conditions,'data/sample_installer_iz5/izpack/conditions.xml')
+        self.assertEquals(conditions, 'data/sample_installer_iz5/izpack/conditions.xml')
 
         izc = IzConditions(conditions)
         self.assertTrue(izc != None)
@@ -94,20 +93,55 @@ class TestVerifier(unittest.TestCase):
         Testing the variables container.
         """
         variables = self.izv.paths.get_path('variables')
-        self.assertEquals(variables,'data/sample_installer_iz5/izpack/variables.xml')
+        self.assertEquals(variables, 'data/sample_installer_iz5/izpack/variables.xml')
 
         izv = IzVariables(variables)
         self.assertTrue(izv != None)
         num = len(izv.get_keys()) - len(izv.properties[WHITE_LIST])
         self.assertEquals(num, 3, str(num) + '!=3')
 
+    def test_verifyStrings(self):
+        """
+        Verify strings in sample installer
+        """
+        hits = self.izv.verify('strings', verbosity=2)
+        undefined_strings = {'some.string.4',
+                             'my.error.message.id.test',
+                             'password.empty',
+                             'password.not.equal',
+                             'some.user',
+                             'some.user.panel.info',
+                             'some.user.password',
+                             'some.user.password.confirm',
+                             'some.string.5',
+                             'some.string.6'}
+
+        ids, location = zip(*hits)
+        self.assertTrue(not (set(ids) - undefined_strings))
+
+
     def test_verifyConditions(self):
         """
         Verify conditions in sample installer.
         """
-        hits = self.izv.verify('conditions', verbosity=1)
+        hits = self.izv.verify('conditions', verbosity=2)
+        ids, locations = zip(*hits)
+        ids = list(ids)
+        locations = list(locations)
+
         num = len(hits)
-        self.assertTrue(num == 2)
+        self.assertTrue(num == 4)
+        self.assertTrue("myinstallerclass.condition" in ids)
+
+
+    def test_verifyClasses(self):
+        """
+        Verify classes in sample installer
+        """
+        hits = self.izv.verify('classes')
+        num = len(hits)
+        self.assertTrue(num == 4)
+
 
     def test_verifyVariables(self):
         """
@@ -123,7 +157,7 @@ class TestVerifier(unittest.TestCase):
         """
         hits = self.izv.verify('strings', verbosity=1)
         num = len(hits)
-        self.assertTrue(num == 7)
+        self.assertTrue(num == 10)
 
     def test_verifyAll(self):
         """
@@ -131,7 +165,7 @@ class TestVerifier(unittest.TestCase):
         """
         hits = self.izv.verify_all(verbosity=1)
         num = len(hits)
-        assert(num != 0)
+        assert (num != 0)
 
     def test_findReference(self):
         """
@@ -161,7 +195,7 @@ class TestVerifier(unittest.TestCase):
         self.assertEquals(len(classes.get_keys()), 1)
 
         hits = self.izv.verify('classes', verbosity=2)
-        self.assertEquals(len(hits), 2)
+        self.assertEquals(len(hits), 4)
 
         referenced = self.izv.get_referenced('classes')
         self.assertTrue(referenced.has_key('com.sample.installer.Foo'))

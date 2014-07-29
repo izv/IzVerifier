@@ -170,31 +170,54 @@ class Seeker:
                 stripped.append((processed, hit[1]))
         return stripped
 
+    def match_literal(self, key):
+        # "some literal string";
+        literal_string = '^"[\w].*"$'
+        literal_matcher = re.compile(literal_string)
+        return literal_matcher.match(key)
+
+    def match_compound(self, key):
+        # ie. someVariable + "some literal";
+        compound_mix = '^[\"\w].*[\+].+[\w].*$'
+        compound_matcher = re.compile(compound_mix)
+        return compound_matcher.match(key)
+
+    def match_variable(self, key):
+        # someVariable;
+        variable = '^[\w]+$'
+        variable_matcher = re.compile(variable)
+        return variable_matcher.match(key)
+
+    def match_method(self, key):
+        method = '^[\w].*\(.*$'
+        method_matcher = re.compile(method)
+        return method_matcher.match(key)
+
+    def extract_key_from_method(self, key):
+        extract_method = '\((.*)'
+        extract_method_pattern = re.compile(extract_method)
+        matched = re.search(extract_method_pattern, key)
+        return matched.group(1)
+
+
     def process_key(self, key, location, white_list):
         """
         Input: a key, file location, and white_list of keys
         Output: a key with quotes removed, if necessary.
         """
-        # "some literal string";
-        literal_string = '^"[\w].*"$'
-        literal_matcher = re.compile(literal_string)
 
-        # ie. someVariable + "some literal";
-        compound_mix = '^[\"\w].*[\+].+[\w].*$'
-        compound_matcher = re.compile(compound_mix)
-
-        # someVariable;
-        variable = '^[\w].*$'
-        variable_matcher = re.compile(variable)
+        while (self.match_method(key)):
+            key = self.extract_key_from_method(key)
 
         # this is a tricky key using strings and variables, probably runtime.
-        if compound_matcher.match(key):
+        if self.match_compound(key):
             return None
-        elif literal_matcher.match(key):
+        elif self.match_literal(key):
             key = key[1:-1] # strip quotes
         # otherwise it's hopefully just a variable, likely runtime, but we can look for it.
-        elif variable_matcher.match(key):
+        elif self.match_variable(key):
             key = self.find_variable_value(key, location, white_list)
+            key = key[1:-1] #strip quotes
         return key
 
     def find_variable_value(self, variable, location, white_list):
@@ -208,7 +231,8 @@ class Seeker:
         hits = list(self.search_source_for_pattern(location, search_pattern, extract_pattern, white_list))
 
         if hits:
-            return variable + "=" + hits[0][0] # first hit
+
+            return hits[0][0] # first hit
         else:
             return None  # unable to id this, so it's runtime.
 
@@ -254,7 +278,7 @@ class Seeker:
     def parse_grep_output(self, output, key):
         """
         Given a line of output from a grep output, returns a tuple
-        holding the key of the condition and the file it was found in.
+        holding the key of the element and the file it was found in.
         """
         match_key = re.search(key, output)
         match_loc = re.search(self.grep_location_pattern, output)

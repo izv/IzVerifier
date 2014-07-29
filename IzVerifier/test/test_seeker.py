@@ -126,7 +126,7 @@ class TestSeeker(unittest.TestCase):
         }
 
         hits = self.seeker.search_specs_for_attributes(props)
-        self.assertTrue(len(hits) == 2)
+        self.assertTrue(len(hits) == 4)
 
 
     def test_findAllVariablesInSpecs(self):
@@ -155,4 +155,4 @@ class TestSeeker(unittest.TestCase):
             white_list_patterns=self.strings.properties[WHITE_LIST_PATTERNS]
         )
         num = len(hits)
-        self.assertTrue(num == 4)
+        self.assertTrue(num == 7)
