@@ -135,28 +135,27 @@ class Seeker:
         Find all occurrences of these patterns at the source code in the given paths.
         """
         hits = set()
-        searches, extractors = zip(*patterns)
-        combined_search_pattern = ('|').join(searches)
-        combined_extract_pattern = ('|').join(extractors)
+        if len(patterns) != 0:
+            searches, extractors = zip(*patterns)
+            combined_search_pattern = ('|').join(searches)
+            combined_extract_pattern = ('|').join(extractors)
 
-        for path in path_list:
-            if vid:
-                key_pattern = combined_search_pattern.format('"' + vid + '"')
-                extract_pattern = combined_extract_pattern.format('"' + vid + '"')
-            else:
-                key_pattern = combined_search_pattern.format('.*?')
-                extract_pattern = combined_extract_pattern.format('.*?')
+            for path in path_list:
+                if vid:
+                    key_pattern = combined_search_pattern.format('"' + vid + '"')
+                    extract_pattern = combined_extract_pattern.format('"' + vid + '"')
+                else:
+                    key_pattern = combined_search_pattern.format('.*?')
+                    extract_pattern = combined_extract_pattern.format('.*?')
 
-            hits |= self.search_source_for_pattern(path,
-                                                   key_pattern,
-                                                   extract_pattern,
-                                                   white_list_patterns)
+                hits |= self.search_source_for_pattern(path,
+                                                       key_pattern,
+                                                       extract_pattern,
+                                                       white_list_patterns)
 
-        # process the keys
-        hits = self.strip_source_hits(hits, white_list_patterns)
         return set(hits)
 
-    def strip_source_hits(self, hits, white_list):
+    def strip_source_hits(self, hit, white_list, pattern):
         """
         Removes extra quotes from the keys of hits in source matches.
         ie. "uninstaller.warning" => uninstaller.warning
