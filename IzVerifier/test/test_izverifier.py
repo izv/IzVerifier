@@ -120,7 +120,6 @@ class TestVerifier(unittest.TestCase):
         non_strings = {'db.driver'}
 
         found_strings, location = zip(*hits)
-        print found_strings
         for id in undefined_strings:
             self.assertTrue(id in found_strings)
 
@@ -158,7 +157,7 @@ class TestVerifier(unittest.TestCase):
         """
         hits = self.izv.verify('variables', verbosity=1)
         num = len(hits)
-        self.assertTrue(num == 4)
+        self.assertTrue(num == 5)
 
     def test_verifyAll(self):
         """
