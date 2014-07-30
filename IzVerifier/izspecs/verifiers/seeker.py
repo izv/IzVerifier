@@ -135,20 +135,22 @@ class Seeker:
         Find all occurrences of these patterns at the source code in the given paths.
         """
         hits = set()
+        searches, extractors = zip(*patterns)
+        combined_search_pattern = ('|').join(searches)
+        combined_extract_pattern = ('|').join(extractors)
 
         for path in path_list:
-            for pattern in patterns:
-                if vid:
-                    key_pattern = pattern[0].format('"' + vid + '"')
-                    extract_pattern = pattern[1].format('"' + vid + '"')
-                else:
-                    key_pattern = pattern[0].format('.*?')
-                    extract_pattern = pattern[1].format('.*?')
+            if vid:
+                key_pattern = combined_search_pattern.format('"' + vid + '"')
+                extract_pattern = combined_extract_pattern.format('"' + vid + '"')
+            else:
+                key_pattern = combined_search_pattern.format('.*?')
+                extract_pattern = combined_extract_pattern.format('.*?')
 
-                hits |= self.search_source_for_pattern(path,
-                                                       key_pattern,
-                                                       extract_pattern,
-                                                       white_list_patterns)
+            hits |= self.search_source_for_pattern(path,
+                                                   key_pattern,
+                                                   extract_pattern,
+                                                   white_list_patterns)
 
         # process the keys
         hits = self.strip_source_hits(hits, white_list_patterns)
