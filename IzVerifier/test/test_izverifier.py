@@ -195,12 +195,13 @@ class TestVerifier(unittest.TestCase):
         self.assertEquals(len(classes.get_keys()), 1)
 
         hits = self.izv.verify('classes', verbosity=2)
-        self.assertEquals(len(hits), 4)
+        self.assertEquals(len(hits), 5)
 
         referenced = self.izv.get_referenced('classes')
         self.assertTrue(referenced.has_key('com.sample.installer.Foo'))
         self.assertTrue(referenced.has_key('com.sample.installer.SuperValidator'))
         self.assertTrue(referenced.has_key('com.sample.installer.SuperDuperValidator'))
+        self.assertTrue(referenced.has_key('com.sample.installer.BarListener'))
 
 
 if __name__ == '__main__':

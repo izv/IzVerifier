@@ -16,7 +16,7 @@ class IzClasses(IzContainer):
            "userInputSpec",
            "ProcessPanel.Spec",
            "core-packs"],
-        ATTRIBUTES: ['class', 'name', 'classname'],
+        ATTRIBUTES: ['class', 'name', 'classname', 'installer'],
         SPEC_ELEMENT: '',
         PARENT_OPENING_TAG: '',
         PARENT_CLOSING_TAG: '',
@@ -129,5 +129,7 @@ class IzClasses(IzContainer):
             return not is_izpack_class(element['class'])
         if element.has_attr('classname'):
             return not is_izpack_class(element['classname'])
+        if element.has_attr('installer') and element.name == 'listener':
+            return not is_izpack_class(element['installer'])
 
         return False
