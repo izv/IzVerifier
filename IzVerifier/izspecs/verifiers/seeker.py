@@ -142,7 +142,7 @@ class Seeker:
                     key_pattern = pattern[0].format('"' + vid + '"')
                     extract_pattern = pattern[1].format('"' + vid + '"')
                 else:
-                    key_pattern = pattern[0].format('')
+                    key_pattern = pattern[0].format('.*?')
                     extract_pattern = pattern[1].format('.*?')
 
                 hits |= self.search_source_for_pattern(path,
@@ -214,11 +214,16 @@ class Seeker:
             return None
         elif self.match_literal(key):
             key = key[1:-1] # strip quotes
+            return key
         # otherwise it's hopefully just a variable, likely runtime, but we can look for it.
         elif self.match_variable(key):
             key = self.find_variable_value(key, location, white_list)
-            key = key[1:-1] #strip quotes
-        return key
+            if key != None:
+                key = key[1:-1] #strip quotes
+            return key
+        else:
+            return None
+
 
     def find_variable_value(self, variable, location, white_list):
         """
@@ -324,7 +329,7 @@ class Seeker:
         Returns a set of all lines containing that pattern.
         """
         keys = set()
-        cmd_string = "grep -R -e '{0}' {1}".format(search_pattern, path)
+        cmd_string = "grep -P -R -e '{0}' {1}".format(search_pattern, path)
         cmd = [cmd_string]
         try:
             output = subprocess.check_output(cmd, shell=True)
