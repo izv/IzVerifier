@@ -25,8 +25,8 @@ class IzConditions(IzContainer):
         PARENT_CLOSING_TAG: '</conditions>',
         WHITE_LIST: ['izpack.linuxinstall'],
         WHITE_LIST_PATTERNS: [],
-        PATTERNS: [('isConditionTrue({0}', "isConditionTrue\(({0})\)"),
-                     ("getCondition({0}", "getCondition\(({0})\)")]
+        PATTERNS: [('isConditionTrue\({0}', "isConditionTrue\(({0})\)"),
+                     ("getCondition\({0}", "getCondition\(({0})\)")]
     }
 
     def parse(self, soup):

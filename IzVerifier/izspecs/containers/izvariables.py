@@ -25,8 +25,8 @@ class IzVariables(IzContainer):
                              'APP_NAME', 'APP_URL', 'APP_VER', 'INSTALL_GROUP', 'UNINSTALLER_CONDITION',
                              'USER_NAME', 'USER_HOME', 'ISO3_LANG', 'IP_ADDRESS', 'HOST_NAME',
                              'FILE_SEPARATOR', 'DesktopShortcutCheckboxEnabled', 'InstallerFrame.logfilePath'],
-        PATTERNS: [('getVariable({0}','getVariable\(({0})\)'),
-            ('setVariable({0}', 'setVariable\(({0}),({0})\)')],
+        PATTERNS: [('getVariable\({0}','getVariable\(({0})\)'),
+            ('setVariable\({0}', 'setVariable\(({0}),({0})\)')],
         READ_PATTERNS: [('getVariable({0}','getVariable\(({0})\)')],
         WRITE_PATTERNS: [('setVariable({0}', 'setVariable\(({0}),({0})\)')],
         WHITE_LIST_PATTERNS: []
