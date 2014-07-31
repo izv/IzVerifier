@@ -11,6 +11,11 @@
     <javaversion>1.7</javaversion>
   </info>
 
+   <listeners>
+       <listener installer="com.sample.installer.Foo"/>
+       <listener installer="com.sample.installer.BarListener"/>
+   </listeners>
+
   <guiprefs width="800" height="600" resizable="no">
       <modifier key="useHeadingPanel" value="yes"/>
       <modifier key="headingImageOnLeft" value="yes"/>
