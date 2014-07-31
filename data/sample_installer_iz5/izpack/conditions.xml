@@ -1,28 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xfragment>
+
+    <condition type="and" id="A">
+        <condition type="ref" refid="B"/>
+        <condition type="ref" refid="E"/>
+    </condition>
+    <condition type="and" id="B">
+        <condition type="ref" refid="C"/>
+        <condition type="ref" refid="D"/>
+    </condition>
+    <condition type="and" id="E">
+        <condition type="ref" refid="B"/>
+        <condition type="ref" refid="F"/>
+    </condition>
     <!-- Packs conditions-->
-    <condition type="packselection" id="pack.a">
-        <name>Package A</name>
-    </condition>
+    <!--<condition type="packselection" id="pack.a">-->
+        <!--<name>Package A</name>-->
+    <!--</condition>-->
 
-    <condition type="variable" id="variable1">
-        <name>variable1</name>
-        <value>true</value>
-    </condition>
+    <!--<condition type="variable" id="variable1">-->
+        <!--<name>variable1</name>-->
+        <!--<value>true</value>-->
+    <!--</condition>-->
 
-    <condition type="and" id="and.1">
-        <condition type="ref" refid="pack.a"/>
-        <condition type="ref" refid="variable1"/>
-    </condition>
+    <!--<condition type="and" id="and.1">-->
+        <!--<condition type="ref" refid="pack.a"/>-->
+        <!--<condition type="ref" refid="variable1"/>-->
+    <!--</condition>-->
 
-    <condition type="and" id="and.2">
-        <condition type="ref" refid="pack.b"/>
-        <condition type="ref" refid="variable1"/>
-    </condition>
+    <!--<condition type="and" id="and.2">-->
+        <!--<condition type="ref" refid="pack.b"/>-->
+        <!--<condition type="ref" refid="variable1"/>-->
+    <!--</condition>-->
 
-    <condition type="and" id="and.3">
-        <condition type="ref" refid="pack.does.not.exist"/>
-        <condition type="ref" refid="and.2"/>
-    </condition>
+    <!--<condition type="and" id="and.3">-->
+        <!--<condition type="ref" refid="pack.does.not.exist"/>-->
+        <!--<condition type="ref" refid="and.2"/>-->
+    <!--</condition>-->
 
 </xfragment>

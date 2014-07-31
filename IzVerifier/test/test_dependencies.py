@@ -1,3 +1,5 @@
+from IzVerifier.izspecs.verifiers.dependencies import depth_first_search
+
 __author__ = 'fcanas'
 
 import unittest
@@ -31,6 +33,14 @@ class TestDependencies(unittest.TestCase):
         """
         Run the full dependency verification test.
         """
-        self.izv.dependency_verification(verbosity=2, fail_on_undefined_vars=True)
+        self.izv.dependency_verification(verbosity=2, fail_on_undefined_vars=False)
+
+    def test_verifyDPS(self):
+        """
+        Tests the depth-first search for condition dependency problems.
+        """
+        conditions = self.izv.get_container('conditions')
+        variables = self.izv.get_container('variables')
+        depth_first_search(conditions, variables)
 
 

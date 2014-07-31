@@ -3,6 +3,79 @@ from IzVerifier.izspecs.containers.constants import *
 
 __author__ = 'fcanas'
 
+
+def depth_first_search(conditions, variables):
+    """
+    Performs a depth first search of the conditions dependency tree.
+    :return: A set of paths leading to undefined condition dependendcies.
+    """
+    visited = {}
+    stack = []
+    undefined_paths = []
+
+    for condition_id in conditions.get_keys():
+        stack.append(condition_id)
+
+        while stack:
+            id = stack.pop()
+            undefined_paths = visit_node(id, conditions, variables, stack, visited, undefined_paths, set())
+    return undefined_paths
+
+
+def visit_node(id, conditions, variables, stack, visited, undefined_paths, path):
+    """
+    Visits a single node.
+    """
+    if id in visited.keys():
+        if visited[id] == 1:
+            return undefined_paths
+        else:
+            undefined_paths.add(path)
+            return undefined_paths
+
+    if not conditions.container.has_key(id):
+        visited[id] = 0
+        undefined_paths.add(path)
+        return undefined_paths
+
+    condition = conditions.container[id]
+    type = condition['type']
+
+    if 'variable' in type:
+        var = str(condition.find('name').text)
+        tup = (var, 'variable')
+        if not var in variables.get_keys():
+            path += (tup,)
+            visited[id] = 0
+            undefined_paths.add(path)
+        else:
+            visited[id] = 1
+        return undefined_paths
+
+    if 'exists' in type:
+        var = str(condition.find('variable').text)
+        tup = (var, 'variable')
+        if not var in variables.get_keys():
+            path += (tup,)
+            visited[id] = 0
+            undefined_paths.add(path)
+        else:
+            visited[id] = 1
+        return undefined_paths
+
+    elif 'and' in type or 'or' in type or 'not' in type:
+        dependencies = condition.find_all('condition')
+        for dep in dependencies:
+            did = str(dep['refid'])
+            tup = (did, 'condition')
+            if tup in path:
+                path += (tup,)
+                display_paths(set([path])) # cycle?
+            else:
+                stack.append(did)
+
+
+
 def test_verify_all_dependencies(verifier, verbosity=0, fail_on_undefined_vars=False):
     """
     For the given installer conditions, verify the dependencies for every single one of the conditions
