@@ -167,12 +167,17 @@ class TestSeeker(unittest.TestCase):
                 ('System.out.println(idata.getString("string.key.2"', 'path/to/file.java', 'string.key.2'),
                 ('"string.key.3"', 'path/to/file.java', 'string.key.3'),
                 ('somevar + "string.key.4"', 'path/to/file.java', None),
-            ('key1', 'data/sample_code_base/src/com/sample/installer/Foo.java', 'some.string.1')
+                ('key1', 'data/sample_code_base/src/com/sample/installer/Foo.java', 'some.string.1')
         ]
 
         seeker = Seeker(None)
         for hit in hits:
-            key = seeker.process_key(hit[0], hit[1], ['string.in.whitelist'], 'idata.getString\(.*|System.*.println\(.*')
-            print str(hit[2]) + " => " + str(key)
-            self.assertEquals(hit[2], key)
+            key = seeker.process_key(hit, ['string.in.whitelist'], 'idata.getString\(.*|System.*.println\(.*')
+            if key is None:
+                print str(hit[2]) + " => " + str(key)
+                self.assertEquals(hit[2], key)
+            else:
+                print str(hit[2]) + " => " + str(key[0])
+                self.assertEquals(hit[2], key[0])
+
 
