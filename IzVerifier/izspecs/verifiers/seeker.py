@@ -231,20 +231,27 @@ class Seeker:
         else:
             return None  # unable to id this, so it's runtime.
 
-    def extract_pattern_and_location_from_grep(self, line, pattern, white_list):
+    def extract_pattern_and_location_from_grep(self, line, extract_pattern):
         """
         Given a line of output from grep, extracts the pattern from the line and
         returns it as  a tuples holding the pattern and its location.
         """
 
+        tuple_ = self.parse_grep_output(line, extract_pattern)
+        if not tuple_ is None:
+            return tuple_
+
+    def is_valid_output(self, line, white_list):
+        """
+        Given a line of input from grep, checks to see if line is valid line of code.
+        Rejects output in white_list and comments
+        """
         if self.is_comment(line):
-            return None
+            return False
         elif self.in_grep_whitelist(line, white_list):
-            return None
+            return False
         else:
-            tuple_ = self.parse_grep_output(line, pattern)
-            if not tuple_ is None:
-                return tuple_
+            return True
 
     def is_comment(self, output):
         """
@@ -260,12 +267,12 @@ class Seeker:
         else:
             return False
 
-    def parse_grep_output(self, output, key):
+    def parse_grep_output(self, output, extract_pattern):
         """
         Given a line of output from a grep output, returns a tuple
         holding the key of the element and the file it was found in.
         """
-        match_key = re.search(key, output)
+        match_key = re.search(extract_pattern, output)
         match_loc = re.search(self.grep_location_pattern, output)
         if match_key and match_loc:
             for match in match_key.groups():
@@ -321,7 +328,11 @@ class Seeker:
         try:
             output = subprocess.check_output(cmd, shell=True)
             for line in output.split("\n"):
-                key_and_location = self.extract_pattern_and_location_from_grep(line, extract_pattern, white_list)
+                check_line = self.is_valid_output(line)
+                if check_line is False:
+                    key_and_location = None
+                else:
+                    key_and_location = self.extract_pattern_and_location_from_grep(line, extract_pattern, white_list)
                 if key_and_location is None:
                     continue
                 stripped_key_and_location = self.process_key(key_and_location, white_list, search_pattern)
