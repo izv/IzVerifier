@@ -328,7 +328,7 @@ class Seeker:
         try:
             output = subprocess.check_output(cmd, shell=True)
             for line in output.split("\n"):
-                check_line = self.is_valid_output(line)
+                check_line = self.is_valid_output(line, white_list)
                 if check_line is False:
                     key_and_location = None
                 else:
