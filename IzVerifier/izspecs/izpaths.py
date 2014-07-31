@@ -189,7 +189,7 @@ def path_format(path):
     """
     if os.path.isdir(path):
         if path[-1] != '/':
-            path = path + '/'
+            path += '/'
     return re.sub(r'/+/', '/', path)
 
 
