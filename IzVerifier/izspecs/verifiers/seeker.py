@@ -332,7 +332,7 @@ class Seeker:
                 if check_line is False:
                     key_and_location = None
                 else:
-                    key_and_location = self.extract_pattern_and_location_from_grep(line, extract_pattern, white_list)
+                    key_and_location = self.extract_pattern_and_location_from_grep(line, extract_pattern)
                 if key_and_location is None:
                     continue
                 stripped_key_and_location = self.process_key(key_and_location, white_list, search_pattern)
