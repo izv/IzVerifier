@@ -114,10 +114,18 @@ class TestVerifier(unittest.TestCase):
                              'some.user.password',
                              'some.user.password.confirm',
                              'some.string.5',
-                             'some.string.6'}
+                             'some.string.6',
+                             'hello.world'}
 
-        ids, location = zip(*hits)
-        self.assertTrue(not (set(ids) - undefined_strings))
+        non_strings = {'db.driver'}
+
+        found_strings, location = zip(*hits)
+        for id in undefined_strings:
+            self.assertTrue(id in found_strings)
+
+        for id in non_strings:
+            self.assertTrue(id not in found_strings)
+
 
 
     def test_verifyConditions(self):
@@ -133,31 +141,13 @@ class TestVerifier(unittest.TestCase):
         self.assertTrue(num == 4)
         self.assertTrue("myinstallerclass.condition" in ids)
 
-
-    def test_verifyClasses(self):
-        """
-        Verify classes in sample installer
-        """
-        hits = self.izv.verify('classes')
-        num = len(hits)
-        self.assertTrue(num == 5)
-
-
     def test_verifyVariables(self):
         """
         Verify conditions in sample installer.
         """
         hits = self.izv.verify('variables', verbosity=1)
         num = len(hits)
-        self.assertTrue(num == 4)
-
-    def test_verifyStrings(self):
-        """
-        Verify conditions in sample installer.
-        """
-        hits = self.izv.verify('strings', verbosity=1)
-        num = len(hits)
-        self.assertTrue(num == 10)
+        self.assertTrue(num == 5)
 
     def test_verifyAll(self):
         """
@@ -186,7 +176,7 @@ class TestVerifier(unittest.TestCase):
         hits = self.izv.find_references('some.condition.1', verbosity=2)
         self.assertEquals(len(hits), 1)
 
-    def test_izclasses(self):
+    def test_verifyClasses(self):
         """
         Testing the izclasses container.
         """

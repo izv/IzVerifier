@@ -8,7 +8,7 @@
         <executeclass name="com.sample.installer.myInstallerClass"/>
     </job>
 
-    <job name="Run Foo fool" condition="">
+    <job name="Run Foo fool" condition="some.condition.2">
         <executeclass name="com.sample.installer.Foo"/>
     </job>
 

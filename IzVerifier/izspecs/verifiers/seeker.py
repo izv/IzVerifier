@@ -135,40 +135,25 @@ class Seeker:
         Find all occurrences of these patterns at the source code in the given paths.
         """
         hits = set()
+        if len(patterns) != 0:
+            searches, extractors = zip(*patterns)
+            combined_search_pattern = ('|').join(searches)
+            combined_extract_pattern = ('|').join(extractors)
 
-        for path in path_list:
-            for pattern in patterns:
+            for path in path_list:
                 if vid:
-                    key_pattern = pattern[0].format('"' + vid + '"')
-                    extract_pattern = pattern[1].format('"' + vid + '"')
+                    search_pattern = combined_search_pattern.format('"' + vid + '"')
+                    extract_pattern = combined_extract_pattern.format('"' + vid + '"')
                 else:
-                    key_pattern = pattern[0].format('')
-                    extract_pattern = pattern[1].format('.*?')
+                    search_pattern = combined_search_pattern.format('.*?')
+                    extract_pattern = combined_extract_pattern.format('.*?')
 
                 hits |= self.search_source_for_pattern(path,
-                                                       key_pattern,
+                                                       search_pattern,
                                                        extract_pattern,
                                                        white_list_patterns)
 
-        # process the keys
-        hits = self.strip_source_hits(hits, white_list_patterns)
         return set(hits)
-
-    def strip_source_hits(self, hits, white_list):
-        """
-        Removes extra quotes from the keys of hits in source matches.
-        ie. "uninstaller.warning" => uninstaller.warning
-
-        Input: [(key, location),(key, location) ,...]
-
-        Output: [(key, location),(key, location) ,...] with quotes stripped out of keys.
-        """
-        stripped = []
-        for hit in hits:
-            processed = self.process_key(hit[0], hit[1], white_list)
-            if processed:
-                stripped.append((processed, hit[1]))
-        return stripped
 
     def match_literal(self, key):
         # "some literal string";
@@ -188,10 +173,9 @@ class Seeker:
         variable_matcher = re.compile(variable)
         return variable_matcher.match(key)
 
-    def match_method(self, key):
-        method = '^[\w].*\(.*$'
-        method_matcher = re.compile(method)
-        return method_matcher.match(key)
+    def match_method(self, key, pattern):
+        method_matcher = re.search(pattern, key)
+        return method_matcher
 
     def extract_key_from_method(self, key):
         extract_method = '\((.*)'
@@ -200,25 +184,36 @@ class Seeker:
         return matched.group(1)
 
 
-    def process_key(self, key, location, white_list):
+    def process_key(self, key_and_location, white_list, search_pattern):
         """
-        Input: a key, file location, and white_list of keys
-        Output: a key with quotes removed, if necessary.
+        Input: a tuple of  (key, file location), and white_list of keys, and a search pattern
+        Output: a tuple of a processed key and the location.
         """
 
-        while (self.match_method(key)):
+        key = key_and_location[0]
+        location = key_and_location[1]
+
+        while self.match_method(key, search_pattern):
             key = self.extract_key_from_method(key)
+
 
         # this is a tricky key using strings and variables, probably runtime.
         if self.match_compound(key):
             return None
         elif self.match_literal(key):
-            key = key[1:-1] # strip quotes
+            key = self.strip_quotes(key)
+            return (key, location)
         # otherwise it's hopefully just a variable, likely runtime, but we can look for it.
         elif self.match_variable(key):
             key = self.find_variable_value(key, location, white_list)
-            key = key[1:-1] #strip quotes
-        return key
+            if key != None:
+                return (key, location)
+        else:
+            return None
+
+    def strip_quotes(self, key):
+        return key[1:-1] # strip quotes
+
 
     def find_variable_value(self, variable, location, white_list):
         """
@@ -236,30 +231,27 @@ class Seeker:
         else:
             return None  # unable to id this, so it's runtime.
 
-    def search_source_for_pattern(self, path, search_pattern, key_pattern, white_list):
+    def extract_pattern_and_location_from_grep(self, line, extract_pattern):
         """
-        Searches source code for references to search_pattern, and returns a set
-        of tuples of the form (key_pattern, location_in_source)
+        Given a line of output from grep, extracts the pattern from the line and
+        returns it as  a tuples holding the pattern and its location.
         """
-        hits = self.search_source(search_pattern, path)
-        keys_and_locations = self.extract_pattern_and_location_from_grep(hits, key_pattern, white_list)
-        return keys_and_locations
 
-    def extract_pattern_and_location_from_grep(self, lines, pattern, white_list):
+        tuple_ = self.parse_grep_output(line, extract_pattern)
+        if not tuple_ is None:
+            return tuple_
+
+    def is_valid_output(self, line, white_list):
         """
-        Given a set of lines that are output from grep, extracts the pattern from each and
-        returns it as  a set of tuples holding the pattern and its location.
+        Given a line of input from grep, checks to see if line is valid line of code.
+        Rejects output in white_list and comments
         """
-        tuples = set()
-        for line in lines:
-            if self.is_comment(line):
-                continue
-            if self.in_grep_whitelist(line, white_list):
-                continue
-            tuple_ = self.parse_grep_output(line, pattern)
-            if not tuple_ is None:
-                tuples.add(tuple_)
-        return tuples
+        if self.is_comment(line):
+            return False
+        elif self.in_grep_whitelist(line, white_list):
+            return False
+        else:
+            return True
 
     def is_comment(self, output):
         """
@@ -275,17 +267,25 @@ class Seeker:
         else:
             return False
 
-    def parse_grep_output(self, output, key):
+    def parse_grep_output(self, output, extract_pattern):
         """
         Given a line of output from a grep output, returns a tuple
         holding the key of the element and the file it was found in.
         """
-        match_key = re.search(key, output)
+        match_key = re.search(extract_pattern, output)
         match_loc = re.search(self.grep_location_pattern, output)
         if match_key and match_loc:
-            return match_key.group(1), match_loc.group(1)
+            for match in match_key.groups():
+                if match is not None:
+                    matched = match
+                    break
+            return matched, match_loc.group(1)
         if match_key and not match_loc:
-            return match_key.group(1), "UNKNOWN"
+            for match in match_key.groups():
+                if match is not None:
+                    matched = match
+                    break
+            return matched, "UNKNOWN"
         else:
             return None
 
@@ -317,19 +317,27 @@ class Seeker:
                     values.add(atty)
         return values
 
-    @staticmethod
-    def search_source(search_pattern, path):
+    def search_source_for_pattern(self, path, search_pattern, extract_pattern, white_list):
         """
         Searches all files recursively from given path for the search_pattern.
         Returns a set of all lines containing that pattern.
         """
         keys = set()
-        cmd_string = "grep -R -e '{0}' {1}".format(search_pattern, path)
+        cmd_string = "grep -P -R -e '{0}' {1}".format(search_pattern, path)
         cmd = [cmd_string]
         try:
             output = subprocess.check_output(cmd, shell=True)
             for line in output.split("\n"):
-                keys.add(line)
+                check_line = self.is_valid_output(line, white_list)
+                if check_line is False:
+                    key_and_location = None
+                else:
+                    key_and_location = self.extract_pattern_and_location_from_grep(line, extract_pattern)
+                if key_and_location is None:
+                    continue
+                stripped_key_and_location = self.process_key(key_and_location, white_list, search_pattern)
+                if stripped_key_and_location is not None:
+                    keys.add(stripped_key_and_location)
         except subprocess.CalledProcessError:
             # no hits were found
             pass

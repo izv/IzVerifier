@@ -10,7 +10,8 @@ public Class Foo {
 
         String key1 = "some.string.1";
         String key2 = "some.string.4";
-        String key3 = "some.string.6"
+        String key3 = "some.string.6";
+        String errorMsgDup = idata.langpack.getString("hello.world");
         String val = idata.langpack.getString(key1);
         setErrorMessageId("my.error.message.id.test");
         System.out.println("some.string.2");
@@ -18,7 +19,8 @@ public Class Foo {
         System.out.println(idata.langpack.getString("some.string.3"));
         System.out.println(String.format(idata.langpack.getString("some.string.5")), string);
         System.out.println(String.format(idata.langpack.getString(key3)), string);
-        System.out.println
+        System.out.println(String.format(errorMsgDup,nameValuePair[0]));
+        System.out.println(jdbcNameLbl + " " + idata.getVariable("db.driver"));
 
 
         String cond1 = "some.condition.1";
