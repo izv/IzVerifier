@@ -13,29 +13,34 @@
         <condition type="ref" refid="B"/>
         <condition type="ref" refid="F"/>
     </condition>
+
+    <condition type="variable" id="C">
+        <name>variable.c</name>
+        <value>true</value>
+    </condition>
     <!-- Packs conditions-->
-    <!--<condition type="packselection" id="pack.a">-->
-        <!--<name>Package A</name>-->
-    <!--</condition>-->
+    <condition type="packselection" id="pack.a">
+        <name>Package A</name>
+    </condition>
 
-    <!--<condition type="variable" id="variable1">-->
-        <!--<name>variable1</name>-->
-        <!--<value>true</value>-->
-    <!--</condition>-->
+    <condition type="variable" id="variable1">
+        <name>variable1</name>
+        <value>true</value>
+    </condition>
 
-    <!--<condition type="and" id="and.1">-->
-        <!--<condition type="ref" refid="pack.a"/>-->
-        <!--<condition type="ref" refid="variable1"/>-->
-    <!--</condition>-->
+    <condition type="and" id="and.1">
+        <condition type="ref" refid="pack.a"/>
+        <condition type="ref" refid="variable1"/>
+    </condition>
 
-    <!--<condition type="and" id="and.2">-->
-        <!--<condition type="ref" refid="pack.b"/>-->
-        <!--<condition type="ref" refid="variable1"/>-->
-    <!--</condition>-->
+    <condition type="and" id="and.2">
+        <condition type="ref" refid="pack.b"/>
+        <condition type="ref" refid="variable1"/>
+    </condition>
 
-    <!--<condition type="and" id="and.3">-->
-        <!--<condition type="ref" refid="pack.does.not.exist"/>-->
-        <!--<condition type="ref" refid="and.2"/>-->
-    <!--</condition>-->
+    <condition type="and" id="and.3">
+        <condition type="ref" refid="pack.does.not.exist"/>
+        <condition type="ref" refid="and.2"/>
+    </condition>
 
 </xfragment>

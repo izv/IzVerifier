@@ -1,185 +1,89 @@
 from IzVerifier.logging.reporter import display_paths
-from IzVerifier.izspecs.containers.constants import *
-
 __author__ = 'fcanas'
 
-
-def depth_first_search(conditions, variables):
-    """
-    Performs a depth first search of the conditions dependency tree.
-    :return: A set of paths leading to undefined condition dependendcies.
-    """
-    visited = {}
-    stack = []
-    undefined_paths = []
-
-    for condition_id in conditions.get_keys():
-        stack.append(condition_id)
-
-        while stack:
-            id = stack.pop()
-            undefined_paths = visit_node(id, conditions, variables, stack, visited, undefined_paths, set())
-    return undefined_paths
-
-
-def visit_node(id, conditions, variables, stack, visited, undefined_paths, path):
-    """
-    Visits a single node.
-    """
-    if id in visited.keys():
-        if visited[id] == 1:
-            return undefined_paths
-        else:
-            undefined_paths.add(path)
-            return undefined_paths
-
-    if not conditions.container.has_key(id):
-        visited[id] = 0
-        undefined_paths.add(path)
-        return undefined_paths
-
-    condition = conditions.container[id]
-    type = condition['type']
-
-    if 'variable' in type:
-        var = str(condition.find('name').text)
-        tup = (var, 'variable')
-        if not var in variables.get_keys():
-            path += (tup,)
-            visited[id] = 0
-            undefined_paths.add(path)
-        else:
-            visited[id] = 1
-        return undefined_paths
-
-    if 'exists' in type:
-        var = str(condition.find('variable').text)
-        tup = (var, 'variable')
-        if not var in variables.get_keys():
-            path += (tup,)
-            visited[id] = 0
-            undefined_paths.add(path)
-        else:
-            visited[id] = 1
-        return undefined_paths
-
-    elif 'and' in type or 'or' in type or 'not' in type:
-        dependencies = condition.find_all('condition')
-        for dep in dependencies:
-            did = str(dep['refid'])
-            tup = (did, 'condition')
-            if tup in path:
-                path += (tup,)
-                display_paths(set([path])) # cycle?
-            else:
-                stack.append(did)
-
-
+invalid_paths = []
 
 def test_verify_all_dependencies(verifier, verbosity=0, fail_on_undefined_vars=False):
     """
     For the given installer conditions, verify the dependencies for every single one of the conditions
     that are in some way referenced in specs or source.
     """
-
-    return_value = 0
+    global invalid_paths
+    invalid_paths = []
 
     crefs = set([ref[0] for ref in verifier.find_code_references('conditions')])
     srefs = set([ref[0] for ref in verifier.find_spec_references('conditions')])
 
     conditions = verifier.get_container('conditions')
     variables = verifier.get_container('variables')
-    drefs = conditions.get_keys()
+
+    drefs = set(conditions.container.keys())
+
+    invalids = depth_first_search(crefs | srefs | drefs, conditions, variables, fail_on_undefined_vars)
+    if verbosity > 0:
+        display_paths(invalids)
+
+    return invalids
 
 
-    for condition in drefs | srefs | crefs:
-        result = verify_dependencies(condition, conditions, variables)
-        fail = True
-        if result:
-            last_path = list(result)[-1]
-            if 'variable' in last_path[-1]:
-                fail = fail_on_undefined_vars
-            else:
-                return_value += 1 # indicates an undefined condition, so we fail
-            if fail and verbosity > 0:
-                display_paths(result)
-    return return_value
-
-
-def test_verify_dependencies(id, conditions, variables):
+def depth_first_search(references, conditions, variables, fail_on_vars):
     """
-    Verifies that the given condition id is defined, and that its' dependencies and
-    their transitive dependencies are all defined and valid.
+    Performs a depth first search of the conditions dependency tree.
+    :return: A set of paths leading to undefined condition dependendcies.
     """
-    result = 0
+    verified = {}
 
-    if not id in conditions.get_keys():
-        return 1
-    else:
-        result = verify_dependencies(id, conditions, variables)
-    return result
+    for condition_id in references:
+        path = ((condition_id, 'condition'),)
+        _visit_node(condition_id, conditions, variables, verified, path, fail_on_vars)
+
+    return invalid_paths
 
 
-def verify_dependencies(id, conditions, variables):
+def _visit_node(cid, conditions, variables, verified, path, fov):
     """
-    Performs a breadth-first search of a condition's dependencies in order
-    to verify that all dependencies and transitive dependencies are defined
-    and valid.
+    Visits a single node in the conditions dependency tree.
     """
-    result = _verify_dependencies(id, conditions, variables, set(), tuple())
-    return result
 
+    # default case: a validly defined condition
+    verified[cid] = True
 
-def _verify_dependencies(id, conditions, variables, undefined_paths, current_path):
-    """
-    Given the soup for a condition, test that its dependencies are validly
-    defined.
-    """
-    tup = (id, 'condition')
-    current_path += (tup,)
+    if not cid in conditions.container:
+        verified[cid] = False
+        invalid_paths.append(path)
+        return False
 
-    ids = conditions.get_keys()
+    condition = conditions.container[cid]
+    ctype = condition['type']
 
-    # Exception for izpack conditions:
-    if id in conditions.properties[WHITE_LIST]:
-        return undefined_paths
-
-    if not id in conditions.get_keys():
-        undefined_paths.add(current_path)
-        return undefined_paths
-
-    condition = conditions.container[id]
-    condition_type = condition['type']
-
-    if 'variable' in condition_type:
+    if 'variable' in ctype:
         var = str(condition.find('name').text)
         tup = (var, 'variable')
-        if not var in variables.get_keys():
-            current_path += (tup,)
-            undefined_paths.add(current_path)
-        return undefined_paths
+        path += (tup,)
+        if not var in variables.get_keys() and fov:
+            verified[cid] = False
+            invalid_paths.append(path)
+        else:
+            verified[cid] = True
+        return verified[cid]
 
-    if 'exists' in condition_type:
+    if 'exists' in ctype:
         var = str(condition.find('variable').text)
         tup = (var, 'variable')
+        path += (tup,)
         if not var in variables.get_keys():
-            current_path += (tup,)
-            undefined_paths.add(current_path)
-        return undefined_paths
+            verified[cid] = False
+            invalid_paths.append(path)
+        else:
+            verified[cid] = True
+        return verified[cid]
 
-    elif 'and' in condition_type or 'or' in condition_type or 'not' in condition_type:
+    elif 'and' in ctype or 'or' in ctype or 'not' in ctype:
         dependencies = condition.find_all('condition')
         for dep in dependencies:
             did = str(dep['refid'])
-            tup = (did, 'condition')
-            if tup in current_path:
-                current_path += (tup,)
-                display_paths(set([current_path]))
-                continue
+            new_path = path + ((did, 'condition'),)
+            if not _visit_node(did, conditions, variables, verified, new_path, fov):
+                verified[cid] = False
 
-            _verify_dependencies(did, conditions, variables, undefined_paths, current_path)
-    return undefined_paths
-
-
-
-
+    return verified[cid]
