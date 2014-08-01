@@ -45,7 +45,7 @@ class Reporter:
         """
         if warg <= 0:
             height, width = termhelper.terminal_height_width()
-            self.width = max(width, 80)
+            self.width = max(width, 100)
         else:
             self.width = warg
 
