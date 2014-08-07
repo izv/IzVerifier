@@ -58,8 +58,8 @@ IzVerifier methods:
         The verify(specification) method must have run prior to calling get_referenced for the mapping to be filled.
         The mapping is in the form:
         {
-            'id1': set([file1, file2, ...]),
-            'id2': set([filea, fileb, ...]),
+            'id1': {file1, file2, ...},
+            'id2': {filea, fileb, ...},
             ...
         }
 
