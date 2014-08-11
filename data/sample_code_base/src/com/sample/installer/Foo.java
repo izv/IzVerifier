@@ -25,6 +25,7 @@ public Class Foo {
 
         String cond1 = "some.condition.1";
         Boolean isTrue = idata.getRules().isConditionTrue(cond1);
+        Boolean isTrue = idata.getRules().isConditionTrue(and.2);
 
         String someVar = "some.undefined.var.1";
         String someVal = idata.getVariable(someVar);

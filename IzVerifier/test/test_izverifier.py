@@ -133,13 +133,15 @@ class TestVerifier(unittest.TestCase):
         Verify conditions in sample installer.
         """
         hits = self.izv.verify('conditions', verbosity=2)
-        ids, locations = zip(*hits)
-        ids = list(ids)
-        locations = list(locations)
 
-        num = len(hits)
-        self.assertTrue(num == 4)
-        self.assertTrue("myinstallerclass.condition" in ids)
+        undefined_conditions = {'myinstallerclass.condition',
+                                'some.condition.2',
+                                'some.condition.1'}
+
+        found_conditions, location = zip(*hits)
+
+        for id in undefined_conditions:
+            self.assertTrue(id in found_conditions)
 
     def test_verifyVariables(self):
         """
