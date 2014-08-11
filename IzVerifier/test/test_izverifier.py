@@ -141,16 +141,6 @@ class TestVerifier(unittest.TestCase):
         self.assertTrue(num == 4)
         self.assertTrue("myinstallerclass.condition" in ids)
 
-
-    def test_verifyClasses(self):
-        """
-        Verify classes in sample installer
-        """
-        hits = self.izv.verify('classes')
-        num = len(hits)
-        self.assertTrue(num == 4)
-
-
     def test_verifyVariables(self):
         """
         Verify conditions in sample installer.
@@ -186,7 +176,7 @@ class TestVerifier(unittest.TestCase):
         hits = self.izv.find_references('some.condition.1', verbosity=2)
         self.assertEquals(len(hits), 1)
 
-    def test_izclasses(self):
+    def test_verifyClasses(self):
         """
         Testing the izclasses container.
         """

@@ -6,12 +6,12 @@ Static spec file  verification for IzPack installers.
 Purpose
 -------
 
-IzVerifier is a tool that tests izpack installers for incorrectly defined or undefined conditions, variables, and strings. IzVerifier also parses the source code of any custom classes used by the installer to ensure that no undefined izpack specs are referenced. Finally, IzVerifier can also perform a graph search of the installers' conditions dependency trees to find cycles or missing items.
+IzVerifier is a tool that tests izpack installers for incorrectly defined or missing specifications. IzVerifier also parses the source code of any custom classes used by the installer to ensure that no undefined izpack specifications are referenced. Finally, IzVerifier can also perform a graph search of the installers' conditions dependency trees to find cycles or missing items. Currently supported speficiation types are conditions, variables, strings, and custom classes.
 
 Compatibility
 -------------
 
-IzVerifier is a work-in-progress in its early stages, and currently compatible only with izpack v5 installers.
+IzVerifier is a work-in-progress in its early stages, currently compatible with both v4 and v5 Izpack installers. 
 
 Installation
 ------------
@@ -58,10 +58,25 @@ IzVerifier methods:
         The verify(specification) method must have run prior to calling get_referenced for the mapping to be filled.
         The mapping is in the form:
         {
-            'id1': set([file1, file2, ...]),
-            'id2': set([filea, fileb, ...]),
+            'id1': {file1, file2, ...},
+            'id2': {filea, fileb, ...},
             ...
         }
+
+
+IzVerifier is meant to work out of the box for Installers that follow Izpack V5 specification conventions, but its classes and containers can be customized for less conventional sets of installation specs. Some use cases:
+    
+Adding custom methods to IzVerifier's string searches:
+
+    >>> izstrings = izv.get_container('strings')
+    >>> izstrings.properties['patterns'].append(('myCustomStringMethod\({0}\)', 'myCustomStringMethod\(({0})\)'))
+    >>> izv.verify('strings', verbosity=2)
+   
+Specifying custom paths to specification files, resource files, or langpacks:
+ 
+    >>> izv = IzVerifier(args)
+    >>> izv.paths.langpacks['eng.xml'] = 'path/to/eng.xml'
+    >>> izv.verify('strings')
 
 
 Contributing
@@ -76,3 +91,5 @@ Setting up to hack on IzVerifier is fairly simple:
     $ pip install -e .
 
  Now importing and calling IzVerifier as in the Usage guide above will use the version in your repo, so you can modify and immediately see the changes in your code without re-installing or upgrading the package.
+ 
+ Pull requests for tests, improvements, and documentation are welcome.
