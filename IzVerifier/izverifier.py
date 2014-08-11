@@ -37,7 +37,7 @@ class IzVerifier():
         self.containers = {}
         self.sources = args.get('sources', [])
 
-        if args.has_key('pom'):
+        if 'pom' in args:
             self.properties = IzProperties(args['pom'])
         else:
             self.properties = None
@@ -54,7 +54,6 @@ class IzVerifier():
         for specification in self.specifications:
             missing |= self.verify(specification, verbosity)
         return missing
-
 
     def verify(self, specification, verbosity=0):
         """
@@ -77,23 +76,24 @@ class IzVerifier():
 
         return cmissing | smissing
 
-    def load_references(self, references, container):
+    @staticmethod
+    def load_references(references, container):
         """
         Load a container's referenced map with all detected references from source code and spec files.
         """
         referenced = container.get_referenced()
         for ref in references:
-            if referenced.has_key(ref[0]):
+            if ref[0] in referenced:
                 referenced[ref[0]].add(ref[1])
             else:
-                referenced[ref[0]] = set([ref[1]])
+                referenced[ref[0]] = {ref[1]}
 
     def get_container(self, specification):
         """
         Returns an izpack item container filled with specs gathered from the installer
         specified in the constructor.
         """
-        if not self.containers.has_key(specification):
+        if not specification in self.containers:
             return self.init_container(specification)
         else:
             return self.containers[specification]
@@ -111,7 +111,6 @@ class IzVerifier():
     def find_code_references(self, specification):
         """
         Find all source code references for specs in each container.
-        :param specifications: conditions, variables, strings, or other izpack spec
         """
         container = self.get_container(specification)
         hits = self.seeker.find_references_in_source(patterns=container.properties[PATTERNS],
@@ -123,17 +122,15 @@ class IzVerifier():
     def find_spec_references(self, specification):
         """
         Find all specification xml references for specs in each container.
-        :param installer:
-        :param specifications:
         """
         container = self.get_container(specification)
 
         args = {
-             'specs': map(self.paths.get_path, container.properties[REFERENCE_SPEC_FILES]),
-             'filter_fn': container.has_reference,
-             'attributes': container.properties[ATTRIBUTES],
-             'transform_fn': container.ref_transformer,
-             'white_list_patterns': container.properties[WHITE_LIST_PATTERNS]
+            'specs': map(self.paths.get_path, container.properties[REFERENCE_SPEC_FILES]),
+            'filter_fn': container.has_reference,
+            'attributes': container.properties[ATTRIBUTES],
+            'transform_fn': container.ref_transformer,
+            'white_list_patterns': container.properties[WHITE_LIST_PATTERNS]
         }
         hits = self.seeker.search_specs_for_attributes(args)
         return hits
@@ -203,12 +200,10 @@ def validate_arguments(args):
     """
     Throws exceptions if required args are missing or invalid.
     """
-    if not args.has_key('specs_path'):
+    if not 'specs_path' in args:
         raise IzArgumentsException("No Path to Installer Specs Specified")
-        exit(1)
-    if not args.has_key('resources_path'):
+    if not 'resources_path' in args:
         raise IzArgumentsException("No Path to Installer Resources Specified")
-        exit(1)
 
 
 def undefined(key_set, tup_set):
