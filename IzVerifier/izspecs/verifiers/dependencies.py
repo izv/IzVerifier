@@ -20,7 +20,7 @@ def test_verify_all_dependencies(verifier, verbosity=0, fail_on_undefined_vars=F
 
     result_dict = dict()
     for condition in drefs | srefs | crefs:
-        result = verify_dependencies(condition, conditions, variables)
+        result = verify_dependencies(condition, conditions, variables, verbosity)
         fail = True
         if result:
             last_path = list(result)[-1]
@@ -35,7 +35,7 @@ def test_verify_all_dependencies(verifier, verbosity=0, fail_on_undefined_vars=F
     return return_value
 
 
-def test_verify_dependencies(id, conditions, variables):
+def test_verify_dependencies(id, conditions, variables, verbosity):
     """
     Verifies that the given condition id is defined, and that its' dependencies and
     their transitive dependencies are all defined and valid.
@@ -45,21 +45,21 @@ def test_verify_dependencies(id, conditions, variables):
     if not id in conditions.get_keys():
         return 1
     else:
-        result = verify_dependencies(id, conditions, variables)
+        result = verify_dependencies(id, conditions, variables, verbosity)
     return result
 
 
-def verify_dependencies(id, conditions, variables):
+def verify_dependencies(id, conditions, variables, verbosity):
     """
     Performs a breadth-first search of a condition's dependencies in order
     to verify that all dependencies and transitive dependencies are defined
     and valid.
     """
-    result = _verify_dependencies(id, conditions, variables, set(), tuple())
+    result = _verify_dependencies(id, conditions, variables, set(), tuple(), verbosity)
     return result
 
 
-def _verify_dependencies(id, conditions, variables, undefined_paths, current_path):
+def _verify_dependencies(id, conditions, variables, undefined_paths, current_path, verbosity):
     """
     Given the soup for a condition, test that its dependencies are validly
     defined.
@@ -106,10 +106,11 @@ def _verify_dependencies(id, conditions, variables, undefined_paths, current_pat
                 key = current_path[0][0]
                 value = () + (current_path,)
                 cycle_dict = {key: set(value)}
-                display_paths(cycle_dict, True)
+                if verbosity > 0:
+                    display_paths(cycle_dict, True)
                 continue
 
-            _verify_dependencies(did, conditions, variables, undefined_paths, current_path)
+            _verify_dependencies(did, conditions, variables, undefined_paths, current_path, verbosity)
     return undefined_paths
 
 
