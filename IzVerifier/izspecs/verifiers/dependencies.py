@@ -12,7 +12,7 @@ def test_verify_all_dependencies(verifier, verbosity=0, fail_on_undefined_vars=F
     return_value = 0
 
     crefs = set([ref[0] for ref in verifier.find_code_references('conditions')])
-    srefs = set([ref[0] for ref in verifier.find_spec_references('conditions')])
+    srefs = set([ref[0] for ref in verifier.find_specification_references('conditions')])
 
     conditions = verifier.get_container('conditions')
     variables = verifier.get_container('variables')
