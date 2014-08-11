@@ -28,9 +28,8 @@ def test_verify_all_dependencies(verifier, verbosity=0, fail_on_undefined_vars=F
                 fail = fail_on_undefined_vars
             else:
                 return_value += 1 # indicates an undefined condition, so we fail
-            if fail and verbosity > 0:
+            if fail:
                 result_dict[condition] = result
-                #display_paths(result)
     if verbosity > 0:
         display_paths(result_dict)
     return return_value
@@ -104,7 +103,10 @@ def _verify_dependencies(id, conditions, variables, undefined_paths, current_pat
             tup = (did, 'condition')
             if tup in current_path:
                 current_path += (tup,)
-                display_paths(set([current_path]))
+                key = current_path[0][0]
+                value = () + (current_path,)
+                cycle_dict = {key: set(value)}
+                display_paths(cycle_dict, True)
                 continue
 
             _verify_dependencies(did, conditions, variables, undefined_paths, current_path)

@@ -76,7 +76,7 @@ class Reporter:
 
         return tuple_padding
 
-def display_paths(paths_dict):
+def display_paths(paths_dict, cycle=False):
     """
     Human readable output for displaying dependency paths.
     """
@@ -84,7 +84,7 @@ def display_paths(paths_dict):
     for condition_id in paths_dict:
         print condition_id + " : condition"
         for path in list(paths_dict[condition_id]):
-            tab = 3
+            tab = len(condition_id)
             undefined = ""
             for index, node in enumerate(path[1:]):
                 add_to_tab = 0
@@ -99,7 +99,10 @@ def display_paths(paths_dict):
                     add_to_tab += len(branch)
                 else:
                     branch = ''
-                if index == len(path) - 2:
+                if index == len(path) - 2 and cycle:
+                    undefined = ': is cycle'
+                elif index == len(path) - 2:
                     undefined = ": is undefined"
                 print " " * tab + branch + str(id) + " (type: " + str(node[1]) + ")" + undefined
                 tab += add_to_tab
+        print
