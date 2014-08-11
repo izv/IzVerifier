@@ -18,7 +18,7 @@ def test_verify_all_dependencies(verifier, verbosity=0, fail_on_undefined_vars=F
     variables = verifier.get_container('variables')
     drefs = conditions.get_keys()
 
-
+    result_dict = dict()
     for condition in drefs | srefs | crefs:
         result = verify_dependencies(condition, conditions, variables)
         fail = True
@@ -29,7 +29,10 @@ def test_verify_all_dependencies(verifier, verbosity=0, fail_on_undefined_vars=F
             else:
                 return_value += 1 # indicates an undefined condition, so we fail
             if fail and verbosity > 0:
-                display_paths(result)
+                result_dict[condition] = result
+                #display_paths(result)
+    if verbosity > 0:
+        display_paths(result_dict)
     return return_value
 
 

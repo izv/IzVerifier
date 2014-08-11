@@ -76,22 +76,30 @@ class Reporter:
 
         return tuple_padding
 
-def display_paths(paths):
+def display_paths(paths_dict):
     """
     Human readable output for displaying dependency paths.
     """
 
-    for path in paths:
-        tab = 0
-        for node in path:
-            if type(node[0]) is tuple:
-                id = node[0][0]
-            else:
-                id = node[0]
-            if tab:
-                branch = u'\u02ea\u2192 '
-            else:
-                branch = ''
-            tab += 3
-            print " " * tab + branch + str(id) + " : (" + str(node[1]) + ")"
-    print
+    for condition_id in paths_dict:
+        print condition_id + " : condition"
+        for path in list(paths_dict[condition_id]):
+            tab = 3
+            undefined = ""
+            for index, node in enumerate(path[1:]):
+                add_to_tab = 0
+                if type(node[0]) is tuple:
+                    id = node[0][0]
+                    add_to_tab += len(id)
+                else:
+                    id = node[0]
+                    add_to_tab += len(id)
+                if tab:
+                    branch = u'\u02ea\u2192 depends on '
+                    add_to_tab += len(branch)
+                else:
+                    branch = ''
+                if index == len(path) - 2:
+                    undefined = ": is undefined"
+                print " " * tab + branch + str(id) + " (type: " + str(node[1]) + ")" + undefined
+                tab += add_to_tab
