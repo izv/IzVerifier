@@ -54,8 +54,8 @@ IzVerifier methods:
         Returns a dictionary which maps the condition id to a set of tuples containing paths to missing dependencies.
         The dictionary will be of the form:
         {
-            'condition_id': {((node1, type),(node2, type)...,('fail', reason)),
-                            ((node1, type),(node2, type)...,('fail', reason))
+            'condition_id': {((node1, type),(node2, type)...),
+                            ((node1, type),(node2, type)...)
                             ...
                             }
         }
