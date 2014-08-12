@@ -66,7 +66,14 @@ def _verify_dependencies(cond_id, conditions, variables, undefined_paths, curren
         return undefined_paths
 
     if not cond_id in conditions.get_keys():
-        undefined_paths.add(current_path)
+        tup = (current_path[-1][0], 'undefined condition')
+        modded_current = ()
+        for node in current_path[:-1]:
+            modded_current += (node,)
+        else:
+            modded_current += (tup,)
+
+        undefined_paths.add(modded_current)
         return undefined_paths
 
     condition = conditions.container[cond_id]
@@ -76,7 +83,7 @@ def _verify_dependencies(cond_id, conditions, variables, undefined_paths, curren
         var = str(condition.find('name').text)
         tup = (var, 'variable')
         if not var in variables.get_keys():
-            current_path += (tup,)
+            current_path += ((var, 'undefined variable'),)
             undefined_paths.add(current_path)
         return undefined_paths
 
@@ -84,7 +91,7 @@ def _verify_dependencies(cond_id, conditions, variables, undefined_paths, curren
         var = str(condition.find('variable').text)
         tup = (var, 'variable')
         if not var in variables.get_keys():
-            current_path += (tup,)
+            current_path += ((var, 'undefined variable'),)
             undefined_paths.add(current_path)
         return undefined_paths
 
@@ -94,7 +101,7 @@ def _verify_dependencies(cond_id, conditions, variables, undefined_paths, curren
             did = str(dep['refid'])
             tup = (did, 'condition')
             if tup in current_path:
-                current_path += ((did,'cycle'),)
+                current_path += ((did,'cyclic condition reference'),)
                 return undefined_paths.add(current_path)
 
             _verify_dependencies(did, conditions, variables, undefined_paths, current_path)
