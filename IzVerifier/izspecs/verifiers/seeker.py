@@ -91,7 +91,7 @@ class Seeker:
 
         def value_matcher(val):
             matcher = re.compile(value)
-            return (not matcher.match(val) == None)
+            return not matcher.match(val) is None
 
         args['value_fn'] = value_matcher
 
@@ -117,11 +117,8 @@ class Seeker:
         """
         spec_hits = set()
 
-
-
         hits = self.search_specs_for_value(args)
         spec_hits |= hits
-
 
         source_hits = self.find_references_in_source(patterns=args['patterns'],
                                                      path_list=args['source_paths'],
@@ -137,8 +134,8 @@ class Seeker:
         hits = set()
         if len(patterns) != 0:
             searches, extractors = zip(*patterns)
-            combined_search_pattern = ('|').join(searches)
-            combined_extract_pattern = ('|').join(extractors)
+            combined_search_pattern = '|'.join(searches)
+            combined_extract_pattern = '|'.join(extractors)
 
             for path in path_list:
                 if vid:
@@ -155,34 +152,38 @@ class Seeker:
 
         return set(hits)
 
-    def match_literal(self, key):
+    @staticmethod
+    def match_literal(key):
         # "some literal string";
         literal_string = '^"[\w].*"$'
         literal_matcher = re.compile(literal_string)
         return literal_matcher.match(key)
 
-    def match_compound(self, key):
+    @staticmethod
+    def match_compound(key):
         # ie. someVariable + "some literal";
         compound_mix = '^[\"\w].*[\+].+[\w].*$'
         compound_matcher = re.compile(compound_mix)
         return compound_matcher.match(key)
 
-    def match_variable(self, key):
+    @staticmethod
+    def match_variable(key):
         # someVariable;
         variable = '^[\w]+$'
         variable_matcher = re.compile(variable)
         return variable_matcher.match(key)
 
-    def match_method(self, key, pattern):
+    @staticmethod
+    def match_method(key, pattern):
         method_matcher = re.search(pattern, key)
         return method_matcher
 
-    def extract_key_from_method(self, key):
+    @staticmethod
+    def extract_key_from_method(key):
         extract_method = '\((.*)'
         extract_method_pattern = re.compile(extract_method)
         matched = re.search(extract_method_pattern, key)
         return matched.group(1)
-
 
     def process_key(self, key_and_location, white_list, search_pattern):
         """
@@ -196,24 +197,23 @@ class Seeker:
         while self.match_method(key, search_pattern):
             key = self.extract_key_from_method(key)
 
-
         # this is a tricky key using strings and variables, probably runtime.
         if self.match_compound(key):
             return None
         elif self.match_literal(key):
             key = self.strip_quotes(key)
-            return (key, location)
+            return key, location
         # otherwise it's hopefully just a variable, likely runtime, but we can look for it.
         elif self.match_variable(key):
             key = self.find_variable_value(key, location, white_list)
-            if key != None:
-                return (key, location)
+            if key is not None:
+                return key, location
         else:
             return None
 
-    def strip_quotes(self, key):
-        return key[1:-1] # strip quotes
-
+    @staticmethod
+    def strip_quotes(key):
+        return key[1:-1]  # strip quotes
 
     def find_variable_value(self, variable, location, white_list):
         """
@@ -227,7 +227,7 @@ class Seeker:
 
         if hits:
 
-            return hits[0][0] # first hit
+            return hits[0][0]  # first hit
         else:
             return None  # unable to id this, so it's runtime.
 
@@ -258,7 +258,7 @@ class Seeker:
         Filter out any lines that are parts of comments.
         """
         if ':' in output:
-            loc,hit = output.split(':', 1)
+            loc, hit = output.split(':', 1)
         else:
             return False
 
@@ -277,15 +277,11 @@ class Seeker:
         if match_key and match_loc:
             for match in match_key.groups():
                 if match is not None:
-                    matched = match
-                    break
-            return matched, match_loc.group(1)
+                    return match, match_loc.group(1)
         if match_key and not match_loc:
             for match in match_key.groups():
                 if match is not None:
-                    matched = match
-                    break
-            return matched, "UNKNOWN"
+                    return match, "UNKNOWN"
         else:
             return None
 
