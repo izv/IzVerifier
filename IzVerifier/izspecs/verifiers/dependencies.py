@@ -66,8 +66,6 @@ def _verify_dependencies(cond_id, conditions, variables, undefined_paths, curren
         return undefined_paths
 
     if not cond_id in conditions.get_keys():
-        fail_reason = ('fail', ' is undefined')
-        current_path += (fail_reason,)
         undefined_paths.add(current_path)
         return undefined_paths
 
@@ -79,8 +77,6 @@ def _verify_dependencies(cond_id, conditions, variables, undefined_paths, curren
         tup = (var, 'variable')
         if not var in variables.get_keys():
             current_path += (tup,)
-            fail_reason = ('fail', ' is undefined')
-            current_path += (fail_reason,)
             undefined_paths.add(current_path)
         return undefined_paths
 
@@ -89,8 +85,6 @@ def _verify_dependencies(cond_id, conditions, variables, undefined_paths, curren
         tup = (var, 'variable')
         if not var in variables.get_keys():
             current_path += (tup,)
-            fail_reason = ('fail', ' is undefined')
-            current_path += (fail_reason,)
             undefined_paths.add(current_path)
         return undefined_paths
 
@@ -100,9 +94,7 @@ def _verify_dependencies(cond_id, conditions, variables, undefined_paths, curren
             did = str(dep['refid'])
             tup = (did, 'condition')
             if tup in current_path:
-                current_path += (tup,)
-                fail_reason = ('fail', ' is cycle')
-                current_path += (fail_reason,)
+                current_path += ((did,'cycle'),)
                 return undefined_paths.add(current_path)
 
             _verify_dependencies(did, conditions, variables, undefined_paths, current_path)

@@ -83,13 +83,15 @@ def display_paths(paths_dict):
 
     for condition_id in paths_dict:
         for path_index, path in enumerate(list(paths_dict[condition_id])):
-            fail_condition = path[-1]
             tab = len(condition_id)
             reason_for_failure = ""
-            for node_index, node in enumerate(path[:-1]):
+            for node_index, node in enumerate(path):
                 # check to see if end of path reached
-                if node_index == len(path) - 2:
-                    reason_for_failure = fail_condition[1]
+                if node_index == len(path) - 1:
+                    if 'cycle' in node[1]:
+                        reason_for_failure = ": is cycle"
+                    else:
+                        reason_for_failure = ": is undefined"
 
                 if node_index == 0:
                     if path_index == 0:
@@ -109,6 +111,11 @@ def display_paths(paths_dict):
                         add_to_tab += len(branch)
                     else:
                         branch = ''
-                    print " " * tab + branch + str(cid) + " (type: " + str(node[1]) + ")" + reason_for_failure
+
+                    type_ = str(node[1])
+                    if 'cycle' in type_:
+                        type_ = 'condition'
+
+                    print " " * tab + branch + str(cid) + " (type: " + type_ + ")" + reason_for_failure
                     tab += add_to_tab
         print
