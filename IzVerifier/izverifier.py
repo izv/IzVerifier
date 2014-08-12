@@ -55,7 +55,6 @@ class IzVerifier():
             missing |= self.verify(specification, verbosity)
         return missing
 
-
     def verify(self, specification, verbosity=0):
         """
         Runs a verification on the given izpack spec: conditions, strings, variables, etc.
@@ -81,7 +80,9 @@ class IzVerifier():
         """
         Run a conditions dependency graph search.
         """
-        results = test_verify_all_dependencies(self, verbosity, fail_on_undefined_vars=fail_on_undefined_vars)
+        results = test_verify_all_dependencies(self, fail_on_undefined_vars)
+        if verbosity > 0:
+            display_paths(results)
         return results
 
     def get_container(self, specification):
@@ -107,7 +108,7 @@ class IzVerifier():
     def find_code_references(self, specification):
         """
         Find all source code references for specs in each container.
-        :param specifications: conditions, variables, strings, or other izpack spec
+        :param specification: conditions, variables, strings, or other izpack spec
         """
         container = self.get_container(specification)
         hits = self.seeker.find_references_in_source(patterns=container.properties[PATTERNS],
@@ -119,8 +120,7 @@ class IzVerifier():
     def find_specification_references(self, specification):
         """
         Find all specification xml references for specs in each container.
-        :param installer:
-        :param specifications:
+        :param specification:
         """
         container = self.get_container(specification)
 
@@ -133,16 +133,6 @@ class IzVerifier():
         }
         hits = self.seeker.search_specs_for_attributes(args)
         return hits
-
-    def dependency_verification(self, verbosity=0, fail_on_undefined_vars=False):
-        """
-        Run a conditions dependency graph search.
-        """
-        results = test_verify_all_dependencies(self, fail_on_undefined_vars=fail_on_undefined_vars)
-        if verbosity > 0:
-            display_paths(results)
-        return results
-
 
     def find_references(self, rid, specs=None, verbosity=0):
         """
@@ -228,7 +218,6 @@ def _validate_arguments(args):
         raise IzArgumentsException("No Path to Installer Specs Specified")
     if not 'resources_path' in args:
         raise IzArgumentsException("No Path to Installer Resources Specified")
-        exit(1)
 
 
 def _undefined(key_set, tup_set):
