@@ -2,12 +2,14 @@ __author__ = 'fcanas'
 
 import termhelper
 
+
 class Reporter:
     """
     Responsible for displaying results and recording them to log files.
     """
 
     def __init__(self):
+        self.width = warg
         self.set_terminal_width()  # default width of terminal
 
     templates = {
@@ -46,8 +48,6 @@ class Reporter:
         if warg <= 0:
             height, width = termhelper.terminal_height_width()
             self.width = max(width, 100)
-        else:
-            self.width = warg
 
     def get_tuple_padding(self, item):
         """
@@ -61,7 +61,6 @@ class Reporter:
         # in the case of a very short first item with a very long second item)
 
         tuple_padding = max(30, self.width - 50, len(item[0]) + 1)
-
 
         # If the combined length of the items is short enough to fit on one line, avoid a line break
         if len(item[0]) + len(item[1]) < self.width:

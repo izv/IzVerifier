@@ -7,7 +7,7 @@ from IzVerifier.izspecs.verifiers.seeker import Seeker
 from IzVerifier.izspecs.containers.constants import *
 from IzVerifier.exceptions.IzVerifierException import IzArgumentsException
 from IzVerifier.izspecs.izpaths import IzPaths
-from IzVerifier.logging.reporter import Reporter
+from IzVerifier.logging.reporter import Reporter, display_paths
 
 
 __author__ = 'fcanas'
