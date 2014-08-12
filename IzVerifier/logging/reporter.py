@@ -8,9 +8,9 @@ class Reporter:
     Responsible for displaying results and recording them to log files.
     """
 
-    def __init__(self):
+    def __init__(self, warg=0):
         self.width = warg
-        self.set_terminal_width()  # default width of terminal
+        self.set_terminal_width(warg)  # default width of terminal
 
     templates = {
         'test': '[ {0:.<{2}}{1:.>{3}} ]',

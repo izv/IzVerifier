@@ -7,7 +7,7 @@ class IzContainer():
     """
     Abstract class responsible for containing some izpack spec resource.
 
-    For example implementors, see:
+    For example implementers, see:
     izconditions (for izpack conditions)
     izstrings (for izpack localized strings)
     izvariables (for izpack variables)
@@ -20,7 +20,6 @@ class IzContainer():
             self.soup = BeautifulSoup(open(path), 'xml')
         except IOError:
             raise MissingFileException("spec not found at: " + path)
-            exit(1)
         self.parse(self.soup)
 
     def get_referenced(self):
@@ -32,6 +31,13 @@ class IzContainer():
         }
         """
         return self.referenced
+
+    @abstractmethod
+    def parse(self, soup):
+        """
+        Parse the xml soup generated from the izpack descriptor file.
+        """
+        pass
 
     @abstractmethod
     def get_keys(self):

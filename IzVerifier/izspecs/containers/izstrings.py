@@ -6,6 +6,7 @@ from IzVerifier.izspecs.containers.constants import *
 
 IZPACK_LANG_PATH = 'izpack_lang_path'
 
+
 class IzStrings(IzContainer):
     """
     Container for izpack strings from langpack files.
@@ -28,13 +29,16 @@ class IzStrings(IzContainer):
             ('System.*.println\({0}', 'System.*.println\(({0})\)'),
             ('setErrorMessageId\({0}', 'setErrorMessageId\(({0})\)')],
         WHITE_LIST_PATTERNS: ['^.*\(\(String\) conn\);.*$',
-                              '^UserInputPanel.*$'], # for some weirdness in a console helper :)
+                              '^UserInputPanel.*$'],  # for some weirdness in a console helper :)
 
         PARENT_OPENING_TAG: '<langpack>',
         PARENT_CLOSING_TAG: '</langpack>',
     }
 
     def parse_izpack_strings(self, path):
+        """
+        Parse izpack's built-in langpack strings.
+        """
         self.soup_izpack = BeautifulSoup(open(path), 'xml')
         self.parse(self.soup_izpack)
 
@@ -61,10 +65,12 @@ class IzStrings(IzContainer):
 
         # panels never contain strings directly as attributes. Their 'id' is the
         # panel id.
-        if str(element.name) == 'panel': return False
+        if str(element.name) == 'panel':
+            return False
 
         # Validators directly under panels have id's that are not strings.
-        if str(element.parent.name) == 'panel' and str(element.name) == 'validator': return False
+        if str(element.parent.name) == 'panel' and str(element.name) == 'validator':
+            return False
 
         # Elements with ids that start with the word 'port' in them are not strings either.
         if element.has_attr('id'):
@@ -90,7 +96,8 @@ class IzStrings(IzContainer):
         # Otherwise, check if this element contains one of the attributes used to
         # hold string ids and return true if it does.
         for atty in IzStrings.properties['attributes']:
-            if element.has_attr(atty): return True
+            if element.has_attr(atty):
+                return True
 
         return False
 
@@ -110,7 +117,8 @@ class IzStrings(IzContainer):
         """
         return set(self.container.values())
 
-    def ref_transformer(self, reference):
+    @staticmethod
+    def ref_transformer(reference):
         """
         Identity function.
         """
