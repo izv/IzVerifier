@@ -76,33 +76,40 @@ class Reporter:
 
         return tuple_padding
 
-def display_paths(paths_dict, cycle=False):
+
+def display_paths(paths_dict):
     """
     Human readable output for displaying dependency paths.
     """
 
     for condition_id in paths_dict:
-        print condition_id + " : condition"
-        for path in list(paths_dict[condition_id]):
+        for path_index, path in enumerate(list(paths_dict[condition_id])):
+            fail_condition = path[-1]
             tab = len(condition_id)
-            undefined = ""
-            for index, node in enumerate(path[1:]):
-                add_to_tab = 0
-                if type(node[0]) is tuple:
-                    id = node[0][0]
-                    add_to_tab += len(id)
+            reason_for_failure = ""
+            for node_index, node in enumerate(path[:-1]):
+                # check to see if end of path reached
+                if node_index == len(path) - 2:
+                    reason_for_failure = fail_condition[1]
+
+                if node_index == 0:
+                    if path_index == 0:
+                        print condition_id + " (type: condition)" + reason_for_failure
+                    else:
+                        continue
                 else:
-                    id = node[0]
-                    add_to_tab += len(id)
-                if tab:
-                    branch = u'\u02ea\u2192 depends on '
-                    add_to_tab += len(branch)
-                else:
-                    branch = ''
-                if index == len(path) - 2 and cycle:
-                    undefined = ': is cycle'
-                elif index == len(path) - 2:
-                    undefined = ": is undefined"
-                print " " * tab + branch + str(id) + " (type: " + str(node[1]) + ")" + undefined
-                tab += add_to_tab
+                    add_to_tab = 0
+                    if type(node[0]) is tuple:
+                        cid = node[0][0]
+                        add_to_tab += len(cid)
+                    else:
+                        cid = node[0]
+                        add_to_tab += len(cid)
+                    if tab:
+                        branch = u'\u02ea\u2192 depends on '
+                        add_to_tab += len(branch)
+                    else:
+                        branch = ''
+                    print " " * tab + branch + str(cid) + " (type: " + str(node[1]) + ")" + reason_for_failure
+                    tab += add_to_tab
         print

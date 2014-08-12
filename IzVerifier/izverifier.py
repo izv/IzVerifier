@@ -142,8 +142,11 @@ class IzVerifier():
         """
         Run a conditions dependency graph search.
         """
-        results = test_verify_all_dependencies(self, verbosity, fail_on_undefined_vars=fail_on_undefined_vars)
+        results = test_verify_all_dependencies(self, fail_on_undefined_vars=fail_on_undefined_vars)
+        if verbosity > 0:
+            display_paths(results)
         return results
+
 
     def find_references(self, rid, specs=None, verbosity=0):
         """
