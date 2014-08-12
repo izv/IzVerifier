@@ -6,7 +6,11 @@ Static spec file  verification for IzPack installers.
 Purpose
 -------
 
-IzVerifier is a tool that tests izpack installers for incorrectly defined or missing specifications. IzVerifier also parses the source code of any custom classes used by the installer to ensure that no undefined izpack specifications are referenced. Finally, IzVerifier can also perform a graph search of the installers' conditions dependency trees to find cycles or missing items. Currently supported speficiation types are conditions, variables, strings, and custom classes.
+IzVerifier is a tool that tests izpack installers for incorrectly defined or missing specifications. IzVerifier also 
+parses the source code of any custom classes used by the installer to ensure that no undefined izpack specifications 
+are referenced. Finally, IzVerifier can also perform a graph search of the installers' conditions dependency trees to 
+find cycles or missing items. Currently supported speficiation types are conditions, variables, strings, and custom 
+classes.
 
 Compatibility
 -------------
@@ -54,14 +58,17 @@ IzVerifier methods:
         Returns a dictionary which maps the condition id to a set of tuples containing paths to missing dependencies.
         The dictionary will be of the form:
         {
-            'condition_id': {((node1, type),(node2, type)...),
-                            ((node1, type),(node2, type)...)
-                            ...
-                            }
+            'condition_id1': {
+                                ((node1, type),(node2, type)...),
+                                ((node1, type),(node2, type)...),
+                                ...
+                            },
+            ...
         }
 
     get_referenced(specification):
-        Returns a mapping for the given specification of all referenced items (defined or undefined) to the files they are referenced in.
+        Returns a mapping for the given specification of all referenced items (defined or undefined) to the files they 
+        are referenced in.
         The verify(specification) method must have run prior to calling get_referenced for the mapping to be filled.
         The mapping is in the form:
         {
@@ -71,7 +78,8 @@ IzVerifier methods:
         }
 
 
-IzVerifier is meant to work out of the box for Installers that follow Izpack V5 specification conventions, but its classes and containers can be customized for less conventional sets of installation specs. Some use cases:
+IzVerifier is meant to work out of the box for Installers that follow Izpack V5 specification conventions, but its 
+classes and containers can be customized for less conventional sets of installation specs. Some use cases:
     
 Adding custom methods to IzVerifier's string searches:
 
@@ -97,6 +105,7 @@ Setting up to hack on IzVerifier is fairly simple:
 
     $ pip install -e .
 
- Now importing and calling IzVerifier as in the Usage guide above will use the version in your repo, so you can modify and immediately see the changes in your code without re-installing or upgrading the package.
+ Now importing and calling IzVerifier as in the Usage guide above will use the version in your repo, so you can modify 
+ and immediately see the changes in your code without re-installing or upgrading the package.
  
  Pull requests for tests, improvements, and documentation are welcome.
