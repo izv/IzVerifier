@@ -226,7 +226,7 @@ def _undefined(key_set, tup_set):
     key_set is a simple set of string keys.
     up_set is a set of tuples: tup[0] is the key of that tuple.
     """
-    return set([tup for tup in tup_set if not _quote_remover(tup[0]) in key_set])
+    return set((tup for tup in tup_set if not _quote_remover(tup[0]) in key_set))
 
 
 def _unused(key_set, tup_set):
@@ -237,13 +237,12 @@ def _unused(key_set, tup_set):
     """
     if not tup_set:
         return key_set
-    return set([key for key in key_set if not key in zip(*tup_set)[0]])
+    return set((key for key in key_set if not key in zip(*tup_set)[0]))
 
 
 def _quote_remover(key):
     """
     Extracts the actual key of the item passed in.
-    TODO: seriously do this minus recursion, idiot.
     """
     if key.startswith('"') and key.endswith('"'):
         return key[1:-1]

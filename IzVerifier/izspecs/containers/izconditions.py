@@ -72,11 +72,13 @@ class IzConditions(IzContainer):
         return str(self.container)
 
     def ref_transformer(self, reference):
-        """ Given a compound condition id returns a list of the conditions contained in it.
-            ie. "cond1+cond2+!cond3" = [cond1, cond2, cond3]"""
+        """
+        Given a compound condition id returns a list of the conditions contained in it.
+        Example:. "cond1+cond2+!cond3" => {cond1, cond2, cond3}
+        """
         cids = re.split("\+|\|", reference)
-        return set([cid.replace("!", "") for cid in cids if
-                    not re.match(self.properties['ignore_key_pattern'], cid.replace("!", ""))])
+        return set((cid.replace("!", "") for cid in cids if
+                    not re.match(self.properties['ignore_key_pattern'], cid.replace("!", ""))))
 
     def has_reference(self, element):
         """
