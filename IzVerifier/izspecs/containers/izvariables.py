@@ -22,12 +22,12 @@ class IzVariables(IzContainer):
         PARENT_OPENING_TAG: '<xfragment>',
         PARENT_CLOSING_TAG: '</xfragment>',
         WHITE_LIST: ['izpack.linuxinstall', 'JAVA_HOME', 'INSTALL_PATH', 'IzPanel.LayoutType',
-                             'APP_NAME', 'APP_URL', 'APP_VER', 'INSTALL_GROUP', 'UNINSTALLER_CONDITION',
-                             'USER_NAME', 'USER_HOME', 'ISO3_LANG', 'IP_ADDRESS', 'HOST_NAME',
-                             'FILE_SEPARATOR', 'DesktopShortcutCheckboxEnabled', 'InstallerFrame.logfilePath'],
-        PATTERNS: [('getVariable\({0}','getVariable\(({0})\)'),
-            ('setVariable\({0}', 'setVariable\(({0}),({0})\)')],
-        READ_PATTERNS: [('getVariable({0}','getVariable\(({0})\)')],
+                     'APP_NAME', 'APP_URL', 'APP_VER', 'INSTALL_GROUP', 'UNINSTALLER_CONDITION',
+                     'USER_NAME', 'USER_HOME', 'ISO3_LANG', 'IP_ADDRESS', 'HOST_NAME',
+                     'FILE_SEPARATOR', 'DesktopShortcutCheckboxEnabled', 'InstallerFrame.logfilePath'],
+        PATTERNS: [('getVariable\({0}', 'getVariable\(({0})\)'),
+                   ('setVariable\({0}', 'setVariable\(({0}),({0})\)')],
+        READ_PATTERNS: [('getVariable({0}', 'getVariable\(({0})\)')],
         WRITE_PATTERNS: [('setVariable({0}', 'setVariable\(({0}),({0})\)')],
         WHITE_LIST_PATTERNS: []
     }
@@ -36,8 +36,8 @@ class IzVariables(IzContainer):
         """
         Extracts all variable definitions from variables.xml doc.
         """
-        vars = soup.find_all('variable')
-        for var in vars:
+        variables = soup.find_all('variable')
+        for var in variables:
             self.container[str(var['name'])] = var
 
     def get_keys(self):
@@ -46,18 +46,11 @@ class IzVariables(IzContainer):
         """
         return set(self.container.keys()) | set(self.properties[WHITE_LIST])
 
-
     def count(self):
         """
         Return number of vars found in definition file.
         """
         return len(self.container.keys())
-
-    def print_keys(self):
-        """
-        Prints all of the variable keys found in definition spec.
-        """
-        pass
 
     def get_spec_elements(self):
         """
@@ -65,8 +58,25 @@ class IzVariables(IzContainer):
         """
         return set(self.container.values())
 
+    def has_reference(self, element):
+        """
+        Return true if the given element contains an izpack var reference.
+        """
+        for atty in self.properties['attributes']:
+            if element.has_attr(atty):
+                return True
+
+        return False
+
     def to_string(self):
         return str(self.container)
+
+    @staticmethod
+    def print_keys():
+        """
+        Prints all of the variable keys found in definition spec.
+        """
+        pass
 
     @staticmethod
     def element_sort_key(element):
@@ -90,17 +100,17 @@ class IzVariables(IzContainer):
         """
         return element['value']
 
-    def ref_transformer(self, ref):
+    @staticmethod
+    def ref_transformer(ref):
         """
         Wraps reference into list.
         """
         return [ref]
 
-    def has_reference(self, element):
+    @staticmethod
+    def has_definition(self, element):
         """
-        Return true if the given element contains an izpack var reference.
+        Determines if element is a string definition.
         """
-        for atty in self.properties['attributes']:
-            if element.has_attr(atty): return True
+        return 'str' == element.name and element.has_attr('key') and element.has_attr('id')
 
-        return False

@@ -26,7 +26,7 @@ class IzConditions(IzContainer):
         WHITE_LIST: ['izpack.linuxinstall'],
         WHITE_LIST_PATTERNS: [],
         PATTERNS: [('isConditionTrue\({0}', "isConditionTrue\(({0})\)"),
-                     ("getCondition\({0}", "getCondition\(({0})\)")]
+                   ("getCondition\({0}", "getCondition\(({0})\)")]
     }
 
     def parse(self, soup):
@@ -34,7 +34,6 @@ class IzConditions(IzContainer):
         conds = soup.find_all(self.has_condition_definition)
         for cond in conds:
             self.container[str(cond['id'])] = cond
-
 
     def get_keys(self):
         """
@@ -76,37 +75,48 @@ class IzConditions(IzContainer):
         """ Given a compound condition id returns a list of the conditions contained in it.
             ie. "cond1+cond2+!cond3" = [cond1, cond2, cond3]"""
         cids = re.split("\+|\|", reference)
-        return set([cid.replace("!", "") for cid in cids if not \
-            re.match(self.properties['ignore_key_pattern'], cid.replace("!", ""))])
-
-    def has_condition_definition(self, element):
-        """
-        Returns true if this element is a condition definition.
-        """
-        return element.name == 'condition' and element.has_attr('id')
+        return set([cid.replace("!", "") for cid in cids if
+                    not re.match(self.properties['ignore_key_pattern'], cid.replace("!", ""))])
 
     def has_reference(self, element):
         """
         Return true if the given element contains an izpack cond reference.
         """
         for atty in self.properties['attributes']:
-            if element.has_attr(atty): return True
+            if element.has_attr(atty):
+                return True
 
         return False
 
-    def has_def_by_condition_ref(self, ele):
+    def has_definition(self, element):
+        """
+        Determines if the given xml element is a condition definition.
+        """
+        return 'condition' == element.name and element.has_attr('type') and element.has_attr('id')
+
+    @staticmethod
+    def has_def_by_condition_ref(ele):
         """
         Function to determine if element contains a ref id for conditions.
         """
         return ele.has_attr('refid')
 
-    def has_def_by_variable_ref(self, ele):
+    @staticmethod
+    def has_condition_definition(element):
+        """
+        Returns true if this element is a condition definition.
+        """
+        return element.name == 'condition' and element.has_attr('id')
+
+    @staticmethod
+    def has_def_by_variable_ref(ele):
         """
         Does this element define a 'variable' type condition?
         """
         return ele.has_attr('type') and ele['type'] == 'variable'
 
-    def extract_variable_from_definition(self, element):
+    @staticmethod
+    def extract_variable_from_definition(element):
         """
         Given an element containing a variable type condition, return the variable name.
         """
