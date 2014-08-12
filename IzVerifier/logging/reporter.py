@@ -2,13 +2,15 @@ __author__ = 'fcanas'
 
 import termhelper
 
+
 class Reporter:
     """
     Responsible for displaying results and recording them to log files.
     """
 
-    def __init__(self):
-        self.set_terminal_width()  # default width of terminal
+    def __init__(self, warg=0):
+        self.width = warg
+        self.set_terminal_width(warg)  # default width of terminal
 
     templates = {
         'test': '[ {0:.<{2}}{1:.>{3}} ]',
@@ -46,8 +48,6 @@ class Reporter:
         if warg <= 0:
             height, width = termhelper.terminal_height_width()
             self.width = max(width, 100)
-        else:
-            self.width = warg
 
     def get_tuple_padding(self, item):
         """
@@ -62,7 +62,6 @@ class Reporter:
 
         tuple_padding = max(30, self.width - 50, len(item[0]) + 1)
 
-
         # If the combined length of the items is short enough to fit on one line, avoid a line break
         if len(item[0]) + len(item[1]) < self.width:
 
@@ -76,22 +75,35 @@ class Reporter:
 
         return tuple_padding
 
-def display_paths(paths):
+
+def display_paths(paths_dict):
     """
     Human readable output for displaying dependency paths.
     """
 
-    for path in paths:
-        tab = 0
-        for node in path:
-            if type(node[0]) is tuple:
-                id = node[0][0]
-            else:
-                id = node[0]
-            if tab:
-                branch = u'\u02ea\u2192 '
-            else:
-                branch = ''
-            tab += 3
-            print " " * tab + branch + str(id) + " : (" + str(node[1]) + ")"
-    print
+    for condition_id in paths_dict:
+        for path_index, path in enumerate(list(paths_dict[condition_id])):
+            tab = len(condition_id)
+            for node_index, node in enumerate(path):
+                if node_index == 0:
+                    if path_index == 0:
+                        print condition_id + " (type: " + str(node[1]) + ")"
+                    else:
+                        continue
+                else:
+                    add_to_tab = 0
+                    if type(node[0]) is tuple:
+                        cid = node[0][0]
+                        add_to_tab += len(cid)
+                    else:
+                        cid = node[0]
+                        add_to_tab += len(cid)
+                    if tab:
+                        branch = u'\u02ea\u2192 depends on '
+                        add_to_tab += len(branch)
+                    else:
+                        branch = ''
+
+                    print " " * tab + branch + str(cid) + " (type: " + str(node[1]) + ")"
+                    tab += add_to_tab
+        print

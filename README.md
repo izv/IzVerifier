@@ -51,7 +51,14 @@ IzVerifier methods:
     dependency_verification(verbosity=0):
         Runs a condition dependencies graph search on all conditions referenced by the specs
         of the installer.
-        Returns a set of tuples containing paths to missing dependencies.
+        Returns a dictionary which maps the condition id to a set of tuples containing paths to missing dependencies.
+        The dictionary will be of the form:
+        {
+            'condition_id': {((node1, type),(node2, type)...),
+                            ((node1, type),(node2, type)...)
+                            ...
+                            }
+        }
 
     get_referenced(specification):
         Returns a mapping for the given specification of all referenced items (defined or undefined) to the files they are referenced in.

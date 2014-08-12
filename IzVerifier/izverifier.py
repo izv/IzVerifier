@@ -7,7 +7,7 @@ from IzVerifier.izspecs.verifiers.seeker import Seeker
 from IzVerifier.izspecs.containers.constants import *
 from IzVerifier.exceptions.IzVerifierException import IzArgumentsException
 from IzVerifier.izspecs.izpaths import IzPaths
-from IzVerifier.logging.reporter import Reporter
+from IzVerifier.logging.reporter import Reporter, display_paths
 
 
 __author__ = 'fcanas'
@@ -55,6 +55,7 @@ class IzVerifier():
             missing |= self.verify(specification, verbosity)
         return missing
 
+
     def verify(self, specification, verbosity=0):
         """
         Runs a verification on the given izpack spec: conditions, strings, variables, etc.
@@ -93,9 +94,20 @@ class IzVerifier():
         else:
             return self.containers[specification]
 
+    def init_container(self, specification):
+        """
+        Initialize a container to be used for verification.
+        """
+        module = importlib.import_module("IzVerifier.izspecs.containers.iz" + specification)
+        class_ = getattr(module, 'Iz' + specification.title())
+        instance = class_(self.paths.get_path(specification))
+        self.containers[specification] = instance
+        return instance
+
     def find_code_references(self, specification):
         """
         Find all source code references for specs in each container.
+        :param specifications: conditions, variables, strings, or other izpack spec
         """
         container = self.get_container(specification)
         hits = self.seeker.find_references_in_source(patterns=container.properties[PATTERNS],
@@ -107,6 +119,8 @@ class IzVerifier():
     def find_specification_references(self, specification):
         """
         Find all specification xml references for specs in each container.
+        :param installer:
+        :param specifications:
         """
         container = self.get_container(specification)
 
@@ -119,6 +133,16 @@ class IzVerifier():
         }
         hits = self.seeker.search_specs_for_attributes(args)
         return hits
+
+    def dependency_verification(self, verbosity=0, fail_on_undefined_vars=False):
+        """
+        Run a conditions dependency graph search.
+        """
+        results = test_verify_all_dependencies(self, fail_on_undefined_vars=fail_on_undefined_vars)
+        if verbosity > 0:
+            display_paths(results)
+        return results
+
 
     def find_references(self, rid, specs=None, verbosity=0):
         """
@@ -204,6 +228,7 @@ def _validate_arguments(args):
         raise IzArgumentsException("No Path to Installer Specs Specified")
     if not 'resources_path' in args:
         raise IzArgumentsException("No Path to Installer Resources Specified")
+        exit(1)
 
 
 def _undefined(key_set, tup_set):
@@ -229,6 +254,7 @@ def _unused(key_set, tup_set):
 def _quote_remover(key):
     """
     Extracts the actual key of the item passed in.
+    TODO: seriously do this minus recursion, idiot.
     """
     if key.startswith('"') and key.endswith('"'):
         return key[1:-1]

@@ -62,7 +62,8 @@ class TestVerifier(unittest.TestCase):
 
         # Test for number of keys in conditions.xml plus white list
         num = len(izc.get_keys()) - len(izc.properties[WHITE_LIST])
-        self.assertEquals(num, 5, str(num) + "!=5")
+        print num
+        self.assertEquals(num, 8, str(num) + "!=8")
 
     def test_langpack_paths(self):
         """
@@ -133,13 +134,15 @@ class TestVerifier(unittest.TestCase):
         Verify conditions in sample installer.
         """
         hits = self.izv.verify('conditions', verbosity=2)
-        ids, locations = zip(*hits)
-        ids = list(ids)
-        locations = list(locations)
 
-        num = len(hits)
-        self.assertTrue(num == 4)
-        self.assertTrue("myinstallerclass.condition" in ids)
+        undefined_conditions = {'myinstallerclass.condition',
+                                'some.condition.2',
+                                'some.condition.1'}
+
+        found_conditions, location = zip(*hits)
+
+        for id in undefined_conditions:
+            self.assertTrue(id in found_conditions)
 
     def test_verifyVariables(self):
         """

@@ -25,4 +25,19 @@
         <condition type="ref" refid="and.2"/>
     </condition>
 
+    <condition type="or" id="or.cycle.1">
+        <condition type="ref" refid="or.cycle.2"/>
+        <condition type="ref" refid="pack.a"/>
+    </condition>
+
+    <condition type="or" id="or.cycle.2">
+        <condition type="ref" refid="or.cycle.3"/>
+        <condition type="ref" refid="pack.a"/>
+    </condition>
+
+    <condition type="or" id="or.cycle.3">
+        <condition type="ref" refid="or.cycle.1"/>
+        <condition type="ref" refid="pack.a"/>
+    </condition>
+
 </xfragment>
