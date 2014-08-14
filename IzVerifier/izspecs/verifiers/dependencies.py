@@ -9,8 +9,8 @@ def test_verify_all_dependencies(verifier, fail_on_undefined_vars=False):
     that are in some way referenced in specs or source.
     """
 
-    crefs = set([ref[0] for ref in verifier.find_code_references('conditions')])
-    srefs = set([ref[0] for ref in verifier.find_specification_references('conditions')])
+    crefs = set((ref[0] for ref in verifier.find_code_references('conditions')))
+    srefs = set((ref[0] for ref in verifier.find_specification_references('conditions')))
 
     conditions = verifier.get_container('conditions')
     variables = verifier.get_container('variables')
@@ -81,7 +81,6 @@ def _verify_dependencies(cond_id, conditions, variables, undefined_paths, curren
 
     if 'variable' in condition_type:
         var = str(condition.find('name').text)
-        tup = (var, 'variable')
         if not var in variables.get_keys():
             current_path += ((var, 'undefined variable'),)
             undefined_paths.add(current_path)
@@ -89,7 +88,6 @@ def _verify_dependencies(cond_id, conditions, variables, undefined_paths, curren
 
     if 'exists' in condition_type:
         var = str(condition.find('variable').text)
-        tup = (var, 'variable')
         if not var in variables.get_keys():
             current_path += ((var, 'undefined variable'),)
             undefined_paths.add(current_path)
@@ -101,7 +99,7 @@ def _verify_dependencies(cond_id, conditions, variables, undefined_paths, curren
             did = str(dep['refid'])
             tup = (did, 'condition')
             if tup in current_path:
-                current_path += ((did,'cyclic condition reference'),)
+                current_path += ((did, 'cyclic condition reference'),)
                 return undefined_paths.add(current_path)
 
             _verify_dependencies(did, conditions, variables, undefined_paths, current_path)

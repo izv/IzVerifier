@@ -23,7 +23,6 @@ class TestDependencies(unittest.TestCase):
             'sources': [source_path2],
             'resources_path': path2,
             'pom': pom,
-            'specs': ['conditions', 'strings', 'variables']
         }
         self.izv = IzVerifier(args)
 
@@ -31,7 +30,21 @@ class TestDependencies(unittest.TestCase):
         """
         Run the full dependency verification test.
         """
-        self.izv.dependency_verification(verbosity=0, fail_on_undefined_vars=True)
+        undefined_deps = {'and.1', 'and.2', 'and.3',
+                          'or.cycle.1', 'or.cycle.2', 'or.cycle.3',
+                          'some.condition.1', 'some.condition.2',
+                          'variable1',
+                          'myinstallerclass.condition'}
+
+        results = self.izv.dependency_verification(verbosity=2, fail_on_undefined_vars=True)
+        for cond in undefined_deps:
+            self.assertTrue(cond in results.keys())
+
+        for cond in results.keys():
+            self.assertTrue(cond in undefined_deps)
+
+
+
 
 
 
