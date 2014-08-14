@@ -34,7 +34,7 @@ class TestDependencies(unittest.TestCase):
                           'or.cycle.1', 'or.cycle.2', 'or.cycle.3',
                           'some.condition.1', 'some.condition.2',
                           'variable1',
-                          'myinstallerclass.condition'}
+                          'myinstallerclass.condition', 'short.1'}
 
         results = self.izv.dependency_verification(verbosity=2, fail_on_undefined_vars=True)
         for cond in undefined_deps:

@@ -6,7 +6,8 @@ __author__ = 'fcanas'
 class ConditionDependencyGraph():
 
     def __init__(self, verifier):
-        self.result_dict = {}
+        self.ill_defined = {}
+        self.well_defined = set()
         self.crefs = set((ref[0] for ref in verifier.find_code_references('conditions')))
         self.srefs = set((ref[0] for ref in verifier.find_specification_references('conditions')))
         self.conditions = verifier.get_container('conditions')
@@ -25,14 +26,13 @@ class ConditionDependencyGraph():
         for condition in self.all_references():
             result = self.verify_dependencies(condition)
             fail = True
-            if result:
-                last_path = list(result)[-1]
-                if 'variable' in last_path[-1]:
-                    fail = fail_on_undefined_vars
-                if fail:
-                    self.result_dict[condition] = result
+            if result and (not 'variable' in list(result)[-1][-1] or fail_on_undefined_vars):
+                self.ill_defined[condition] = result
+            else:
+                self.well_defined.add(condition)
 
-        return self.result_dict
+
+        return self.ill_defined
 
 
     def test_verify_dependencies(self, cond_id, conditions, variables):
@@ -57,20 +57,35 @@ class ConditionDependencyGraph():
         result = self._verify_dependencies(cond_id, set(), tuple())
         return result
 
-
     def _verify_dependencies(self, cond_id, undefined_paths, current_path):
         """
         Given the soup for a condition, test that its dependencies are validly
         defined.
         """
 
-        tup = (cond_id, 'condition')
-        current_path += (tup,)
-
         # Exception for izpack conditions:
         if cond_id in self.conditions.properties[WHITE_LIST]:
             return undefined_paths
 
+        # Short-circuit on well-defined conditions:
+        if cond_id in self.well_defined:
+            return undefined_paths
+
+        # Short-circuit ill-defined conditions:
+        if cond_id in self.ill_defined.keys():
+            current_path = current_path + ((cond_id, 'condition is bad'),)
+            return undefined_paths.add(current_path)
+
+        # Cycle checking:
+        tup = (cond_id, 'condition')
+        if tup in current_path:
+            current_path += ((cond_id, 'cyclic condition reference'),)
+            return undefined_paths.add(current_path)
+
+        tup = (cond_id, 'condition')
+        current_path += (tup,)
+
+        # Check for undefined condition.
         if not cond_id in self.conditions.get_keys():
             tup = (current_path[-1][0], 'undefined condition')
             modded_current = ()
@@ -103,18 +118,8 @@ class ConditionDependencyGraph():
             dependencies = condition.find_all('condition')
             for dep in dependencies:
                 did = str(dep['refid'])
-
-                if did in self.result_dict.keys():
-                    current_path += ((did, 'condition is bad'),)
-                    undefined_paths.add(current_path)
-                    continue
-
-                tup = (did, 'condition')
-                if tup in current_path:
-                    current_path += ((did, 'cyclic condition reference'),)
-                    return undefined_paths.add(current_path)
-
                 self._verify_dependencies(did, undefined_paths, current_path)
+
         return undefined_paths
 
 
