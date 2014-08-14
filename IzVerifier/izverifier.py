@@ -2,7 +2,7 @@ import importlib
 from IzVerifier.izspecs.containers.izclasses import IzClasses
 
 from IzVerifier.izspecs.izproperties import IzProperties
-from IzVerifier.izspecs.verifiers.dependencies import test_verify_all_dependencies
+from IzVerifier.izspecs.verifiers.dependencies import ConditionDependencyGraph
 from IzVerifier.izspecs.verifiers.seeker import Seeker
 from IzVerifier.izspecs.containers.constants import *
 from IzVerifier.exceptions.IzVerifierException import IzArgumentsException
@@ -80,7 +80,9 @@ class IzVerifier():
         """
         Run a conditions dependency graph search.
         """
-        results = test_verify_all_dependencies(self, fail_on_undefined_vars)
+        graph = ConditionDependencyGraph(self)
+
+        results = graph.test_verify_all_dependencies(fail_on_undefined_vars)
         if verbosity > 0:
             display_paths(results)
         return results

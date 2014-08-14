@@ -3,107 +3,119 @@ from IzVerifier.izspecs.containers.constants import *
 __author__ = 'fcanas'
 
 
-def test_verify_all_dependencies(verifier, fail_on_undefined_vars=False):
-    """
-    For the given installer conditions, verify the dependencies for every single one of the conditions
-    that are in some way referenced in specs or source.
-    """
+class ConditionDependencyGraph():
 
-    crefs = set((ref[0] for ref in verifier.find_code_references('conditions')))
-    srefs = set((ref[0] for ref in verifier.find_specification_references('conditions')))
+    def __init__(self, verifier):
+        self.result_dict = {}
+        self.crefs = set((ref[0] for ref in verifier.find_code_references('conditions')))
+        self.srefs = set((ref[0] for ref in verifier.find_specification_references('conditions')))
+        self.conditions = verifier.get_container('conditions')
+        self.variables = verifier.get_container('variables')
+        self.drefs = self.conditions.get_keys()
 
-    conditions = verifier.get_container('conditions')
-    variables = verifier.get_container('variables')
-    drefs = conditions.get_keys()
+    def all_references(self):
+        return self.drefs | self.srefs | self.crefs
 
-    result_dict = dict()
-    for condition in drefs | srefs | crefs:
-        result = verify_dependencies(condition, conditions, variables)
-        fail = True
-        if result:
-            last_path = list(result)[-1]
-            if 'variable' in last_path[-1]:
-                fail = fail_on_undefined_vars
-            if fail:
-                result_dict[condition] = result
+    def test_verify_all_dependencies(self, verifier, fail_on_undefined_vars=False):
+        """
+        For the given installer conditions, verify the dependencies for every single one of the conditions
+        that are in some way referenced in specs or source.
+        """
 
-    return result_dict
+        for condition in self.all_references():
+            result = self.verify_dependencies(condition)
+            fail = True
+            if result:
+                last_path = list(result)[-1]
+                if 'variable' in last_path[-1]:
+                    fail = fail_on_undefined_vars
+                if fail:
+                    self.result_dict[condition] = result
 
-
-def test_verify_dependencies(cond_id, conditions, variables):
-    """
-    Verifies that the given condition id is defined, and that its' dependencies and
-    their transitive dependencies are all defined and valid.
-    """
-
-    if not cond_id in conditions.get_keys():
-        return 1
-    else:
-        result = verify_dependencies(cond_id, conditions, variables)
-    return result
+        return self.result_dict
 
 
-def verify_dependencies(cond_id, conditions, variables):
-    """
-    Performs a breadth-first search of a condition's dependencies in order
-    to verify that all dependencies and transitive dependencies are defined
-    and valid.
-    """
-    result = _verify_dependencies(cond_id, conditions, variables, set(), tuple())
-    return result
+    def test_verify_dependencies(self, cond_id, conditions, variables):
+        """
+        Verifies that the given condition id is defined, and that its' dependencies and
+        their transitive dependencies are all defined and valid.
+        """
 
-
-def _verify_dependencies(cond_id, conditions, variables, undefined_paths, current_path):
-    """
-    Given the soup for a condition, test that its dependencies are validly
-    defined.
-    """
-    tup = (cond_id, 'condition')
-    current_path += (tup,)
-
-    # Exception for izpack conditions:
-    if cond_id in conditions.properties[WHITE_LIST]:
-        return undefined_paths
-
-    if not cond_id in conditions.get_keys():
-        tup = (current_path[-1][0], 'undefined condition')
-        modded_current = ()
-        for node in current_path[:-1]:
-            modded_current += (node,)
+        if not cond_id in conditions.get_keys():
+            return 1
         else:
-            modded_current += (tup,)
+            result = self.verify_dependencies(cond_id, conditions, variables)
+        return result
 
-        undefined_paths.add(modded_current)
+
+    def verify_dependencies(self, cond_id):
+        """
+        Performs a breadth-first search of a condition's dependencies in order
+        to verify that all dependencies and transitive dependencies are defined
+        and valid.
+        """
+        result = self._verify_dependencies(cond_id, set(), tuple())
+        return result
+
+
+    def _verify_dependencies(self, cond_id, undefined_paths, current_path):
+        """
+        Given the soup for a condition, test that its dependencies are validly
+        defined.
+        """
+
+        tup = (cond_id, 'condition')
+        current_path += (tup,)
+
+        # Exception for izpack conditions:
+        if cond_id in self.conditions.properties[WHITE_LIST]:
+            return undefined_paths
+
+        if not cond_id in self.conditions.get_keys():
+            tup = (current_path[-1][0], 'undefined condition')
+            modded_current = ()
+            for node in current_path[:-1]:
+                modded_current += (node,)
+            else:
+                modded_current += (tup,)
+
+            undefined_paths.add(modded_current)
+            return undefined_paths
+
+        condition = self.conditions.container[cond_id]
+        condition_type = condition['type']
+
+        if 'variable' in condition_type:
+            var = str(condition.find('name').text)
+            if not var in self.variables.get_keys():
+                current_path += ((var, 'undefined variable'),)
+                undefined_paths.add(current_path)
+            return undefined_paths
+
+        if 'exists' in condition_type:
+            var = str(condition.find('variable').text)
+            if not var in self.variables.get_keys():
+                current_path += ((var, 'undefined variable'),)
+                undefined_paths.add(current_path)
+            return undefined_paths
+
+        elif 'and' in condition_type or 'or' in condition_type or 'not' in condition_type:
+            dependencies = condition.find_all('condition')
+            for dep in dependencies:
+                did = str(dep['refid'])
+
+                if did in self.result_dict.keys():
+                    current_path += ((did, 'condition is bad'),)
+                    undefined_paths.add(current_path)
+                    continue
+
+                tup = (did, 'condition')
+                if tup in current_path:
+                    current_path += ((did, 'cyclic condition reference'),)
+                    return undefined_paths.add(current_path)
+
+                self._verify_dependencies(did, undefined_paths, current_path)
         return undefined_paths
-
-    condition = conditions.container[cond_id]
-    condition_type = condition['type']
-
-    if 'variable' in condition_type:
-        var = str(condition.find('name').text)
-        if not var in variables.get_keys():
-            current_path += ((var, 'undefined variable'),)
-            undefined_paths.add(current_path)
-        return undefined_paths
-
-    if 'exists' in condition_type:
-        var = str(condition.find('variable').text)
-        if not var in variables.get_keys():
-            current_path += ((var, 'undefined variable'),)
-            undefined_paths.add(current_path)
-        return undefined_paths
-
-    elif 'and' in condition_type or 'or' in condition_type or 'not' in condition_type:
-        dependencies = condition.find_all('condition')
-        for dep in dependencies:
-            did = str(dep['refid'])
-            tup = (did, 'condition')
-            if tup in current_path:
-                current_path += ((did, 'cyclic condition reference'),)
-                return undefined_paths.add(current_path)
-
-            _verify_dependencies(did, conditions, variables, undefined_paths, current_path)
-    return undefined_paths
 
 
 
