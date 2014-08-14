@@ -16,7 +16,7 @@ setup(
             'IzVerifier.test',
             'IzVerifier.logging'
         ],
-        url='https://github.com/FranciscoCanas/IzVerifier',
+        url='https://github.com/izv/IzVerifier',
         license='LICENSE.txt',
         description='Static specification file verification for IzPack installers.',
         long_description=open('README.txt').read(),
