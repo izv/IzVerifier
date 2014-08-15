@@ -5,6 +5,10 @@
         <name>Package A</name>
     </condition>
 
+        <condition type="packselection" id="pack.b">
+        <name>Package B</name>
+    </condition>
+
     <condition type="variable" id="variable1">
         <name>variable1</name>
         <value>true</value>
@@ -23,6 +27,36 @@
     <condition type="and" id="and.3">
         <condition type="ref" refid="pack.does.not.exist"/>
         <condition type="ref" refid="and.2"/>
+    </condition>
+
+    <condition type="or" id="or.cycle.1">
+        <condition type="ref" refid="or.cycle.2"/>
+        <condition type="ref" refid="pack.a"/>
+    </condition>
+
+    <condition type="or" id="or.cycle.2">
+        <condition type="ref" refid="or.cycle.3"/>
+        <condition type="ref" refid="pack.a"/>
+    </condition>
+
+    <condition type="or" id="or.cycle.3">
+        <condition type="ref" refid="or.cycle.1"/>
+        <condition type="ref" refid="pack.a"/>
+    </condition>
+
+    <condition type="or" id="short.1">
+        <condition type="ref" refid="or.cycle.2"/>
+        <condition type="ref" refid="or.cycle.3"/>
+        <condition type="ref" refid="and.3"/>
+    </condition>
+
+    <condition type="not" id="short.3">
+        <condition type="ref" refid="short.2"/>
+    </condition>
+
+    <condition type="or" id="short.2">
+        <condition type="ref" refid="pack.b"/>
+        <condition type="ref" refid="pack.a"/>
     </condition>
 
 </xfragment>

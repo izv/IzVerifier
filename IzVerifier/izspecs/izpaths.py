@@ -12,10 +12,12 @@ class IzPaths():
     Class responsible for providing paths to specific IzPack resources and spec files.
     """
     
-    def __init__(self, specs, resources, properties = {}):
+    def __init__(self, specs, resources, properties=None):
         """
         Initialize the installer's root path.
         """
+        if not properties:
+            properties = {}
         self.init_collections()
         self.properties = properties
         self.set_paths(specs, resources)
@@ -28,7 +30,7 @@ class IzPaths():
         """
         # Default paths to spec files relative to specs folder.
         self.specs = {
-            'BASE' : '',
+            'BASE': '',
             'variables': 'variables.xml',
             'conditions': 'conditions.xml',
             'dynamicvariables': 'dynamic_variables.xml',
@@ -80,11 +82,10 @@ class IzPaths():
         """
         Find the path for the spec in the install.xml file.
         """
-        path = None
         element = self.soup.find(spec)
         if element:
             child = element.find('xi:include')
-            if child: # if xi:include exists, specs are external.
+            if child:  # if xi:include exists, specs are external.
                 path = self.properties.substitute(child['href'])
             else:
                 # Internal specs.
@@ -99,10 +100,9 @@ class IzPaths():
         Returns a path to the spec or resources file, or None if there isn't any.
         """
         for col in [self.specs, self.resources]:
-            if col.has_key(name):
+            if name in col:
                 return force_absolute(col['BASE'], col[name])
         raise MissingFileException(name)
-
 
     def find_resources(self):
         """
@@ -125,23 +125,21 @@ class IzPaths():
             if 'customlangpack' in res['id'].lower():
                 self.find_langpack_path(res)
             else:
-                id = remove_xml(res['id'])
-                self.resources[id] = path_format(self.properties.substitute(res['src']))
+                rid = remove_xml(res['id'])
+                self.resources[rid] = path_format(self.properties.substitute(res['src']))
 
     def find_langpack_path(self, langpack):
         """
         Finds a langpack path from the given xml langpack element
         """
-        id = langpack['id']
+        lid = langpack['id']
         src = path_format(self.properties.substitute(langpack['src']))
-        if '.xml_' in id:
-            self.langpacks[id[-3:]] = src
+        if '.xml_' in lid:
+            self.langpacks[lid[-3:]] = src
 
-        if not self.langpacks.has_key('default'):
+        if not 'default' in self.langpacks:
             self.langpacks['default'] = src
             self.resources['strings'] = src
-
-
 
     def get_langpacks(self):
         """
@@ -153,22 +151,23 @@ class IzPaths():
         """
         return self.langpacks
 
-    def get_langpack_path(self, id='default'):
+    def get_langpack_path(self, lid='default'):
         """
         Returns the path to the langpack with the given localization id.
         """
-        path = self.langpacks[id]
+        path = self.langpacks[lid]
         return force_absolute(self.res_path, path)
 
 
-def remove_xml(id):
+def remove_xml(rid):
     """
     Removes the .xml from a resource or spec id.
     """
-    if '.xml' in id[-4:]:
-        return id[:-4]
+    if '.xml' in rid[-4:]:
+        return rid[:-4]
     else:
-        return id
+        return rid
+
 
 def force_absolute(base, path):
     """
@@ -178,6 +177,7 @@ def force_absolute(base, path):
         return path
     else:
         return path_format(base + path)
+
 
 def path_format(path):
     """

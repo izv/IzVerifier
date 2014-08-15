@@ -1,6 +1,7 @@
 from IzVerifier.izspecs.containers.izcontainer import IzContainer
 from IzVerifier.izspecs.containers.constants import *
 from os import walk
+
 __author__ = 'fcanas'
 
 
@@ -8,14 +9,15 @@ class IzClasses(IzContainer):
     """
     Container for parsing and storing custom classes used in izpack installers.
     """
+
     properties = {
         NAME: "classes",
         DEFINITION_SPEC_FILES: [],
         REFERENCE_SPEC_FILES: [
-           "install",
-           "userInputSpec",
-           "ProcessPanel.Spec",
-           "core-packs"],
+            "install",
+            "userInputSpec",
+            "ProcessPanel.Spec",
+            "core-packs"],
         ATTRIBUTES: ['class', 'name', 'classname', 'installer'],
         SPEC_ELEMENT: '',
         PARENT_OPENING_TAG: '',
@@ -30,6 +32,7 @@ class IzClasses(IzContainer):
     def __init__(self, path=None):
         """
         Initializes the container from the path to the root of custom source code.
+        Note: does not make use of parent class __init__.
         """
         self.container = {}
         self.referenced = {}
@@ -48,19 +51,11 @@ class IzClasses(IzContainer):
                     name = self.path_to_id(root, path)
                     self.container[name] = path
 
-    def path_to_id(self, root, path):
-        """
-        Transforms a classpath to a class id.
-        """
-        return path.replace(root, '').replace('/', '.').replace('.java', '')
-
-
     def get_keys(self):
         """
         Returns a set of all the keys for defined variables.
         """
         return set(self.container.keys()) | set(self.properties[WHITE_LIST])
-
 
     def count(self):
         """
@@ -84,6 +79,43 @@ class IzClasses(IzContainer):
     def to_string(self):
         return str(self.container)
 
+    def has_reference(self, element):
+        """
+        Return true if the given element contains an izpack var reference.
+        """
+
+        def is_izpack_class(classname):
+            """
+            Determines if this references an izpack built-in class.
+            """
+            if type(classname) is list:
+                classname = classname[0]
+            return not '.' in classname
+
+        if element.has_attr('name') and element.name == 'executeclass':
+            return not is_izpack_class(element['name'])
+        if element.has_attr('class'):
+            return not is_izpack_class(element['class'])
+        if element.has_attr('classname'):
+            return not is_izpack_class(element['classname'])
+        if element.has_attr('installer') and element.name == 'listener':
+            return not is_izpack_class(element['installer'])
+
+        return False
+
+    def has_definition(self, element):
+        """
+        Custom izpack classes are not defined by xml descriptors, so this method is unused.
+        """
+        pass
+
+    @staticmethod
+    def path_to_id(root, path):
+        """
+        Transforms a classpath to a class id.
+        """
+        return path.replace(root, '').replace('/', '.').replace('.java', '')
+
     @staticmethod
     def element_sort_key(element):
         """
@@ -105,31 +137,9 @@ class IzClasses(IzContainer):
         """
         return element
 
-    def ref_transformer(self, ref):
+    @staticmethod
+    def ref_transformer(ref):
         """
         Unwraps the ref if necessary.
         """
         return [ref]
-
-    def has_reference(self, element):
-        """
-        Return true if the given element contains an izpack var reference.
-        """
-        def is_izpack_class(classname):
-            """
-            Determines if this references an izpack built-in class.
-            """
-            if type(classname) is list:
-                classname = classname[0]
-            return not '.' in classname
-
-        if element.has_attr('name') and element.name == 'executeclass':
-            return not is_izpack_class(element['name'])
-        if element.has_attr('class'):
-            return not is_izpack_class(element['class'])
-        if element.has_attr('classname'):
-            return not is_izpack_class(element['classname'])
-        if element.has_attr('installer') and element.name == 'listener':
-            return not is_izpack_class(element['installer'])
-
-        return False
