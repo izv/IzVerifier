@@ -4,6 +4,7 @@ __author__ = 'fcanas'
 
 
 class ConditionDependencyGraph():
+    compound_conditions = ['or', 'xor', 'and', 'not']
 
     def __init__(self, verifier, fail_on_undefined_vars=False):
         self.ill_defined = {}
@@ -119,7 +120,7 @@ class ConditionDependencyGraph():
                 undefined_paths.add(current_path)
                 return False
 
-        elif 'and' in condition_type or 'or' in condition_type or 'not' in condition_type:
+        elif condition_type in self.compound_conditions:
             dependencies = condition.find_all('condition')
             for dep in dependencies:
                 did = str(dep['refid'])
