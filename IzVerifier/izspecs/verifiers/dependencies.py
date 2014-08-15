@@ -76,7 +76,7 @@ class ConditionDependencyGraph():
 
         # Short-circuit ill-defined conditions:
         if cond_id in self.ill_defined.keys():
-            current_path = current_path + ((cond_id, 'condition is bad'),)
+            current_path = current_path + ((cond_id, 'ill-defined condition'),)
             undefined_paths.add(current_path)
             return False
 
