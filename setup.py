@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
         name='IzVerifier',
-        version='0.0.3.3',
+        version='0.0.3.5',
         author='Francisco Canas',
         author_email='mailfrancisco@gmail.com',
         packages=[
