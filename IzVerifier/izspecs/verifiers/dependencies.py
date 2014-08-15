@@ -85,21 +85,14 @@ class ConditionDependencyGraph():
             undefined_paths.add(current_path)
             return False
 
-        tup = (cond_id, 'condition')
-        current_path += (tup,)
-
         # Check for undefined condition.
         if not cond_id in self.conditions.get_keys():
-            tup = (current_path[-1][0], 'undefined condition')
-            modded_current = ()
-            for node in current_path[:-1]:
-                modded_current += (node,)
-            else:
-                modded_current += (tup,)
-
-            undefined_paths.add(modded_current)
+            tup = (cond_id, 'undefined condition')
+            current_path += (tup,)
+            undefined_paths.add(current_path)
             return False
 
+        current_path += (tup,)
         condition = self.conditions.container[cond_id]
         condition_type = condition['type']
 
@@ -110,7 +103,7 @@ class ConditionDependencyGraph():
                 undefined_paths.add(current_path)
                 return False
 
-        if 'exists' in condition_type:
+        elif 'exists' in condition_type:
             var = str(condition.find('variable').text)
             if not var in self.variables.get_keys() and self.fail_on_undefined_vars:
                 current_path += ((var, 'undefined variable'),)
