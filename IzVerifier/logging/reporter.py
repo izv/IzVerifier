@@ -15,7 +15,8 @@ class Reporter:
     templates = {
         'test': '[ {0:.<{2}}{1:.>{3}} ]',
         'set_tuples': '{0:.<{2}}{1:.>{3}}',
-        'set_items': '{0:.<{1}}'
+        'set_items': '{0:.<{1}}',
+        'path_display': '[ {0:.<{1}}FAIL ]'
     }
 
     def report_test(self, test, items):
@@ -76,34 +77,38 @@ class Reporter:
         return tuple_padding
 
 
-def display_paths(paths_dict):
-    """
-    Human readable output for displaying dependency paths.
-    """
+    def display_paths(self, paths_dict):
+        """
+        Human readable output for displaying dependency paths.
+        """
+        def node_type(node):
+            return " (type: {0})".format(str(node[1]))
 
-    for condition_id in paths_dict:
-        for path_index, path in enumerate(list(paths_dict[condition_id])):
-            tab = len(condition_id)
-            for node_index, node in enumerate(path):
-                if node_index == 0:
-                    if path_index == 0:
-                        print condition_id + " (type: " + str(node[1]) + ")"
-                    else:
-                        continue
-                else:
-                    add_to_tab = 0
-                    if type(node[0]) is tuple:
-                        cid = node[0][0]
-                        add_to_tab += len(cid)
-                    else:
-                        cid = node[0]
-                        add_to_tab += len(cid)
-                    if tab:
-                        branch = u'\u02ea\u2192 depends on '
-                        add_to_tab += len(branch)
-                    else:
-                        branch = ''
+        template = self.templates['path_display']
 
-                    print " " * tab + branch + str(cid) + " (type: " + str(node[1]) + ")"
-                    tab += add_to_tab
-        print
+        for condition_id in paths_dict:
+            for path_index, path in enumerate(list(paths_dict[condition_id])):
+                tab = len(condition_id)
+                for node_index, node in enumerate(path):
+                    if node_index == 0:
+                        if path_index == 0:
+                            print template.format(condition_id + node_type(node), self.width - len('[ FAIL ]'))
+                        else:
+                            continue
+                    else:
+                        add_to_tab = 0
+                        if type(node[0]) is tuple:
+                            cid = node[0][0]
+                            add_to_tab += len(cid)
+                        else:
+                            cid = node[0]
+                            add_to_tab += len(cid)
+                        if tab:
+                            branch = u'\u02ea\u2192 depends on '
+                            add_to_tab += len(branch)
+                        else:
+                            branch = ''
+
+                        print " " * tab + branch + str(cid) + node_type(node)
+                        tab += add_to_tab
+            print
