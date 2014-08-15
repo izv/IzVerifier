@@ -27,15 +27,13 @@ class ConditionDependencyGraph():
 
         for condition in self.all_references():
             result = self.verify_dependencies(condition)
-            fail = True
+
             if result:
                 self.ill_defined[condition] = result
             else:
                 self.well_defined.add(condition)
 
-
         return self.ill_defined
-
 
     def test_verify_dependencies(self, cond_id, conditions, variables):
         """
@@ -46,9 +44,8 @@ class ConditionDependencyGraph():
         if not cond_id in conditions.get_keys():
             return 1
         else:
-            result = self.verify_dependencies(cond_id, conditions, variables)
+            result = self.verify_dependencies(cond_id)
         return result
-
 
     def verify_dependencies(self, cond_id):
         """
@@ -57,7 +54,7 @@ class ConditionDependencyGraph():
         and valid.
         """
         undefined_paths = set()
-        result = self._verify_dependencies(cond_id, undefined_paths, tuple())
+        self._verify_dependencies(cond_id, undefined_paths, tuple())
         return undefined_paths
 
     def _verify_dependencies(self, cond_id, undefined_paths, current_path):
