@@ -80,9 +80,9 @@ class IzVerifier():
         """
         Run a conditions dependency graph search.
         """
-        graph = ConditionDependencyGraph(self)
+        graph = ConditionDependencyGraph(self, fail_on_undefined_vars)
 
-        results = graph.test_verify_all_dependencies(fail_on_undefined_vars)
+        results = graph.test_verify_all_dependencies()
         if verbosity > 0:
             display_paths(results)
         return results

@@ -5,7 +5,7 @@ __author__ = 'fcanas'
 
 class ConditionDependencyGraph():
 
-    def __init__(self, verifier):
+    def __init__(self, verifier, fail_on_undefined_vars=False):
         self.ill_defined = {}
         self.well_defined = set()
         self.crefs = set((ref[0] for ref in verifier.find_code_references('conditions')))
@@ -13,11 +13,12 @@ class ConditionDependencyGraph():
         self.conditions = verifier.get_container('conditions')
         self.variables = verifier.get_container('variables')
         self.drefs = self.conditions.get_keys()
+        self.fail_on_undefined_vars = fail_on_undefined_vars
 
     def all_references(self):
         return self.drefs | self.srefs | self.crefs
 
-    def test_verify_all_dependencies(self, verifier, fail_on_undefined_vars=False):
+    def test_verify_all_dependencies(self):
         """
         For the given installer conditions, verify the dependencies for every single one of the conditions
         that are in some way referenced in specs or source.
@@ -26,7 +27,7 @@ class ConditionDependencyGraph():
         for condition in self.all_references():
             result = self.verify_dependencies(condition)
             fail = True
-            if result and (not 'variable' in list(result)[-1][-1] or fail_on_undefined_vars):
+            if result:
                 self.ill_defined[condition] = result
             else:
                 self.well_defined.add(condition)
@@ -50,37 +51,41 @@ class ConditionDependencyGraph():
 
     def verify_dependencies(self, cond_id):
         """
-        Performs a breadth-first search of a condition's dependencies in order
+        Performs a depth-first search of a condition's dependencies in order
         to verify that all dependencies and transitive dependencies are defined
         and valid.
         """
-        result = self._verify_dependencies(cond_id, set(), tuple())
-        return result
+        undefined_paths = set()
+        result = self._verify_dependencies(cond_id, undefined_paths, tuple())
+        return undefined_paths
 
     def _verify_dependencies(self, cond_id, undefined_paths, current_path):
         """
         Given the soup for a condition, test that its dependencies are validly
         defined.
         """
+        defined_children = True
 
         # Exception for izpack conditions:
         if cond_id in self.conditions.properties[WHITE_LIST]:
-            return undefined_paths
+            return True
 
         # Short-circuit on well-defined conditions:
         if cond_id in self.well_defined:
-            return undefined_paths
+            return True
 
         # Short-circuit ill-defined conditions:
         if cond_id in self.ill_defined.keys():
             current_path = current_path + ((cond_id, 'condition is bad'),)
-            return undefined_paths.add(current_path)
+            undefined_paths.add(current_path)
+            return False
 
         # Cycle checking:
         tup = (cond_id, 'condition')
         if tup in current_path:
             current_path += ((cond_id, 'cyclic condition reference'),)
-            return undefined_paths.add(current_path)
+            undefined_paths.add(current_path)
+            return False
 
         tup = (cond_id, 'condition')
         current_path += (tup,)
@@ -95,32 +100,36 @@ class ConditionDependencyGraph():
                 modded_current += (tup,)
 
             undefined_paths.add(modded_current)
-            return undefined_paths
+            return False
 
         condition = self.conditions.container[cond_id]
         condition_type = condition['type']
 
         if 'variable' in condition_type:
             var = str(condition.find('name').text)
-            if not var in self.variables.get_keys():
+            if not var in self.variables.get_keys() and self.fail_on_undefined_vars:
                 current_path += ((var, 'undefined variable'),)
                 undefined_paths.add(current_path)
-            return undefined_paths
+                return False
 
         if 'exists' in condition_type:
             var = str(condition.find('variable').text)
             if not var in self.variables.get_keys():
                 current_path += ((var, 'undefined variable'),)
                 undefined_paths.add(current_path)
-            return undefined_paths
+                return False
 
         elif 'and' in condition_type or 'or' in condition_type or 'not' in condition_type:
             dependencies = condition.find_all('condition')
             for dep in dependencies:
                 did = str(dep['refid'])
-                self._verify_dependencies(did, undefined_paths, current_path)
+                if not self._verify_dependencies(did, undefined_paths, current_path):
+                    defined_children = False
 
-        return undefined_paths
+        if defined_children:
+            self.well_defined.add(cond_id)
+
+        return defined_children
 
 
 
