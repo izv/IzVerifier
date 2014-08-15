@@ -80,6 +80,8 @@ def display_paths(paths_dict):
     """
     Human readable output for displaying dependency paths.
     """
+    def node_type(node):
+        return " (type: {0})".format(str(node[1]))
 
     for condition_id in paths_dict:
         for path_index, path in enumerate(list(paths_dict[condition_id])):
@@ -87,7 +89,7 @@ def display_paths(paths_dict):
             for node_index, node in enumerate(path):
                 if node_index == 0:
                     if path_index == 0:
-                        print condition_id + " (type: " + str(node[1]) + ")"
+                        print condition_id + node_type(node)
                     else:
                         continue
                 else:
@@ -104,6 +106,6 @@ def display_paths(paths_dict):
                     else:
                         branch = ''
 
-                    print " " * tab + branch + str(cid) + " (type: " + str(node[1]) + ")"
+                    print " " * tab + branch + str(cid) + node_type(node)
                     tab += add_to_tab
         print
