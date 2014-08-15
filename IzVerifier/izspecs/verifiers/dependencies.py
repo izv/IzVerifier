@@ -114,7 +114,7 @@ class ConditionDependencyGraph():
 
         if 'exists' in condition_type:
             var = str(condition.find('variable').text)
-            if not var in self.variables.get_keys():
+            if not var in self.variables.get_keys() and self.fail_on_undefined_vars:
                 current_path += ((var, 'undefined variable'),)
                 undefined_paths.add(current_path)
                 return False

@@ -38,9 +38,11 @@ class TestDependencies(unittest.TestCase):
 
         results = self.izv.dependency_verification(verbosity=2, fail_on_undefined_vars=True)
         for cond in undefined_deps:
+            print cond + " should be ill-defined"
             self.assertTrue(cond in results.keys())
 
         for cond in results.keys():
+            print cond + " should be ill-defined"
             self.assertTrue(cond in undefined_deps)
 
 
