@@ -37,13 +37,18 @@ class TestDependencies(unittest.TestCase):
                           'myinstallerclass.condition', 'short.1'}
 
         results = self.izv.dependency_verification(verbosity=2, fail_on_undefined_vars=True)
-        for cond in undefined_deps:
-            print cond + " should be ill-defined"
-            self.assertTrue(cond in results.keys())
 
-        for cond in results.keys():
-            print cond + " should be ill-defined"
-            self.assertTrue(cond in undefined_deps)
+        extras_found = set(results.keys()) - undefined_deps
+        not_found = undefined_deps - set(results.keys())
+
+        self.assertFalse(extras_found)
+        self.assertFalse(not_found)
+
+        for cond in extras_found:
+            print "%s should not have been found" % cond
+
+        for cond in not_found:
+            print "%s was not found" % cond
 
 
 
