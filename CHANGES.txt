@@ -1,8 +1,9 @@
-v0.0.3.5 2014-08-01:
+v0.0.3.5 2014-08-15:
+    - Optimization to dependency verification.
+    - Changes to dependency verification output.
     - Big internal improvements to source code searches.
     - Detection of custom izpack listener classes.
     - Additional patterns searched for in source code.
-    - References returned by verify methods are now uniform.
 
 v0.0.3.1 2014-07-25:
     - Now using lxml for faster xml parsing (note: lxml now required)
@@ -15,7 +16,7 @@ v0.0.3 2014-07-16:
     - Bug fixes for dependency tests and izpaths.
 
 v0.0.2  2014-07-02:
-    - Now mostly compatible with izpack v4 installers:
+    - Now mostly compatible with izpack v4 installers.
     - IzPack property and POM file property parsing and substitution.
     - Better resolution of paths to specs and resources parsed from install.xml.
     - Source code and xml spec file parsing includes white list patterns.
