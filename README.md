@@ -3,6 +3,8 @@ IzVerifier
 
 Static spec file  verification for IzPack installers.
 
+[![Build Status](https://drone.io/github.com/izv/IzVerifier/status.png)](https://drone.io/github.com/izv/IzVerifier/latest)
+
 Purpose
 -------
 
