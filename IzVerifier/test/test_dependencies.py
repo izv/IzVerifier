@@ -11,7 +11,6 @@ source_path2 = 'data/sample_code_base/src/'
 pom = 'data/sample_installer_iz5/pom.xml'
 
 
-
 class TestDependencies(unittest.TestCase):
     """
     Basic testing of verifier class.

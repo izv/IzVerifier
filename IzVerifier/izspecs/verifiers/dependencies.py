@@ -36,7 +36,7 @@ class ConditionDependencyGraph():
 
         return self.ill_defined
 
-    def test_verify_dependencies(self, cond_id, conditions, variables):
+    def test_verify_dependencies(self, cond_id, conditions):
         """
         Verifies that the given condition id is defined, and that its' dependencies and
         their transitive dependencies are all defined and valid.
@@ -172,8 +172,6 @@ class ConditionDependencyGraph():
             current_path += ((cid, 'java class'),)
             undefined_paths.add(current_path)
             return False
-
-
 
     def test_compound(self, condition, undefined_paths, current_path):
         """
