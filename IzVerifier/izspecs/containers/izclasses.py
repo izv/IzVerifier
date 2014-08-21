@@ -53,7 +53,7 @@ class IzClasses(IzContainer):
 
     def get_keys(self):
         """
-        Returns a set of all the keys for defined variables.
+        Returns a set of all the keys for existing custom classes.
         """
         return set(self.container.keys()) | set(self.properties[WHITE_LIST])
 

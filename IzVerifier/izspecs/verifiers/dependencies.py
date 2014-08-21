@@ -9,6 +9,7 @@ class ConditionDependencyGraph():
     def __init__(self, verifier, fail_on_undefined_vars=False):
         self.ill_defined = {}
         self.well_defined = set()
+        self.verifier = verifier
         self.crefs = set((ref[0] for ref in verifier.find_code_references('conditions')))
         self.srefs = set((ref[0] for ref in verifier.find_specification_references('conditions')))
         self.conditions = verifier.get_container('conditions')
@@ -134,6 +135,46 @@ class ConditionDependencyGraph():
         else:
             return True
 
+    def test_java(self, condition, undefined_paths, current_path):
+        """
+        Tests if a 'java' type condition is well-defined. ie, if the class that the java var is a
+        field of exists.
+
+        <condition type="java" id="myStaticFieldIsTrue">
+          <java>
+            <class>my.package.MyClass</class>
+            <field>myStaticField</field>
+          </java>
+          <returnvalue type="boolean">true</returnvalue>
+        </condition>
+
+        :param condition: the condition being tested.
+        :param undefined_paths: current set of undefined paths.
+        :param current_path: the current path.
+        :return: True for a well-defined condition, False otherwise.
+        """
+        cond_id = str(condition.get('id'))
+
+        try:
+            cid = str(condition.find('class').text)
+        except AttributeError:
+            current_path += ((cond_id, 'ill-defined java condition'),)
+            undefined_paths.add(current_path)
+            return False
+
+        if not cid:
+            current_path += ((cid, 'ill-defined java condition'),)
+            undefined_paths.add(current_path)
+            return False
+
+        classes = self.verifier.get_container('classes').get_keys()
+        if not cid in classes:
+            current_path += ((cid, 'java class'),)
+            undefined_paths.add(current_path)
+            return False
+
+
+
     def test_compound(self, condition, undefined_paths, current_path):
         """
         Tests if a compound condition is well-defined: if it's children are all well-defined.
@@ -156,7 +197,8 @@ class ConditionDependencyGraph():
         'and': test_compound,
         'not': test_compound,
         'variable': test_variable,
-        'exists': test_exists
+        'exists': test_exists,
+        'java': test_java
     }
 
 
