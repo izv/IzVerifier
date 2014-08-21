@@ -104,7 +104,7 @@ class Reporter:
                             cid = node[0]
                             add_to_tab += len(cid)
                         if tab:
-                            branch = u'\u02ea\u2192 depends on '
+                            branch = '\--> depends on '
                             add_to_tab += len(branch)
                         else:
                             branch = ''
