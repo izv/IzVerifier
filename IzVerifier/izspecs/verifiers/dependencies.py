@@ -9,6 +9,7 @@ class ConditionDependencyGraph():
     def __init__(self, verifier, fail_on_undefined_vars=False):
         self.ill_defined = {}
         self.well_defined = set()
+        self.verifier = verifier
         self.crefs = set((ref[0] for ref in verifier.find_code_references('conditions')))
         self.srefs = set((ref[0] for ref in verifier.find_specification_references('conditions')))
         self.conditions = verifier.get_container('conditions')
@@ -35,7 +36,7 @@ class ConditionDependencyGraph():
 
         return self.ill_defined
 
-    def test_verify_dependencies(self, cond_id, conditions, variables):
+    def test_verify_dependencies(self, cond_id, conditions):
         """
         Verifies that the given condition id is defined, and that its' dependencies and
         their transitive dependencies are all defined and valid.
@@ -62,7 +63,6 @@ class ConditionDependencyGraph():
         Given the soup for a condition, test that its dependencies are validly
         defined.
         """
-        defined_children = True
 
         # Exception for izpack conditions:
         if cond_id in self.conditions.properties[WHITE_LIST]:
@@ -96,31 +96,108 @@ class ConditionDependencyGraph():
         condition = self.conditions.container[cond_id]
         condition_type = condition['type']
 
-        if 'variable' in condition_type:
-            var = str(condition.find('name').text)
-            if not var in self.variables.get_keys() and self.fail_on_undefined_vars:
-                current_path += ((var, 'undefined variable'),)
-                undefined_paths.add(current_path)
-                return False
+        if condition_type in self.condition_tests.keys() and not \
+                self.condition_tests[condition_type](self, condition, undefined_paths, current_path):
+            return False
 
-        elif 'exists' in condition_type:
-            var = str(condition.find('variable').text)
-            if not var in self.variables.get_keys() and self.fail_on_undefined_vars:
-                current_path += ((var, 'undefined variable'),)
-                undefined_paths.add(current_path)
-                return False
+        self.well_defined.add(cond_id)
+        return True
 
-        elif condition_type in self.compound_conditions:
-            dependencies = condition.find_all('condition')
-            for dep in dependencies:
-                did = str(dep['refid'])
-                if not self._verify_dependencies(did, undefined_paths, current_path):
-                    defined_children = False
+    def test_variable(self, condition, undefined_paths, current_path):
+        """
+        Tests if a 'variable' type condition is correctly defined.
+        :param condition: the condition being tested.
+        :param undefined_paths: current set of undefined paths.
+        :param current_path: the current path.
+        :return: True for a well-defined condition, False otherwise.
+        """
+        var = str(condition.find('name').text)
+        if not var in self.variables.get_keys() and self.fail_on_undefined_vars:
+            current_path += ((var, 'undefined variable'),)
+            undefined_paths.add(current_path)
+            return False
+        else:
+            return True
 
-        if defined_children:
-            self.well_defined.add(cond_id)
+    def test_exists(self, condition, undefined_paths, current_path):
+        """
+        Tests if an 'exists' type condition is well-defined.
+        :param condition: the condition being tested.
+        :param undefined_paths: current set of undefined paths.
+        :param current_path: the current path.
+        :return: True for a well-defined condition, False otherwise.
+        """
+        var = str(condition.find('variable').text)
+        if not var in self.variables.get_keys() and self.fail_on_undefined_vars:
+            current_path += ((var, 'undefined variable'),)
+            undefined_paths.add(current_path)
+            return False
+        else:
+            return True
 
+    def test_java(self, condition, undefined_paths, current_path):
+        """
+        Tests if a 'java' type condition is well-defined. ie, if the class that the java var is a
+        field of exists.
+
+        <condition type="java" id="myStaticFieldIsTrue">
+          <java>
+            <class>my.package.MyClass</class>
+            <field>myStaticField</field>
+          </java>
+          <returnvalue type="boolean">true</returnvalue>
+        </condition>
+
+        :param condition: the condition being tested.
+        :param undefined_paths: current set of undefined paths.
+        :param current_path: the current path.
+        :return: True for a well-defined condition, False otherwise.
+        """
+        cond_id = str(condition.get('id'))
+
+        try:
+            cid = str(condition.find('class').text)
+        except AttributeError:
+            current_path += ((cond_id, 'ill-defined java condition'),)
+            undefined_paths.add(current_path)
+            return False
+
+        if not cid:
+            current_path += ((cid, 'ill-defined java condition'),)
+            undefined_paths.add(current_path)
+            return False
+
+        classes = self.verifier.get_container('classes').get_keys()
+        if not cid in classes:
+            current_path += ((cid, 'java class'),)
+            undefined_paths.add(current_path)
+            return False
+
+    def test_compound(self, condition, undefined_paths, current_path):
+        """
+        Tests if a compound condition is well-defined: if it's children are all well-defined.
+        :param condition: the condition being tested.
+        :param undefined_paths: current set of undefined paths.
+        :param current_path: the current path.
+        :return: True for a well-defined condition, False otherwise.
+        """
+        defined_children = True
+        dependencies = condition.find_all('condition')
+        for dep in dependencies:
+            did = str(dep['refid'])
+            if not self._verify_dependencies(did, undefined_paths, current_path):
+                defined_children = False
         return defined_children
+
+    condition_tests = {
+        'or': test_compound,
+        'xor': test_compound,
+        'and': test_compound,
+        'not': test_compound,
+        'variable': test_variable,
+        'exists': test_exists,
+        'java': test_java
+    }
 
 
 

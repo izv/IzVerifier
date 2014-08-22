@@ -63,7 +63,7 @@ class TestVerifier(unittest.TestCase):
         # Test for number of keys in conditions.xml plus white list
         num = len(izc.get_keys()) - len(izc.properties[WHITE_LIST])
         print num
-        self.assertEquals(num, 12, str(num) + "!=12")
+        self.assertEquals(num, 15, str(num) + "!=15")
 
     def test_langpack_paths(self):
         """

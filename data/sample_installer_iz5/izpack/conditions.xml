@@ -59,4 +59,27 @@
         <condition type="ref" refid="pack.a"/>
     </condition>
 
+    <condition type="java" id="static.field.condition1">
+      <java>
+        <class>my.package.MyClass</class>
+        <field>myStaticField</field>
+      </java>
+      <returnvalue type="boolean">true</returnvalue>
+    </condition>
+
+    <condition type="java" id="static.field.condition2">
+      <java>
+        <field>myStaticField</field>
+      </java>
+      <returnvalue type="boolean">true</returnvalue>
+    </condition>
+
+    <condition type="java" id="static.field.condition3">
+      <java>
+        <class>com.sample.installer.Foo</class>
+        <field>myStaticField</field>
+      </java>
+      <returnvalue type="boolean">true</returnvalue>
+    </condition>
+
 </xfragment>

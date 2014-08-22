@@ -7,9 +7,8 @@ from IzVerifier.izverifier import IzVerifier
 
 path1 = 'data/sample_installer_iz5/izpack/'
 path2 = 'data/sample_installer_iz5/resources/'
-source_path2 = 'data/sample_code_base'
+source_path2 = 'data/sample_code_base/src/'
 pom = 'data/sample_installer_iz5/pom.xml'
-
 
 
 class TestDependencies(unittest.TestCase):
@@ -34,7 +33,8 @@ class TestDependencies(unittest.TestCase):
                           'or.cycle.1', 'or.cycle.2', 'or.cycle.3',
                           'some.condition.1', 'some.condition.2',
                           'variable1',
-                          'myinstallerclass.condition', 'short.1'}
+                          'myinstallerclass.condition', 'short.1',
+                          'static.field.condition1', 'static.field.condition2'}
 
         results = self.izv.dependency_verification(verbosity=2, fail_on_undefined_vars=True)
 
