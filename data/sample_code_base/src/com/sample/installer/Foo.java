@@ -7,10 +7,15 @@ public Class Foo {
 
     public static void Run(AbstractUIProcessHandler handler, String [] args) {
         AutomatedInstallData idata = AutomatedInstallData.getInstance();
+        Messages messages = idata.getMessages();
 
         String key1 = "some.string.1";
         String key2 = "some.string.4";
         String key3 = "some.string.6";
+
+        String izpack5_test = idata.getMessages().get("my.izpack5.key");
+        String izpack5_test2 = messages.get("my.izpack5.key.1");
+
         String errorMsgDup = idata.langpack.getString("hello.world");
         String val = idata.langpack.getString(key1);
         setErrorMessageId("my.error.message.id.test");
