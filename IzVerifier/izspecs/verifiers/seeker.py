@@ -313,6 +313,20 @@ class Seeker:
                     values.add(atty)
         return values
 
+    def is_messages_object(self, key):
+        # ie. Messages message = blah
+        messages_pattern = '^Messages \w+'
+        messages_matcher = re.compile(messages_pattern)
+        return  messages_matcher.match(key)
+
+    def messages_search_patterns(self, key):
+        messages_pattern = '^Messages (\w+)'
+        messages_matcher = re.compile(messages_pattern)
+        obj = messages_matcher.match(key).group(1)
+        search_pattern = obj + '.get\('
+        extract_pattern = obj + '.get\((.*?)\)'
+        return search_pattern, extract_pattern
+
     def search_source_for_pattern(self, path, search_pattern, extract_pattern, white_list):
         """
         Searches all files recursively from given path for the search_pattern.
@@ -331,6 +345,16 @@ class Seeker:
                     key_and_location = self.extract_pattern_and_location_from_grep(line, extract_pattern)
                 if key_and_location is None:
                     continue
+
+                if self.is_messages_object(key_and_location[0]):
+                    messages_search_pattern, messages_extract_pattern = self.messages_search_patterns(key_and_location[0])
+                    hits = self.search_source_for_pattern(key_and_location[1], messages_search_pattern, messages_extract_pattern, white_list)
+                    hits_with_location = set()
+                    for hit in hits:
+                        hits_with_location.add((hit[0], key_and_location[1]))
+                    keys = keys|hits_with_location
+                    continue
+
                 stripped_key_and_location = self.process_key(key_and_location, white_list, search_pattern)
                 if stripped_key_and_location is not None:
                     keys.add(stripped_key_and_location)
@@ -338,6 +362,11 @@ class Seeker:
             # no hits were found
             pass
         return keys
+
+    def replace_location(self, key_and_location):
+
+        key_and_location[1] = '/home'
+        return (key_and_location[0], location)
 
     def in_grep_whitelist(self, line, white_list_patterns):
         """
