@@ -87,7 +87,7 @@ class TestVerifier(unittest.TestCase):
 
         # Test for number of strings
         num = len(izs.get_keys())
-        self.assertEquals(num, 4, str(num) + '!=4')
+        self.assertEquals(num, 5, str(num) + '!=4')
 
     def test_IzVariables(self):
         """
@@ -116,7 +116,10 @@ class TestVerifier(unittest.TestCase):
                              'some.user.password.confirm',
                              'some.string.5',
                              'some.string.6',
-                             'hello.world'}
+                             'hello.world',
+                             'my.izpack5.key.1',
+                             'my.izpack5.key.2',
+                             'my.izpack5.key.3'}
 
         non_strings = {'db.driver'}
 
@@ -185,7 +188,7 @@ class TestVerifier(unittest.TestCase):
         """
         classes = IzClasses(source_path2)
         classes.print_keys()
-        self.assertEquals(len(classes.get_keys()), 1)
+        self.assertEquals(len(classes.get_keys()), 2)
 
         hits = self.izv.verify('classes', verbosity=2)
         self.assertEquals(len(hits), 5)
