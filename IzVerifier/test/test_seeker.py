@@ -156,7 +156,7 @@ class TestSeeker(unittest.TestCase):
             white_list_patterns=self.strings.properties[WHITE_LIST_PATTERNS]
         )
         num = len(hits)
-        self.assertTrue(num == 8)
+        self.assertTrue(num == 12)
 
     def test_processKeys(self):
         """

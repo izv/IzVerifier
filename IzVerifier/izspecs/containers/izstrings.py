@@ -27,7 +27,9 @@ class IzStrings(IzContainer):
             ('setError\({0}', 'setError\(({0})\)'),
             ('setMessage\({0}', 'setMessage\(({0})\)'),
             ('System.*.println\({0}', 'System.*.println\(({0})\)'),
-            ('setErrorMessageId\({0}', 'setErrorMessageId\(({0})\)')],
+            ('setErrorMessageId\({0}', 'setErrorMessageId\(({0})\)'),
+            ('getMessages\(\).get\({0}', 'getMessages\(\).get\(({0})\)'),
+            ('Messages\s+[a-zA-Z]\w+\s+=\s+\w+\.getMessages\(\)', '(Messages\s+[a-zA-Z]\w+)\s+=\s+\w+\.getMessages\(\)')],
         WHITE_LIST_PATTERNS: ['^.*\(\(String\) conn\);.*$',
                               '^UserInputPanel.*$'],  # for some weirdness in a console helper :)
 

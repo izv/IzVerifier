@@ -3,4 +3,5 @@
     <str id="some.string.2" txt="Some String go here."/>
     <str id="some.string.3" txt="Some String go here."/>
     <str id="some.user.panel.title" txt="Some User Text Go Here."/>
+    <str id="my.izpack5.key.4" txt="Some String go here."/>
 </langpack>
