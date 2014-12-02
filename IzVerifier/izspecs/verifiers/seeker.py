@@ -208,6 +208,8 @@ class Seeker:
             key = self.find_variable_value(key, location, white_list)
             if key is not None:
                 return key, location
+        elif self.match_class(key):
+            return key, location
         else:
             return None
 

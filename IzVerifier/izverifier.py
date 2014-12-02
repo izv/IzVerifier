@@ -44,6 +44,7 @@ class IzVerifier():
         self.paths = IzPaths(args['specs_path'], args['resources_path'], self.properties)
         self._fill_classes()
         self.seeker = Seeker(self.paths)
+        self.classes = self._find_all_referenced_classes()
 
     def verify_all(self, verbosity=0):
         """
@@ -210,6 +211,25 @@ class IzVerifier():
         Return a specification's map of id's to references.
         """
         return self.get_container(specification).get_referenced()
+
+    def _find_all_referenced_classes(self):
+        referenced_classes = set()
+
+        search_pattern = "import\s+.+;"
+        extract_pattern = "import\s+([^;]+)"
+        white_list = ["^import\s+com.izforge.izpack.*;$", "^import\s+java.*;$"]
+
+        izclass_container = self.get_container("classes")
+        class_to_path_map = izclass_container.container
+        existing_classes_set = set(class_to_path_map.keys())
+        referenced_class_names, spec_found_in = zip(*self.find_specification_references("classes"))
+        referenced_existing_classes = existing_classes_set & set(referenced_class_names)
+
+        for reffed_class in referenced_existing_classes:
+            path_to_class = class_to_path_map[reffed_class]
+            values = self.seeker.search_source_for_pattern(path_to_class, search_pattern, extract_pattern, white_list)
+            referenced_classes = referenced_classes | values
+        return referenced_classes
 
 
 def _validate_arguments(args):
