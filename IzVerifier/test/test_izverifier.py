@@ -199,6 +199,46 @@ class TestVerifier(unittest.TestCase):
         self.assertTrue(referenced.has_key('com.sample.installer.SuperDuperValidator'))
         self.assertTrue(referenced.has_key('com.sample.installer.BarListener'))
 
+    def test_findReferencedClasses(self):
+        """
+        Testing the IzVerifiers ability to find the classes used in an installer
+        """
+        found_referenced_classes, empty = zip(*self.izv.classes)
+        actual_referenced_classes = {
+            'com.sample.installer.Foo',
+            'com.sample.installer.Apples',
+            'com.sample.installer.Pineapples',
+            'com.sample.installer.Oranges'
+        }
+
+        found_referenced_classes = set(found_referenced_classes)
+
+        print "This is what the code found: "
+        print found_referenced_classes
+        print
+
+        extra_classes_found = found_referenced_classes - actual_referenced_classes
+        classes_not_found = actual_referenced_classes - found_referenced_classes
+
+        print "This is what the code found that it shouldn't have: "
+        print extra_classes_found
+        print
+        print "This is what the class didn't find but should have: "
+        print classes_not_found
+        print
+
+        self.assertTrue(len(extra_classes_found) == 0)
+        self.assertTrue(len(classes_not_found) == 0)
+
+        for reffed_class in extra_classes_found:
+            print "this class shouldn't have been found %s" % reffed_class
+
+        for reffed_class in classes_not_found:
+            print "this class should have been found %s" % reffed_class
+
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

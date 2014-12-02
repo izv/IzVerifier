@@ -374,7 +374,7 @@ class Seeker:
     def replace_location(self, key_and_location):
 
         key_and_location[1] = '/home'
-        return (key_and_location[0], location)
+        return (key_and_location[0], key_and_location[1])
 
     def in_grep_whitelist(self, line, white_list_patterns):
         """
