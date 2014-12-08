@@ -1,4 +1,4 @@
-import com.sample.installer.Oranges;
+import com.sample.installer.Bar;
 import com.sample.installer.Pineapples;
 
 public Class Apples {

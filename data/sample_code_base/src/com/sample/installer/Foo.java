@@ -2,7 +2,6 @@
 import com.izforge.izpack.installer.AutomatedInstallData;
 import com.izforge.izpack.util.AbstractUIProcessHandler;
 import com.izforge.izpack.util.VariableSubstitutor;
-import com.sample.installer.Bar;
 import com.sample.installer.Apples;
 
 public Class Foo {

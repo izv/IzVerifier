@@ -188,7 +188,7 @@ class TestVerifier(unittest.TestCase):
         """
         classes = IzClasses(source_path2)
         classes.print_keys()
-        self.assertEquals(len(classes.get_keys()), 2)
+        self.assertEquals(len(classes.get_keys()), 5)
 
         hits = self.izv.verify('classes', verbosity=2)
         self.assertEquals(len(hits), 5)
@@ -203,29 +203,18 @@ class TestVerifier(unittest.TestCase):
         """
         Testing the IzVerifiers ability to find the classes used in an installer
         """
-        found_referenced_classes, empty = zip(*self.izv.classes)
+        found_referenced_classes = self.izv.referenced_classes
         actual_referenced_classes = {
             'com.sample.installer.Foo',
             'com.sample.installer.Apples',
             'com.sample.installer.Pineapples',
-            'com.sample.installer.Oranges'
+            'com.sample.installer.Bar'
         }
 
         found_referenced_classes = set(found_referenced_classes)
 
-        print "This is what the code found: "
-        print found_referenced_classes
-        print
-
         extra_classes_found = found_referenced_classes - actual_referenced_classes
         classes_not_found = actual_referenced_classes - found_referenced_classes
-
-        print "This is what the code found that it shouldn't have: "
-        print extra_classes_found
-        print
-        print "This is what the class didn't find but should have: "
-        print classes_not_found
-        print
 
         self.assertTrue(len(extra_classes_found) == 0)
         self.assertTrue(len(classes_not_found) == 0)
