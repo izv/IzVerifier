@@ -1,3 +1,4 @@
+from Queue import Queue
 import importlib
 from IzVerifier.izspecs.containers.izclasses import IzClasses
 
@@ -44,7 +45,7 @@ class IzVerifier():
         self.paths = IzPaths(args['specs_path'], args['resources_path'], self.properties)
         self._fill_classes()
         self.seeker = Seeker(self.paths)
-        self.classes = self._find_all_referenced_classes()
+        self.referenced_classes = self._find_all_referenced_classes()
 
     def verify_all(self, verbosity=0):
         """
@@ -213,7 +214,13 @@ class IzVerifier():
         return self.get_container(specification).get_referenced()
 
     def _find_all_referenced_classes(self):
+        """
+        Return a set of containing the list of classes that were listed in the specification files,
+        ano those that were imported by those listed in the specification files.
+        """
+
         referenced_classes = set()
+        searched_classes = set()
 
         search_pattern = "import\s+.+;"
         extract_pattern = "import\s+([^;]+)"
@@ -221,15 +228,26 @@ class IzVerifier():
 
         izclass_container = self.get_container("classes")
         class_to_path_map = izclass_container.container
-        existing_classes_set = set(class_to_path_map.keys())
+        classes_in_sources = set(class_to_path_map.keys())
         referenced_class_names, spec_found_in = zip(*self.find_specification_references("classes"))
-        referenced_existing_classes = existing_classes_set & set(referenced_class_names)
+        referenced_existing_classes = classes_in_sources & set(referenced_class_names)
 
         for reffed_class in referenced_existing_classes:
-            path_to_class = class_to_path_map[reffed_class]
-            values = self.seeker.search_source_for_pattern(path_to_class, search_pattern, extract_pattern, white_list)
-            referenced_classes = referenced_classes | values
-        return referenced_classes
+            queue = Queue()
+            queue.put(reffed_class)
+            while (not queue.empty()):
+                search_class = queue.get()
+                searched_classes.add(search_class)
+                found_imports = self.seeker.search_source_for_pattern(class_to_path_map[search_class], search_pattern, extract_pattern, white_list)
+                for found_import in found_imports:
+                    if (found_import[0] in searched_classes):
+                        continue
+                    queue.put(found_import[0])
+                    referenced_classes.add(found_import[0])
+
+        value = referenced_classes & classes_in_sources
+        return value | referenced_existing_classes
+
 
 
 def _validate_arguments(args):
