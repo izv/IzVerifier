@@ -173,7 +173,7 @@ def force_absolute(base, path):
     """
     Ensures that the base path is not appended to an absolute path.
     """
-    if base in path:
+    if os.path.abspath(path) and os.path.exists(path):
         return path
     else:
         return path_format(base + path)
