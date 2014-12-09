@@ -205,10 +205,10 @@ class TestVerifier(unittest.TestCase):
         """
         found_referenced_classes = self.izv.referenced_classes
         actual_referenced_classes = {
-            'com.sample.installer.Foo',
-            'com.sample.installer.Apples',
-            'com.sample.installer.Pineapples',
-            'com.sample.installer.Bar'
+            'data/sample_code_base/src/com/sample/installer/Foo.java',
+            'data/sample_code_base/src/com/sample/installer/Apples.java',
+            'data/sample_code_base/src/com/sample/installer/Pineapples.java',
+            'data/sample_code_base/src/com/sample/installer/Bar.java'
         }
 
         found_referenced_classes = set(found_referenced_classes)
