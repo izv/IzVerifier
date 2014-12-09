@@ -70,6 +70,7 @@ class IzVerifier():
         self._load_references(crefs | srefs, container)
 
         cmissing = _undefined(defined, crefs)
+        cmissing = self.filter_unused_classes(self.referenced_classes, cmissing)
         smissing = _undefined(defined, srefs)
 
         if verbosity > 0:
@@ -228,25 +229,32 @@ class IzVerifier():
 
         izclass_container = self.get_container("classes")
         class_to_path_map = izclass_container.container
-        classes_in_sources = set(class_to_path_map.keys())
-        referenced_class_names, spec_found_in = zip(*self.find_specification_references("classes"))
-        referenced_existing_classes = classes_in_sources & set(referenced_class_names)
+        classes_referenced_in_specs, spec_found_in = zip(*self.find_specification_references("classes"))
 
-        for reffed_class in referenced_existing_classes:
+        for reffed_class in classes_referenced_in_specs:
             queue = Queue()
             queue.put(reffed_class)
             while (not queue.empty()):
                 search_class = queue.get()
                 searched_classes.add(search_class)
+                if not search_class in class_to_path_map:
+                    continue
+                referenced_classes.add(class_to_path_map[search_class])
                 found_imports = self.seeker.search_source_for_pattern(class_to_path_map[search_class], search_pattern, extract_pattern, white_list)
                 for found_import in found_imports:
                     if (found_import[0] in searched_classes):
                         continue
                     queue.put(found_import[0])
-                    referenced_classes.add(found_import[0])
 
-        value = referenced_classes & classes_in_sources
-        return value | referenced_existing_classes
+        return referenced_classes & set(class_to_path_map.values())
+
+    def filter_unused_classes(self, class_set, tup_set):
+        """
+        Returns the subset of tup_set present in class_set
+        class_set is a set of paths to source files
+        tup_set is a set of tupples: tup[0] is the key, tup[1] is the class that key appeared in
+        """
+        return set(tup for tup in tup_set if tup[1] in class_set)
 
 
 

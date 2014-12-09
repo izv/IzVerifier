@@ -10,7 +10,7 @@ class ConditionDependencyGraph():
         self.ill_defined = {}
         self.well_defined = set()
         self.verifier = verifier
-        self.crefs = set((ref[0] for ref in verifier.find_code_references('conditions')))
+        self.crefs = verifier.filter_unused_classes(verifier.referenced_classes, set((ref for ref in verifier.find_code_references('conditions'))))
         self.srefs = set((ref[0] for ref in verifier.find_specification_references('conditions')))
         self.conditions = verifier.get_container('conditions')
         self.variables = verifier.get_container('variables')
