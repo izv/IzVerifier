@@ -19,13 +19,10 @@ class ConditionDependencyGraph():
         self.filter_classes = filter_claases
 
     def all_references(self):
-        srefs, specs = zip(*self.srefs)
+        srefs, specs = self.unzip(self.srefs)
         if self.filter_classes:
             crefs = self.verifier.filter_unused_classes(self.verifier.referenced_classes, self.crefs)
-            if len(crefs) > 0:
-                crefs, sources = zip(*crefs)
-            else:
-                crefs = set()
+            crefs, sources = self.unzip(crefs)
         else:
             crefs, sources = zip(*self.crefs)
         return self.drefs | set(srefs) | set(crefs)
@@ -208,6 +205,17 @@ class ConditionDependencyGraph():
         'exists': test_exists,
         'java': test_java
     }
+
+    def unzip(self, x):
+        """
+        Unzips a list of tuples, x.
+        :param x:
+        :return: Two lists if x is not empty, otherwise returns x and an empty set.
+        """
+        if (len(x)>0):
+            return zip(*x)
+        else:
+            return x, set()
 
 
 
