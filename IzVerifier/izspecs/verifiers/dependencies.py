@@ -6,19 +6,27 @@ __author__ = 'fcanas'
 class ConditionDependencyGraph():
     compound_conditions = ['or', 'xor', 'and', 'not']
 
-    def __init__(self, verifier, fail_on_undefined_vars=False):
+    def __init__(self, verifier, fail_on_undefined_vars=False, filter_claases=False):
         self.ill_defined = {}
         self.well_defined = set()
         self.verifier = verifier
-        self.crefs = set((ref[0] for ref in verifier.find_code_references('conditions')))
-        self.srefs = set((ref[0] for ref in verifier.find_specification_references('conditions')))
+        self.crefs = set((ref for ref in verifier.find_code_references('conditions')))
+        self.srefs = set((ref for ref in verifier.find_specification_references('conditions')))
         self.conditions = verifier.get_container('conditions')
         self.variables = verifier.get_container('variables')
         self.drefs = self.conditions.get_keys()
         self.fail_on_undefined_vars = fail_on_undefined_vars
+        self.filter_classes = filter_claases
 
     def all_references(self):
-        return self.drefs | self.srefs | self.crefs
+        srefs, specs = zip(*self.srefs)
+
+        if self.filter_classes:
+            crefs = self.verifier.filter_unused_classes(self.verifier.referenced_classes, self.crefs)
+            crefs, sources = zip(*crefs)
+        else:
+            crefs, sources = zip(*self.crefs)
+        return self.drefs | set(srefs) | set(crefs)
 
     def test_verify_all_dependencies(self):
         """

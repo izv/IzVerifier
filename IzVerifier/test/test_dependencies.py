@@ -36,7 +36,7 @@ class TestDependencies(unittest.TestCase):
                           'myinstallerclass.condition', 'short.1',
                           'static.field.condition1', 'static.field.condition2'}
 
-        results = self.izv.dependency_verification(verbosity=2, fail_on_undefined_vars=True)
+        results = self.izv.dependency_verification(verbosity=2, fail_on_undefined_vars=True, filter_classes=True)
 
         extras_found = set(results.keys()) - undefined_deps
         not_found = undefined_deps - set(results.keys())

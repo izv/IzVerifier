@@ -105,7 +105,7 @@ class TestVerifier(unittest.TestCase):
         """
         Verify strings in sample installer
         """
-        hits = self.izv.verify('strings', verbosity=2)
+        hits = self.izv.verify('strings', verbosity=2, filter_classes=True)
         undefined_strings = {'some.string.4',
                              'my.error.message.id.test',
                              'password.empty',
@@ -121,14 +121,14 @@ class TestVerifier(unittest.TestCase):
                              'my.izpack5.key.2',
                              'my.izpack5.key.3'}
 
-        non_strings = {'db.driver'}
 
         found_strings, location = zip(*hits)
-        for id in undefined_strings:
-            self.assertTrue(id in found_strings)
 
-        for id in non_strings:
-            self.assertTrue(id not in found_strings)
+        strings_not_found = undefined_strings - set(found_strings)
+        additional_found_strings = set(found_strings) - undefined_strings
+
+        self.assertTrue(len(strings_not_found) == 0, "Strings not found: " + str(strings_not_found))
+        self.assertTrue(len(additional_found_strings) == 0, "Should not have been found: " + str(additional_found_strings))
 
 
 
@@ -188,7 +188,7 @@ class TestVerifier(unittest.TestCase):
         """
         classes = IzClasses(source_path2)
         classes.print_keys()
-        self.assertEquals(len(classes.get_keys()), 2)
+        self.assertEquals(len(classes.get_keys()), 5)
 
         hits = self.izv.verify('classes', verbosity=2)
         self.assertEquals(len(hits), 5)
@@ -198,6 +198,35 @@ class TestVerifier(unittest.TestCase):
         self.assertTrue(referenced.has_key('com.sample.installer.SuperValidator'))
         self.assertTrue(referenced.has_key('com.sample.installer.SuperDuperValidator'))
         self.assertTrue(referenced.has_key('com.sample.installer.BarListener'))
+
+    def test_findReferencedClasses(self):
+        """
+        Testing the IzVerifiers ability to find the classes used in an installer
+        """
+        found_referenced_classes = self.izv.referenced_classes
+        actual_referenced_classes = {
+            'data/sample_code_base/src/com/sample/installer/Foo.java',
+            'data/sample_code_base/src/com/sample/installer/Apples.java',
+            'data/sample_code_base/src/com/sample/installer/Pineapples.java',
+            'data/sample_code_base/src/com/sample/installer/Bar.java'
+        }
+
+        found_referenced_classes = set(found_referenced_classes)
+
+        extra_classes_found = found_referenced_classes - actual_referenced_classes
+        classes_not_found = actual_referenced_classes - found_referenced_classes
+
+        self.assertTrue(len(extra_classes_found) == 0)
+        self.assertTrue(len(classes_not_found) == 0)
+
+        for reffed_class in extra_classes_found:
+            print "this class shouldn't have been found %s" % reffed_class
+
+        for reffed_class in classes_not_found:
+            print "this class should have been found %s" % reffed_class
+
+
+
 
 
 if __name__ == '__main__':

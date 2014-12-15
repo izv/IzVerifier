@@ -14,7 +14,7 @@ from IzVerifier.izspecs.containers.constants import *
 
 path1 = 'data/sample_installer_iz5/izpack/'
 path2 = 'data/sample_installer_iz5/resources/'
-source_path2 = 'data/sample_code_base'
+source_path2 = 'data/sample_code_base/src/'
 pom = 'data/sample_installer_iz5/pom.xml'
 
 
@@ -156,7 +156,7 @@ class TestSeeker(unittest.TestCase):
             white_list_patterns=self.strings.properties[WHITE_LIST_PATTERNS]
         )
         num = len(hits)
-        self.assertTrue(num == 12)
+        self.assertTrue(num == 13)
 
     def test_processKeys(self):
         """

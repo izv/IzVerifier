@@ -1,3 +1,4 @@
+from Queue import Queue
 import importlib
 from IzVerifier.izspecs.containers.izclasses import IzClasses
 
@@ -44,6 +45,7 @@ class IzVerifier():
         self.paths = IzPaths(args['specs_path'], args['resources_path'], self.properties)
         self._fill_classes()
         self.seeker = Seeker(self.paths)
+        self.referenced_classes = self._find_all_referenced_classes()
 
     def verify_all(self, verbosity=0):
         """
@@ -55,7 +57,7 @@ class IzVerifier():
             missing |= self.verify(specification, verbosity)
         return missing
 
-    def verify(self, specification, verbosity=0):
+    def verify(self, specification, verbosity=0, filter_classes=False):
         """
         Runs a verification on the given izpack spec: conditions, strings, variables, etc.
         """
@@ -68,6 +70,8 @@ class IzVerifier():
         self._load_references(crefs | srefs, container)
 
         cmissing = _undefined(defined, crefs)
+        if (filter_classes):
+            cmissing = self.filter_unused_classes(self.referenced_classes, cmissing)
         smissing = _undefined(defined, srefs)
 
         if verbosity > 0:
@@ -76,11 +80,11 @@ class IzVerifier():
 
         return cmissing | smissing
 
-    def dependency_verification(self, verbosity=0, fail_on_undefined_vars=False):
+    def dependency_verification(self, verbosity=0, fail_on_undefined_vars=False, filter_classes=False):
         """
         Run a conditions dependency graph search.
         """
-        graph = ConditionDependencyGraph(self, fail_on_undefined_vars)
+        graph = ConditionDependencyGraph(self, fail_on_undefined_vars, filter_classes)
 
         results = graph.test_verify_all_dependencies()
         if verbosity > 0:
@@ -210,6 +214,49 @@ class IzVerifier():
         Return a specification's map of id's to references.
         """
         return self.get_container(specification).get_referenced()
+
+    def _find_all_referenced_classes(self):
+        """
+        Return a set of containing the list of classes that were listed in the specification files,
+        ano those that were imported by those listed in the specification files.
+        """
+
+        referenced_classes = set()
+        searched_classes = set()
+
+        search_pattern = "import\s+.+;"
+        extract_pattern = "import\s+([^;]+)"
+        white_list = ["^import\s+com.izforge.izpack.*;$", "^import\s+java.*;$"]
+
+        izclass_container = self.get_container("classes")
+        class_to_path_map = izclass_container.container
+        classes_referenced_in_specs, spec_found_in = zip(*self.find_specification_references("classes"))
+
+        for reffed_class in classes_referenced_in_specs:
+            queue = Queue()
+            queue.put(reffed_class)
+            while (not queue.empty()):
+                search_class = queue.get()
+                searched_classes.add(search_class)
+                if not search_class in class_to_path_map:
+                    continue
+                referenced_classes.add(class_to_path_map[search_class])
+                found_imports = self.seeker.search_source_for_pattern(class_to_path_map[search_class], search_pattern, extract_pattern, white_list)
+                for found_import in found_imports:
+                    if (found_import[0] in searched_classes):
+                        continue
+                    queue.put(found_import[0])
+
+        return referenced_classes & set(class_to_path_map.values())
+
+    def filter_unused_classes(self, class_set, tup_set):
+        """
+        Returns the subset of tup_set present in class_set
+        class_set is a set of paths to source files
+        tup_set is a set of tupples: tup[0] is the key, tup[1] is the class that key appeared in
+        """
+        return set(tup for tup in tup_set if tup[1] in class_set)
+
 
 
 def _validate_arguments(args):

@@ -185,6 +185,13 @@ class Seeker:
         matched = re.search(extract_method_pattern, key)
         return matched.group(1)
 
+    @staticmethod
+    def match_import(key):
+        # "some literal string";
+        literal_string = '^\s*[\w\.]+$'
+        literal_matcher = re.compile(literal_string)
+        return literal_matcher.match(key)
+
     def process_key(self, key_and_location, white_list, search_pattern):
         """
         Input: a tuple of  (key, file location), and white_list of keys, and a search pattern
@@ -208,6 +215,8 @@ class Seeker:
             key = self.find_variable_value(key, location, white_list)
             if key is not None:
                 return key, location
+        elif self.match_import(key):
+            return key, location
         else:
             return None
 
@@ -372,7 +381,7 @@ class Seeker:
     def replace_location(self, key_and_location):
 
         key_and_location[1] = '/home'
-        return (key_and_location[0], location)
+        return (key_and_location[0], key_and_location[1])
 
     def in_grep_whitelist(self, line, white_list_patterns):
         """
