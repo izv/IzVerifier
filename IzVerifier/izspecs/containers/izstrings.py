@@ -74,6 +74,9 @@ class IzStrings(IzContainer):
         if str(element.parent.name) == 'panel' and str(element.name) == 'validator':
             return False
 
+        if str(element.name) == 'action':
+            return False
+
         # Elements with ids that start with the word 'port' in them are not strings either.
         if element.has_attr('id'):
             if element['id'].startswith('port') or 'maximum.offset.variable' in element.name:
