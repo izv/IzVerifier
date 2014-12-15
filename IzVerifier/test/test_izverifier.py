@@ -105,7 +105,7 @@ class TestVerifier(unittest.TestCase):
         """
         Verify strings in sample installer
         """
-        hits = self.izv.verify('strings', verbosity=2)
+        hits = self.izv.verify('strings', verbosity=2, filter_classes=True)
         undefined_strings = {'some.string.4',
                              'my.error.message.id.test',
                              'password.empty',
@@ -121,14 +121,14 @@ class TestVerifier(unittest.TestCase):
                              'my.izpack5.key.2',
                              'my.izpack5.key.3'}
 
-        non_strings = {'db.driver'}
 
         found_strings, location = zip(*hits)
-        for id in undefined_strings:
-            self.assertTrue(id in found_strings)
 
-        for id in non_strings:
-            self.assertTrue(id not in found_strings)
+        strings_not_found = undefined_strings - set(found_strings)
+        additional_found_strings = set(found_strings) - undefined_strings
+
+        self.assertTrue(len(strings_not_found) == 0, "Strings not found: " + str(strings_not_found))
+        self.assertTrue(len(additional_found_strings) == 0, "Should not have been found: " + str(additional_found_strings))
 
 
 
