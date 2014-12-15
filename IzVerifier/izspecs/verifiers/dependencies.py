@@ -20,10 +20,12 @@ class ConditionDependencyGraph():
 
     def all_references(self):
         srefs, specs = zip(*self.srefs)
-
         if self.filter_classes:
             crefs = self.verifier.filter_unused_classes(self.verifier.referenced_classes, self.crefs)
-            crefs, sources = zip(*crefs)
+            if len(crefs) > 0:
+                crefs, sources = zip(*crefs)
+            else:
+                crefs = set()
         else:
             crefs, sources = zip(*self.crefs)
         return self.drefs | set(srefs) | set(crefs)
