@@ -57,7 +57,7 @@ class IzVerifier():
             missing |= self.verify(specification, verbosity)
         return missing
 
-    def verify(self, specification, verbosity=0):
+    def verify(self, specification, verbosity=0, filter_classes=False):
         """
         Runs a verification on the given izpack spec: conditions, strings, variables, etc.
         """
@@ -70,7 +70,8 @@ class IzVerifier():
         self._load_references(crefs | srefs, container)
 
         cmissing = _undefined(defined, crefs)
-        cmissing = self.filter_unused_classes(self.referenced_classes, cmissing)
+        if (filter_classes):
+            cmissing = self.filter_unused_classes(self.referenced_classes, cmissing)
         smissing = _undefined(defined, srefs)
 
         if verbosity > 0:
@@ -79,11 +80,11 @@ class IzVerifier():
 
         return cmissing | smissing
 
-    def dependency_verification(self, verbosity=0, fail_on_undefined_vars=False):
+    def dependency_verification(self, verbosity=0, fail_on_undefined_vars=False, filter_classes=False):
         """
         Run a conditions dependency graph search.
         """
-        graph = ConditionDependencyGraph(self, fail_on_undefined_vars)
+        graph = ConditionDependencyGraph(self, fail_on_undefined_vars, filter_classes)
 
         results = graph.test_verify_all_dependencies()
         if verbosity > 0:
