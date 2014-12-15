@@ -210,12 +210,12 @@ class ConditionDependencyGraph():
         """
         Unzips a list of tuples, x.
         :param x:
-        :return: Two lists if x is not empty, otherwise returns x and an empty set.
+        :return: Two lists if x is not empty, otherwise returns x and an empty list.
         """
         if (len(x)>0):
             return zip(*x)
         else:
-            return x, set()
+            return x, list()
 
 
 
