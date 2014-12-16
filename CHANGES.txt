@@ -1,3 +1,9 @@
+v0.0.4.0 2014-12-16:
+    - Added optional class filtering for strings and conditions found in source
+    - Allow specs to be outside of base path provided
+    - No longer matches Action ids as strings
+    - Added support for IzPack 5 Messages object
+
 v0.0.3.5 2014-08-15:
     - Optimization to dependency verification.
     - Changes to dependency verification output.

@@ -3,6 +3,7 @@ CHANGES.txt
 LICENSE.txt
 README.md
 README.txt
+requirements.txt
 setup.py
 IzVerifier/__init__.py
 IzVerifier/izverifier.py

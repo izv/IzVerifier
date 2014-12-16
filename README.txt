@@ -44,17 +44,23 @@ Instantiate the IzVerifier, then call its verification methods:
 
 IzVerifier methods:
 
-    verify_all(verbosity=0):
+    verify_all(verbosity=0, filter_classes=False):
         Run verification tests on all installer specs.
+        Setting filter_classes=true will make IzVerifier filter the results so that only undefined references located in
+        source files that were referenced by the specification files or imported explicitly in those files are returned.
         Returns a set of all references that are undefined.
 
-    verify(specification, verbosity=0):
+    verify(specification, verbosity=0, filter_classes=False):
         Run verification tests on the given specification.
+        Setting filter_classes=true will make IzVerifier filter the results so that only undefined references located in
+        source files that were referenced by the specification files or imported explicitly in those files are returned.
         Returns a set of all references for the given spec that are undefined.
 
-    dependency_verification(verbosity=0):
+    dependency_verification(verbosity=0, filter_classes=False):
         Runs a condition dependencies graph search on all conditions referenced by the specs
         of the installer.
+        Setting filter_classes=true will make IzVerifier filter the results so that only undefined references located in
+        source files that were referenced by the specification files or imported explicitly in those files are returned.
         Returns a dictionary which maps the condition id to a set of tuples containing paths to missing dependencies.
         The dictionary will be of the form:
         {
