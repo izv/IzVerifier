@@ -47,14 +47,14 @@ class IzVerifier():
         self.seeker = Seeker(self.paths)
         self.referenced_classes = self._find_all_referenced_classes()
 
-    def verify_all(self, verbosity=0):
+    def verify_all(self, verbosity=0, filter_classes=False):
         """
         Runs a verification for all specs.
         """
         missing = set([])
 
         for specification in self.specifications:
-            missing |= self.verify(specification, verbosity)
+            missing |= self.verify(specification, verbosity, filter_classes)
         return missing
 
     def verify(self, specification, verbosity=0, filter_classes=False):
