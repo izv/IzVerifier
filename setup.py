@@ -4,11 +4,11 @@ from distutils.core import setup
 
 setup(
         name='IzVerifier',
-        version='0.0.4.0',
+        version='0.0.4.1',
         author='Francisco Canas',
         author_email='mailfrancisco@gmail.com',
         maintainer='Ahmed Abu Lawi',
-        maintainer_email='mail.ahmed.lawi@gmail.com',
+        maintainer_email='ahmedlawi92@gmail.com',
         packages=[
             'IzVerifier',
             'IzVerifier.exceptions',
