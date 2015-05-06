@@ -1,5 +1,7 @@
+import re
 from IzVerifier.izspecs.containers.izcontainer import IzContainer
 from IzVerifier.izspecs.containers.constants import *
+
 from os import walk
 
 __author__ = 'fcanas'
@@ -114,7 +116,9 @@ class IzClasses(IzContainer):
         """
         Transforms a classpath to a class id.
         """
-        return path.replace(root, '').replace('/', '.').replace('.java', '')
+        path = path.replace(root, '').replace('/', '.')
+        path = re.sub('\.java$', '', path)
+        return path
 
     @staticmethod
     def element_sort_key(element):
