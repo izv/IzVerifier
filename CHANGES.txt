@@ -1,3 +1,6 @@
+v0.0.4.1 2015-05-06:
+    - Fixed small bug related to .java being removed from more than just the end of the source file name.
+
 v0.0.4.0 2014-12-16:
     - Added optional class filtering for strings and conditions found in source
     - Allow specs to be outside of base path provided
